@@ -15,9 +15,10 @@ Complete backend development setup with production-tested patterns, skills, and 
 - **plan-reviewer** - Review development plans before implementation
 - **web-research-specialist** - Research technical issues online
 
-### Hooks (2)
+### Hooks (3)
 - **skill-activation-prompt** - Auto-suggests relevant skills
 - **post-tool-use-tracker** - Tracks file changes
+- **error-handling-reminder** - Reminds about error handling best practices
 
 ### Commands (2)
 - **/dev-docs** - Create structured development documentation
@@ -38,22 +39,42 @@ Complete backend development setup with production-tested patterns, skills, and 
 
 ## Post-Installation Setup
 
-1. **Update skill-rules.json** with your project paths:
-   ```bash
-   # Edit .claude/skills/skill-rules.json
-   # Update pathPatterns to match your backend code location
-   # Example: "src/**/*.ts", "backend/**/*.ts", "services/*/src/**/*.ts"
-   ```
+### 1. Customize Skill Triggers
 
-2. **Install hook dependencies**:
-   ```bash
-   cd .claude/hooks && npm install
-   ```
+Edit `.claude/skills/skill-rules.json` to match your project structure:
 
-3. **Test skill activation**:
-   Ask Claude: "How do I create a controller?"
-   
-   Expected: backend-dev-guidelines skill should automatically activate
+```json
+{
+  "skills": {
+    "backend-dev-guidelines": {
+      "fileTriggers": {
+        "pathPatterns": [
+          "src/**/*.ts"           // Single app
+          // OR
+          "services/*/src/**/*.ts" // Monorepo
+          // OR
+          "blog-api/src/**/*.ts",  // Specific services
+          "auth-service/src/**/*.ts"
+        ]
+      }
+    }
+  }
+}
+```
+
+**Why?** The skill-activation-prompt hook uses these patterns to automatically activate skills when you edit matching files.
+
+### 2. Install Hook Dependencies
+
+```bash
+cd .claude/hooks && npm install
+```
+
+### 3. Test Skill Activation
+
+Ask Claude: "How do I create a controller?"
+
+**Expected:** backend-dev-guidelines skill should automatically activate
 
 ## Usage Examples
 
@@ -81,32 +102,53 @@ Skills automatically activate when you:
 /dev-docs-update
 ```
 
-## Customization
+## Advanced Customization
 
-### Adjust Path Patterns
+### Adding Custom Keywords
 
-Edit `.claude/skills/skill-rules.json`:
+Edit `.claude/skills/skill-rules.json` to add project-specific keywords:
 
-**Single app**:
 ```json
 {
-  "backend-dev-guidelines": {
-    "fileTriggers": {
-      "pathPatterns": ["src/**/*.ts"]
+  "skills": {
+    "backend-dev-guidelines": {
+      "promptTriggers": {
+        "keywords": [
+          "backend",
+          "controller",
+          "service",
+          // Add your custom keywords
+          "my-custom-service",
+          "project-specific-term"
+        ]
+      }
     }
   }
 }
 ```
 
+### Adjusting File Pattern Examples
+
+**Single app**:
+```json
+"pathPatterns": ["src/**/*.ts"]
+```
+
 **Monorepo**:
 ```json
-{
-  "backend-dev-guidelines": {
-    "fileTriggers": {
-      "pathPatterns": ["services/*/src/**/*.ts", "packages/*/src/**/*.ts"]
-    }
-  }
-}
+"pathPatterns": [
+  "services/*/src/**/*.ts",
+  "packages/*/src/**/*.ts"
+]
+```
+
+**Specific services**:
+```json
+"pathPatterns": [
+  "blog-api/src/**/*.ts",
+  "auth-service/src/**/*.ts",
+  "notifications-service/src/**/*.ts"
+]
 ```
 
 ## Troubleshooting

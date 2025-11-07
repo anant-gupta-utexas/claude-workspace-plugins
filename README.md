@@ -10,7 +10,7 @@ Complete backend development setup with Node.js/Express/TypeScript patterns.
 **Includes:**
 - 2 Skills (backend-dev-guidelines, skill-developer)
 - 5 Agents (architecture review, refactoring, documentation, etc.)
-- 2 Hooks (skill activation, file tracking)
+- 3 Hooks (skill activation, file tracking, error handling reminders)
 - 2 Commands (/dev-docs, /dev-docs-update)
 
 **Tech Stack:** Node.js, Express, TypeScript, Prisma
@@ -259,11 +259,11 @@ MIT License - Use freely in your projects.
 
 After installing these plugins, you get:
 
-✅ **Intelligent skill activation** - Skills suggest themselves when relevant
-✅ **Specialized agents** - AI assistants for complex tasks
-✅ **Automated workflows** - Hooks that track and optimize your work
-✅ **Production patterns** - Best practices from real-world projects
-✅ **Tech stack validation** - Prevents common mistakes
-✅ **Comprehensive documentation** - Everything you need to know
+- ✅ **Intelligent skill activation** - Skills suggest themselves when relevant
+- ✅ **Specialized agents** - AI assistants for complex tasks
+- ✅ **Automated workflows** - Hooks that track and optimize your work
+- ✅ **Production patterns** - Best practices from real-world projects
+- ✅ **Tech stack validation** - Prevents common mistakes
+- ✅ **Comprehensive documentation** - Everything you need to know
 
 **Start building better software faster!** 🚀

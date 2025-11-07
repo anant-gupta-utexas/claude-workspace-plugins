@@ -42,22 +42,44 @@ Complete frontend development setup with production-tested patterns for React/Ty
 
 ## Post-Installation Setup
 
-1. **Update skill-rules.json** with your frontend paths:
-   ```bash
-   # Edit .claude/skills/skill-rules.json
-   # Update pathPatterns to match your frontend code location
-   # Example: "src/**/*.tsx", "frontend/src/**/*.tsx", "apps/web/**/*.tsx"
-   ```
+### 1. Customize Skill Triggers
 
-2. **Install hook dependencies**:
-   ```bash
-   cd .claude/hooks && npm install
-   ```
+Edit `.claude/skills/skill-rules.json` to match your project structure:
 
-3. **Test skill activation**:
-   Ask Claude: "Create a new React component"
-   
-   Expected: frontend-dev-guidelines skill should automatically activate
+```json
+{
+  "skills": {
+    "frontend-dev-guidelines": {
+      "fileTriggers": {
+        "pathPatterns": [
+          "src/**/*.tsx"            // Single app
+          // OR
+          "apps/web/src/**/*.tsx"   // Monorepo
+          // OR
+          "frontend/src/**/*.tsx",  // Specific apps
+          "admin-panel/src/**/*.tsx"
+        ]
+      }
+    }
+  }
+}
+```
+
+**Why?** The skill-activation-prompt hook uses these patterns to automatically activate skills when you edit matching files.
+
+**⚠️ Important:** frontend-dev-guidelines is a GUARDRAIL and will BLOCK edits with MUI v6 patterns!
+
+### 2. Install Hook Dependencies
+
+```bash
+cd .claude/hooks && npm install
+```
+
+### 3. Test Skill Activation
+
+Ask Claude: "Create a new React component"
+
+**Expected:** frontend-dev-guidelines skill should automatically activate
 
 ## ⚠️ Important: GUARDRAIL Skill
 
@@ -99,35 +121,71 @@ Skills automatically activate when you:
 /dev-docs-update
 ```
 
-## Customization
+## Advanced Customization
 
-### Adjust Path Patterns
+### Adding Custom Keywords
 
-Edit `.claude/skills/skill-rules.json`:
+Edit `.claude/skills/skill-rules.json` to add project-specific keywords:
 
-**Single React app**:
 ```json
 {
-  "frontend-dev-guidelines": {
-    "fileTriggers": {
-      "pathPatterns": ["src/**/*.tsx", "src/**/*.ts"]
+  "skills": {
+    "frontend-dev-guidelines": {
+      "promptTriggers": {
+        "keywords": [
+          "component",
+          "React",
+          "MUI",
+          // Add your custom keywords
+          "dashboard",
+          "custom-component-name"
+        ]
+      }
     }
   }
 }
 ```
 
+### Adjusting File Pattern Examples
+
+**Single React app**:
+```json
+"pathPatterns": [
+  "src/**/*.tsx",
+  "src/**/*.ts"
+]
+```
+
 **Monorepo**:
 ```json
-{
-  "frontend-dev-guidelines": {
-    "fileTriggers": {
-      "pathPatterns": [
-        "apps/web/src/**/*.tsx",
-        "packages/ui/src/**/*.tsx"
-      ]
-    }
-  }
-}
+"pathPatterns": [
+  "apps/web/src/**/*.tsx",
+  "packages/ui/src/**/*.tsx"
+]
+```
+
+**Multiple frontend apps**:
+```json
+"pathPatterns": [
+  "frontend/src/**/*.tsx",
+  "admin-panel/src/**/*.tsx",
+  "client/src/**/*.tsx"
+]
+```
+
+### Disabling the Guardrail
+
+If you need to disable the MUI v7 guardrail:
+
+**Per file** (recommended):
+```typescript
+// @skip-validation
+// Rest of your code
+```
+
+**Environment variable** (affects all files):
+```bash
+export SKIP_FRONTEND_GUIDELINES=1
 ```
 
 ## Troubleshooting
