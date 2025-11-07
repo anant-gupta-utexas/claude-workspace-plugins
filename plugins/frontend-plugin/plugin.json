@@ -1,0 +1,111 @@
+{
+  "name": "frontend-plugin",
+  "version": "1.0.0",
+  "description": "Complete frontend development setup with React/TypeScript/MUI v7 patterns, performance optimization, and frontend-focused agents",
+  "author": "Anant",
+  "license": "MIT",
+  "keywords": [
+    "frontend",
+    "react",
+    "typescript",
+    "mui",
+    "material-ui",
+    "tanstack",
+    "spa"
+  ],
+  "category": "development",
+  "components": {
+    "skills": [
+      {
+        "name": "frontend-dev-guidelines",
+        "path": "skills/frontend-dev-guidelines",
+        "description": "React/TypeScript/MUI v7 patterns with GUARDRAIL enforcement"
+      },
+      {
+        "name": "skill-developer",
+        "path": "skills/skill-developer",
+        "description": "Meta-skill for creating and managing Claude Code skills"
+      }
+    ],
+    "agents": [
+      {
+        "name": "frontend-error-fixer",
+        "path": "agents/frontend-error-fixer.md",
+        "description": "Debug and fix frontend errors (build and runtime)"
+      },
+      {
+        "name": "code-refactor-master",
+        "path": "agents/code-refactor-master.md",
+        "description": "Plan and execute comprehensive refactoring"
+      },
+      {
+        "name": "code-architecture-reviewer",
+        "path": "agents/code-architecture-reviewer.md",
+        "description": "Review code for architectural consistency"
+      },
+      {
+        "name": "refactor-planner",
+        "path": "agents/refactor-planner.md",
+        "description": "Create comprehensive refactoring strategies"
+      },
+      {
+        "name": "plan-reviewer",
+        "path": "agents/plan-reviewer.md",
+        "description": "Review development plans before implementation"
+      },
+      {
+        "name": "web-research-specialist",
+        "path": "agents/web-research-specialist.md",
+        "description": "Research technical issues online"
+      },
+      {
+        "name": "documentation-architect",
+        "path": "agents/documentation-architect.md",
+        "description": "Generate comprehensive documentation"
+      }
+    ],
+    "hooks": [
+      {
+        "name": "skill-activation-prompt",
+        "path": "hooks/skill-activation-prompt.sh",
+        "type": "UserPromptSubmit",
+        "description": "Automatically suggests relevant skills"
+      },
+      {
+        "name": "post-tool-use-tracker",
+        "path": "hooks/post-tool-use-tracker.sh",
+        "type": "PostToolUse",
+        "description": "Tracks file changes for context management"
+      }
+    ],
+    "commands": [
+      {
+        "name": "dev-docs",
+        "path": "commands/dev-docs.md",
+        "description": "Create structured development documentation"
+      },
+      {
+        "name": "dev-docs-update",
+        "path": "commands/dev-docs-update.md",
+        "description": "Update docs before context reset"
+      }
+    ]
+  },
+  "requirements": {
+    "tech_stack": [
+      "React 18+",
+      "TypeScript",
+      "MUI v7",
+      "TanStack Query",
+      "TanStack Router (or similar)"
+    ]
+  },
+  "post_install": {
+    "instructions": [
+      "Update .claude/skills/skill-rules.json with your frontend path patterns",
+      "Install hook dependencies: cd .claude/hooks && npm install",
+      "Test skill activation: Ask 'Create a new React component'",
+      "IMPORTANT: frontend-dev-guidelines is a GUARDRAIL - blocks MUI v6 patterns"
+    ]
+  }
+}

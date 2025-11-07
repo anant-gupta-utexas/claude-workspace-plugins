@@ -1,7 +1,60 @@
 {
   "name": "claude-workspace-plugins",
-  "description": "Personal collection of Claude Code plugins, skills, and agents",
+  "owner": {
+    "name": "Anant",
+    "contact": "anant@example.com"
+  },
+  "description": "Production-tested Claude Code plugins for backend and frontend development",
   "version": "1.0.0",
-  "author": "Your Name",
-  "plugins": []
+  "plugins": [
+    {
+      "name": "backend-plugin",
+      "source": "plugins/backend-plugin",
+      "description": "Complete backend development setup with Node.js/Express/TypeScript patterns, Prisma integration, and backend-focused agents",
+      "version": "1.0.0",
+      "author": "Anant",
+      "category": "development",
+      "keywords": [
+        "backend",
+        "nodejs",
+        "express",
+        "typescript",
+        "prisma",
+        "api",
+        "microservices"
+      ],
+      "components": {
+        "skills": ["backend-dev-guidelines", "skill-developer"],
+        "agents": ["code-architecture-reviewer", "refactor-planner", "documentation-architect", "plan-reviewer", "web-research-specialist"],
+        "hooks": ["skill-activation-prompt", "post-tool-use-tracker"],
+        "commands": ["dev-docs", "dev-docs-update"]
+      }
+    },
+    {
+      "name": "frontend-plugin",
+      "source": "plugins/frontend-plugin",
+      "description": "Complete frontend development setup with React/TypeScript/MUI v7 patterns, performance optimization, and frontend-focused agents",
+      "version": "1.0.0",
+      "author": "Anant",
+      "category": "development",
+      "keywords": [
+        "frontend",
+        "react",
+        "typescript",
+        "mui",
+        "material-ui",
+        "tanstack",
+        "spa"
+      ],
+      "components": {
+        "skills": ["frontend-dev-guidelines", "skill-developer"],
+        "agents": ["frontend-error-fixer", "code-refactor-master", "code-architecture-reviewer", "refactor-planner", "plan-reviewer", "web-research-specialist", "documentation-architect"],
+        "hooks": ["skill-activation-prompt", "post-tool-use-tracker"],
+        "commands": ["dev-docs", "dev-docs-update"]
+      }
+    }
+  ],
+  "repository": "https://github.com/yourusername/claude-workspace-plugins",
+  "homepage": "https://github.com/yourusername/claude-workspace-plugins#readme",
+  "license": "MIT"
 }

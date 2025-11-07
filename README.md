@@ -1,137 +1,269 @@
-# Claude Workspace Plugins
+# Claude Workspace Plugins Marketplace
 
-Personal collection of Claude Code plugins, skills, and agents for enhanced development workflows.
+Production-tested Claude Code plugins for professional development workflows.
 
-## Quick Start
+## 🎯 Available Plugins
 
-### Adding This Marketplace
+### [Backend Plugin](./plugins/backend-plugin/)
+Complete backend development setup with Node.js/Express/TypeScript patterns.
+
+**Includes:**
+- 2 Skills (backend-dev-guidelines, skill-developer)
+- 5 Agents (architecture review, refactoring, documentation, etc.)
+- 2 Hooks (skill activation, file tracking)
+- 2 Commands (/dev-docs, /dev-docs-update)
+
+**Tech Stack:** Node.js, Express, TypeScript, Prisma
+
+---
+
+### [Frontend Plugin](./plugins/frontend-plugin/)
+Complete frontend development setup with React/TypeScript/MUI v7 patterns.
+
+**Includes:**
+- 2 Skills (frontend-dev-guidelines with GUARDRAIL, skill-developer)
+- 7 Agents (error fixing, refactoring, architecture review, etc.)
+- 2 Hooks (skill activation, file tracking)
+- 2 Commands (/dev-docs, /dev-docs-update)
+
+**Tech Stack:** React 18+, TypeScript, MUI v7, TanStack Query/Router
+
+---
+
+## 🚀 Quick Start
+
+### 1. Add This Marketplace
 
 ```bash
-/plugin marketplace add <your-github-username>/claude-workspace-plugins
+/plugin marketplace add yourusername/claude-workspace-plugins
 ```
 
-### Installing Plugins
+### 2. Browse Available Plugins
 
 ```bash
-# Browse available plugins
 /plugin
-
-# Install a specific plugin
-/plugin install plugin-name@<your-github-username>
 ```
 
-## Repository Structure
+This opens an interactive UI showing all available plugins from this marketplace.
 
+### 3. Install a Plugin
+
+```bash
+# For backend development
+/plugin install backend-plugin@claude-workspace-plugins
+
+# For frontend development
+/plugin install frontend-plugin@claude-workspace-plugins
 ```
-claude-workspace-plugins/
-├── .claude-plugin/
-│   └── marketplace.json      # Marketplace configuration
-├── plugins/                   # Individual plugin directories
-│   ├── _template/            # Template for creating new plugins
-│   └── your-plugin-name/     # Your custom plugins
-├── docs/                      # Documentation
-└── README.md
+
+### 4. Configure After Installation
+
+Each plugin requires minimal post-installation setup:
+
+1. Update `skill-rules.json` with your project paths
+2. Install hook dependencies: `cd .claude/hooks && npm install`
+3. Test skill activation
+
+See individual plugin READMEs for detailed instructions.
+
+---
+
+## 📦 Plugin Details
+
+### Backend Plugin
+
+Perfect for:
+- REST API development
+- Microservices
+- Node.js/Express backends
+- TypeScript projects with Prisma
+
+[View Details →](./plugins/backend-plugin/README.md)
+
+### Frontend Plugin
+
+Perfect for:
+- React SPAs
+- Admin panels
+- Web applications with MUI v7
+- TypeScript frontends
+
+[View Details →](./plugins/frontend-plugin/README.md)
+
+---
+
+## 🎨 What's a Plugin?
+
+A Claude Code plugin is a package of:
+
+- **Skills** - Domain knowledge and best practices
+- **Agents** - Specialized AI assistants for complex tasks
+- **Hooks** - Auto-activation and automation
+- **Commands** - Slash commands for workflows
+
+Together, they create an intelligent development environment tailored to your tech stack.
+
+---
+
+## 📖 How to Use Installed Plugins
+
+### Skills Auto-Activate
+
+After installation, skills automatically activate when:
+- You mention relevant keywords
+- You edit matching files
+- You work with specific technologies
+
+**Example:** Edit a TypeScript controller file → backend-dev-guidelines activates automatically
+
+### Using Agents
+
+Invoke agents for complex tasks:
+
+```bash
+"Use the code-architecture-reviewer agent to review my authentication service"
+"Use the refactor-planner agent to plan breaking down this large component"
+"Use the frontend-error-fixer agent to debug this console error"
 ```
 
-## Creating a New Plugin
+### Slash Commands
 
-1. **Copy the template**
-   ```bash
-   cp -r plugins/_template plugins/my-plugin
-   ```
+Use commands for workflows:
 
-2. **Update plugin.json**
-   Edit `plugins/my-plugin/.claude-plugin/plugin.json`:
-   ```json
-   {
-     "name": "my-plugin",
-     "description": "What your plugin does",
-     "version": "1.0.0",
-     "author": "Your Name",
-     "tags": ["category"],
-     "dependencies": []
-   }
-   ```
+```bash
+/dev-docs Implement user authentication
+/dev-docs-update
+```
 
-3. **Add your content**
-   - **Agents**: Add `.md` files to `plugins/my-plugin/agents/`
-   - **Commands**: Add `.md` files to `plugins/my-plugin/commands/`
-   - **Skills**: Create `plugins/my-plugin/skills/skill-name/SKILL.md`
+---
 
-4. **Register in marketplace**
-   Add to `.claude-plugin/marketplace.json`:
-   ```json
-   {
-     "plugins": [
-       {
-         "name": "my-plugin",
-         "path": "plugins/my-plugin",
-         "description": "What your plugin does",
-         "version": "1.0.0",
-         "tags": ["category"]
-       }
-     ]
-   }
-   ```
+## ⚙️ Customization
 
-5. **Test locally**
-   ```bash
-   /plugin marketplace add file:///absolute/path/to/claude-workspace-plugins
-   /plugin install my-plugin
-   ```
+### Path Patterns
 
-## Plugin Components
+After installing a plugin, customize path patterns in `.claude/skills/skill-rules.json`:
 
-### Agents
-Specialized AI personalities for specific tasks. Create agents as markdown files that define expertise and behavior patterns.
+**Backend Example:**
+```json
+{
+  "backend-dev-guidelines": {
+    "fileTriggers": {
+      "pathPatterns": [
+        "src/**/*.ts",           // Single app
+        "services/*/src/**/*.ts" // Monorepo
+      ]
+    }
+  }
+}
+```
 
-**Example**: `agents/python-expert.md`
+**Frontend Example:**
+```json
+{
+  "frontend-dev-guidelines": {
+    "fileTriggers": {
+      "pathPatterns": [
+        "src/**/*.tsx",          // Single app
+        "apps/web/src/**/*.tsx"  // Monorepo
+      ]
+    }
+  }
+}
+```
 
-### Commands
-Slash commands that expand to reusable prompts. Simple markdown files become executable commands.
+---
 
-**Example**: `commands/run-tests.md` → `/run-tests`
+## 🔧 Managing Plugins
 
-### Skills
-Auto-activating knowledge modules with progressive disclosure. Include YAML frontmatter and trigger configuration.
+### List Installed Plugins
 
-**Example**: `skills/error-handling/SKILL.md`
+```bash
+/plugin list
+```
 
-## Publishing Your Marketplace
+### Update a Plugin
 
-1. **Push to GitHub**
-   ```bash
-   git add .
-   git commit -m "Initial plugin marketplace"
-   git remote add origin git@github.com:<username>/claude-workspace-plugins.git
-   git push -u origin main
-   ```
+```bash
+/plugin update backend-plugin
+```
 
-2. **Share with others**
-   Others can add your marketplace:
-   ```bash
-   /plugin marketplace add <username>/claude-workspace-plugins
-   ```
+### Remove a Plugin
 
-## Best Practices
+```bash
+/plugin uninstall backend-plugin
+```
 
-- **Version Control**: Use semantic versioning (1.0.0, 1.1.0, 2.0.0)
-- **Documentation**: Include clear README.md in each plugin
-- **Testing**: Test plugins locally before publishing
-- **Organization**: Group related functionality in single plugins
-- **Naming**: Use descriptive, hyphenated names (my-python-tools)
-- **Skills**: Follow Anthropic's 500-line rule for SKILL.md files
+### List All Marketplaces
 
-## Resources
+```bash
+/plugin marketplace list
+```
 
-- [Claude Code Documentation](https://code.claude.com/docs)
+---
+
+## 🎓 Learn More
+
+### Official Claude Code Docs
 - [Plugin Documentation](https://code.claude.com/docs/en/plugins)
-- [Skills Best Practices](https://code.claude.com/docs/en/skills)
+- [Plugin Marketplaces](https://code.claude.com/docs/en/plugin-marketplaces)
+- [Creating Skills](https://code.claude.com/docs/en/skills)
 
-## License
+### Plugin READMEs
+- [Backend Plugin →](./plugins/backend-plugin/README.md)
+- [Frontend Plugin →](./plugins/frontend-plugin/README.md)
 
-Specify your license here (MIT, Apache 2.0, etc.)
+---
 
-## Contributing
+## 🤝 Contributing
 
-Guidelines for contributing to your plugin collection.
+Want to contribute to these plugins?
+
+1. Fork this repository
+2. Create a feature branch
+3. Submit a pull request
+
+### Creating Your Own Plugins
+
+You can create custom plugins following the same structure:
+
+```
+my-plugin/
+├── plugin.json          # Plugin manifest
+├── README.md           # Documentation
+├── skills/             # Skill files
+├── agents/             # Agent files
+├── hooks/              # Hook files
+└── commands/           # Command files
+```
+
+Then add to `.claude-plugin/marketplace.json`.
+
+---
+
+## 📄 License
+
+MIT License - Use freely in your projects.
+
+---
+
+## 🆘 Support
+
+**Issues or questions?**
+- Check individual plugin READMEs
+- Review [troubleshooting sections](./plugins/backend-plugin/README.md#troubleshooting)
+- Open an issue on GitHub
+
+---
+
+## 🌟 What You Get
+
+After installing these plugins, you get:
+
+✅ **Intelligent skill activation** - Skills suggest themselves when relevant
+✅ **Specialized agents** - AI assistants for complex tasks
+✅ **Automated workflows** - Hooks that track and optimize your work
+✅ **Production patterns** - Best practices from real-world projects
+✅ **Tech stack validation** - Prevents common mistakes
+✅ **Comprehensive documentation** - Everything you need to know
+
+**Start building better software faster!** 🚀
