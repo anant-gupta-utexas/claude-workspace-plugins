@@ -66,6 +66,12 @@
         "path": "hooks/post-tool-use-tracker.sh",
         "type": "PostToolUse",
         "description": "Tracks file changes for context management"
+      },
+      {
+        "name": "error-handling-reminder",
+        "path": "hooks/error-handling-reminder.sh",
+        "type": "Stop",
+        "description": "Reminds developers about error handling best practices after editing backend/frontend code"
       }
     ],
     "commands": [
