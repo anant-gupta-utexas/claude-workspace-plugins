@@ -1,0 +1,7 @@
+{
+  "name": "claude-workspace-plugins",
+  "description": "Personal collection of Claude Code plugins, skills, and agents",
+  "version": "1.0.0",
+  "author": "Your Name",
+  "plugins": []
+}
