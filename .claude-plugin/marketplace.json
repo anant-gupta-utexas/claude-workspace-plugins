@@ -1,8 +1,8 @@
 {
   "name": "claude-workspace-plugins",
   "owner": {
-    "name": "Anant",
-    "contact": "anant@example.com"
+    "name": "Anant Gupta",
+    "contact": "anant.gupta@utexas.edu"
   },
   "description": "Production-tested Claude Code plugins for backend and frontend development",
   "version": "1.0.0",
@@ -12,7 +12,7 @@
       "source": "plugins/backend-plugin",
       "description": "Complete backend development setup with Node.js/Express/TypeScript patterns, Prisma integration, and backend-focused agents",
       "version": "1.0.0",
-      "author": "Anant",
+      "author": "Anant Gupta",
       "category": "development",
       "keywords": [
         "backend",
@@ -26,7 +26,7 @@
       "components": {
         "skills": ["backend-dev-guidelines", "skill-developer"],
         "agents": ["code-architecture-reviewer", "refactor-planner", "documentation-architect", "plan-reviewer", "web-research-specialist"],
-        "hooks": ["skill-activation-prompt", "post-tool-use-tracker"],
+        "hooks": ["skill-activation-prompt", "post-tool-use-tracker", "error-handling-reminder"],
         "commands": ["dev-docs", "dev-docs-update"]
       }
     },
@@ -35,7 +35,7 @@
       "source": "plugins/frontend-plugin",
       "description": "Complete frontend development setup with React/TypeScript/MUI v7 patterns, performance optimization, and frontend-focused agents",
       "version": "1.0.0",
-      "author": "Anant",
+      "author": "Anant Gupta",
       "category": "development",
       "keywords": [
         "frontend",
@@ -54,7 +54,7 @@
       }
     }
   ],
-  "repository": "https://github.com/yourusername/claude-workspace-plugins",
-  "homepage": "https://github.com/yourusername/claude-workspace-plugins#readme",
+  "repository": "https://github.com/anant-gupt-utexas/claude-workspace-plugins",
+  "homepage": "https://github.com/anant-gupt-utexas/claude-workspace-plugins#readme",
   "license": "MIT"
 }
