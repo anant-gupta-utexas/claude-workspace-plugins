@@ -16,18 +16,18 @@ Complete guide to implementing the Application Layer in Clean Architecture.
 
 ### **What is the Application Layer?**
 
-The **Application Layer** orchestrates business logic by coordinating domain entities and infrastructure services.
+The **Application Layer** orchestrates business logic by coordinating domain entities and infrastructure services.
 
-**Location**: `src/application/`
+**Location**: `src/application/`
 
 **Rules**:
 
-- ✅ Imports from `domain/`
-- ✅ Uses **dataclasses** for DTOs
-- ✅ Depends on domain **interfaces** (not implementations)
-- ❌ **NO** imports from `infrastructure/`
-- ❌ **NO** HTTP, database, or framework code
-- ❌ **NO** Pydantic models (use dataclasses)
+- ✅ Imports from `domain/`
+- ✅ Uses **dataclasses** for DTOs
+- ✅ Depends on domain **interfaces** (not implementations)
+- ❌ **NO** imports from `infrastructure/`
+- ❌ **NO** HTTP, database, or framework code
+- ❌ **NO** Pydantic models (use dataclasses)
 
 ### **Purpose**
 
@@ -42,7 +42,7 @@ The **Application Layer** orchestrates business logic by coordinating domain e
 
 ### **What is a Use Case?**
 
-A **Use Case** implements a specific application workflow.
+A **Use Case** implements a specific application workflow.
 
 **Characteristics**:
 
@@ -54,7 +54,8 @@ A **Use Case** implements a specific application workflow.
 ### **Use Case Template**
 
 ```python
-# src/application/use_cases/conversation/create_conversation.pyfrom dataclasses import dataclass
+# src/application/use_cases/conversation/create_conversation.py
+from dataclasses import dataclass
 from typing import Optional
 from uuid import UUID
 
@@ -73,17 +74,6 @@ from ....domain.services import ConversationStateMachine
 from ...exceptions import AgentNotFoundException
 
 class CreateConversationUseCase:
-    """
-    Use case for creating a new conversation.
-
-    Steps:
-    1. Validate agent exists
-    2. Create conversation entity via domain service
-    3. Persist conversation
-    4. Publish initial message
-    5. Return response DTO
-    """
-
     def __init__(
         self,
         conversation_repo: IConversationRepository,
@@ -98,21 +88,22 @@ class CreateConversationUseCase:
         self,
         request: CreateConversationRequest
     ) -> CreateConversationResponse:
-# Step 1: Validate agent
+        # Step 1: Validate agent
         agent = await self.agent_repo.get_by_id(request.agent_id)
         if not agent:
             raise AgentNotFoundException(request.agent_id)
 
-# Step 2: Create conversation via domain service
+        # Step 2: Create conversation via domain service
         conversation = ConversationStateMachine.start_conversation(
             user_id=request.user_id,
             agent_id=request.agent_id,
         )
 
-# Step 3: Persist
+        # Step 3: Persist
         created = await self.conversation_repo.create(conversation)
 
-# Step 4: Publish initial messageawait self.messaging.publish_message(
+        # Step 4: Publish initial message
+        await self.messaging.publish_message(
             agent_id=request.agent_id,
             payload={
                 "conversation_id": str(created.id),
@@ -120,18 +111,19 @@ class CreateConversationUseCase:
             }
         )
 
-# Step 5: Return DTOreturn CreateConversationResponse(
+        # Step 5: Return DTO
+        return CreateConversationResponse(
             conversation=ConversationDTO.from_entity(created),
             primary_agent_id=request.agent_id,
             status="initiated",
         )
-
 ```
 
 ### **Complex Use Case Example**
 
 ```python
-# src/application/use_cases/task/delegate_task.pyfrom ...dtos import DelegateTaskRequest, TaskDTO
+# src/application/use_cases/task/delegate_task.py
+from ...dtos import DelegateTaskRequest, TaskDTO
 from ...exceptions import (
     TaskNotFoundException,
     InvalidTaskStateError,
@@ -143,16 +135,6 @@ from .create_task import CreateTaskUseCase
 from ...dtos import CreateTaskRequest
 
 class DelegateTaskUseCase:
-    """
-    Use case for delegating a task to a subtask.
-
-    Business Rules:
-    1. Parent task must exist and be RUNNING
-    2. Sub-agent must be different from parent agent
-    3. Subtask created via CreateTaskUseCase
-    4. Parent task updated to WAITING_FOR_SUBTASK
-    """
-
     def __init__(
         self,
         task_repository: ITaskRepository,
@@ -162,38 +144,38 @@ class DelegateTaskUseCase:
         self.create_task = create_task_use_case
 
     async def execute(self, request: DelegateTaskRequest) -> TaskDTO:
-# Validate parent task
+        # Validate parent task
         parent_task = await self.task_repo.get_by_id(request.parent_task_id)
         if not parent_task:
             raise TaskNotFoundException(request.parent_task_id)
 
-# Business rule: Can only delegate running tasksif parent_task.status != TaskStatus.RUNNING:
+        # Business rule: Can only delegate running tasks
+        if parent_task.status != TaskStatus.RUNNING:
             raise InvalidTaskStateError(
                 f"Cannot delegate task in status {parent_task.status}",
                 current_state=parent_task.status.value
             )
 
-# Business rule: Sub-agent must be differentif request.sub_agent_id == parent_task.agent_id:
+        # Business rule: Sub-agent must be different
+        if request.sub_agent_id == parent_task.agent_id:
             raise InvalidDelegationError(
                 "Sub-agent must be different from parent agent"
             )
 
-# Create subtask
+        # Create subtask
         subtask_request = CreateTaskRequest(
             conversation_id=parent_task.conversation_id,
             agent_id=request.sub_agent_id,
             input=request.subtask_input,
             parent_task_id=parent_task.id,
         )
-
         subtask_response = await self.create_task.execute(subtask_request)
 
-# Update parent task
+        # Update parent task
         parent_task.wait_for_subtask()
         await self.task_repo.update(parent_task)
 
         return subtask_response.task
-
 ```
 
 ---
@@ -202,7 +184,7 @@ class DelegateTaskUseCase:
 
 ### **What is an Application Service?**
 
-An **Application Service** coordinates multiple use cases.
+An **Application Service** coordinates multiple use cases.
 
 **When to use**:
 
@@ -213,7 +195,8 @@ An **Application Service** coordinates multiple use cases.
 ### **Application Service Example**
 
 ```python
-# src/application/services/orchestrator_service.pyfrom dataclasses import dataclass
+# src/application/services/orchestrator_service.py
+from dataclasses import dataclass
 from typing import Optional
 from uuid import UUID
 
@@ -230,21 +213,11 @@ from ..dtos import (
 
 @dataclass
 class StartConversationRequest:
-    """Request to start a new conversation with orchestration."""
     user_id: str
     initial_message: str
     agent_id: Optional[str] = None
 
 class OrchestratorService:
-    """
-    Application service coordinating multiple use cases.
-
-    Handles complex workflows like:
-    - Starting conversations with agent discovery
-    - Managing conversation lifecycle
-    - Coordinating tasks and agents
-    """
-
     def __init__(
         self,
         create_conversation: CreateConversationUseCase,
@@ -256,16 +229,7 @@ class OrchestratorService:
         self.discover_agent = discover_agent
 
     async def start_conversation(self, request: StartConversationRequest):
-        """
-        Start a new conversation with full orchestration.
-
-        Steps:
-        1. Discover agent (if not provided)
-        2. Create conversation
-        3. Create initial task
-        4. Return complete result
-        """
-# Step 1: Agent discovery
+        # Step 1: Agent discovery
         agent_id = request.agent_id
         if not agent_id:
             discovery_result = await self.discover_agent.execute(
@@ -276,7 +240,7 @@ class OrchestratorService:
             )
             agent_id = discovery_result.selected_agent.agent_id
 
-# Step 2: Create conversation
+        # Step 2: Create conversation
         conv_result = await self.create_conversation.execute(
             CreateConversationRequest(
                 user_id=request.user_id,
@@ -285,7 +249,7 @@ class OrchestratorService:
             )
         )
 
-# Step 3: Create initial task
+        # Step 3: Create initial task
         task_result = await self.create_task.execute(
             CreateTaskRequest(
                 conversation_id=conv_result.conversation.id,
@@ -299,7 +263,6 @@ class OrchestratorService:
             "task": task_result.task,
             "agent_id": agent_id,
         }
-
 ```
 
 ---
@@ -308,11 +271,11 @@ class OrchestratorService:
 
 ### **What are DTOs?**
 
-**DTOs** (Data Transfer Objects) carry data across application boundaries.
+**DTOs** (Data Transfer Objects) carry data across application boundaries.
 
 **Rules**:
 
-- Use **dataclasses** (not Pydantic)
+- Use **dataclasses** (not Pydantic)
 - Immutable when possible
 - Simple data structures
 - No business logic
@@ -320,15 +283,14 @@ class OrchestratorService:
 ### **DTO Examples**
 
 ```python
-# src/application/dtos/conversation_dto.pyfrom dataclasses import dataclass
+# src/application/dtos/conversation_dto.py
+from dataclasses import dataclass
 from datetime import datetime
 from typing import Dict, Any, Optional
 from uuid import UUID
 
 @dataclass
 class ConversationDTO:
-    """DTO for conversation data."""
-
     id: UUID
     user_id: str
     agent_id: Optional[str]
@@ -342,7 +304,6 @@ class ConversationDTO:
 
     @classmethod
     def from_entity(cls, entity) -> "ConversationDTO":
-        """Convert domain entity to DTO."""
         return cls(
             id=entity.id,
             user_id=entity.user_id,
@@ -358,31 +319,28 @@ class ConversationDTO:
 
 @dataclass
 class CreateConversationRequest:
-    """Request to create a new conversation."""
     user_id: str
     initial_message: str
     agent_id: Optional[str] = None
 
 @dataclass
 class CreateConversationResponse:
-    """Response after creating a conversation."""
     conversation: ConversationDTO
     primary_agent_id: str
-    status: str# "initiated", "error"
+    status: str  # "initiated", "error"
 ```
 
 ### **DTO Mappers**
 
 ```python
-# src/application/dtos/task_dto.pyfrom dataclasses import dataclass
+# src/application/dtos/task_dto.py
+from dataclasses import dataclass
 from datetime import datetime
 from typing import Dict, Any, Optional
 from uuid import UUID
 
 @dataclass
 class TaskDTO:
-    """DTO for task data."""
-
     id: UUID
     conversation_id: UUID
     agent_id: str
@@ -399,7 +357,6 @@ class TaskDTO:
 
     @classmethod
     def from_entity(cls, entity) -> "TaskDTO":
-        """Convert domain entity to DTO."""
         return cls(
             id=entity.id,
             conversation_id=entity.conversation_id,
@@ -415,7 +372,6 @@ class TaskDTO:
             completed_at=entity.completed_at,
             updated_at=entity.updated_at,
         )
-
 ```
 
 ---
@@ -425,7 +381,8 @@ class TaskDTO:
 ### **Exception Hierarchy**
 
 ```python
-# src/application/exceptions.pyfrom typing import Optional
+# src/application/exceptions.py
+from typing import Optional
 from uuid import UUID
 
 class ApplicationException(Exception):
@@ -433,45 +390,32 @@ class ApplicationException(Exception):
     pass
 
 class AgentNotFoundException(ApplicationException):
-    """Raised when an agent is not found in the registry."""
-
     def __init__(self, agent_id: str):
         self.agent_id = agent_id
         super().__init__(f"Agent not found: {agent_id}")
 
 class TaskNotFoundException(ApplicationException):
-    """Raised when a task is not found."""
-
     def __init__(self, task_id: UUID):
         self.task_id = task_id
         super().__init__(f"Task not found: {task_id}")
 
 class InvalidTaskStateError(ApplicationException):
-    """Raised when attempting an invalid task state transition."""
-
     def __init__(self, message: str, current_state: Optional[str] = None):
         self.current_state = current_state
         super().__init__(message)
 
 class InvalidDelegationError(ApplicationException):
-    """Raised when attempting an invalid task delegation."""
-
     def __init__(self, message: str):
         super().__init__(message)
 
 class ConversationNotFoundException(ApplicationException):
-    """Raised when a conversation is not found."""
-
     def __init__(self, conversation_id: UUID):
         self.conversation_id = conversation_id
         super().__init__(f"Conversation not found: {conversation_id}")
 
 class UnauthorizedError(ApplicationException):
-    """Raised when a user is not authorized for an operation."""
-
     def __init__(self, message: str):
         super().__init__(message)
-
 ```
 
 ---
@@ -481,22 +425,25 @@ class UnauthorizedError(ApplicationException):
 ### **1. One Use Case, One Responsibility**
 
 ```python
-# ✅ GOOD: Focused use caseclass CreateTaskUseCase:
+# ✅ GOOD: Focused use case
+class CreateTaskUseCase:
     async def execute(self, request: CreateTaskRequest):
-# Only creates taskspass
+        # Only creates tasks
+        pass
 
-# ❌ BAD: Too many responsibilitiesclass TaskUseCase:
-    async def create(self):...
-    async def update(self):...
-    async def delete(self):...
-    async def delegate(self):...
-
+# ❌ BAD: Too many responsibilities
+class TaskUseCase:
+    async def create(self): ...
+    async def update(self): ...
+    async def delete(self): ...
+    async def delegate(self): ...
 ```
 
 ### **2. Use Dataclasses for DTOs**
 
 ```python
-# ✅ GOOD: Dataclass DTOfrom dataclasses import dataclass
+# ✅ GOOD: Dataclass DTO
+from dataclasses import dataclass
 
 @dataclass
 class CreateTaskRequest:
@@ -504,36 +451,37 @@ class CreateTaskRequest:
     agent_id: str
     input: Dict[str, Any]
 
-# ❌ BAD: Pydantic in application layerfrom pydantic import BaseModel
+# ❌ BAD: Pydantic in application layer
+from pydantic import BaseModel
 
-class CreateTaskRequest(BaseModel):# Wrong layer!
+class CreateTaskRequest(BaseModel):  # Wrong layer!
     ...
-
 ```
 
 ### **3. Depend on Interfaces**
 
 ```python
-# ✅ GOOD: Depends on interfacefrom ....domain.interfaces import ITaskRepository
+# ✅ GOOD: Depends on interface
+from ....domain.interfaces import ITaskRepository
 
 class CreateTaskUseCase:
     def __init__(self, task_repo: ITaskRepository):
         self.task_repo = task_repo
 
-# ❌ BAD: Depends on implementationfrom ....infrastructure.persistence.repositories import TaskRepository
+# ❌ BAD: Depends on implementation
+from ....infrastructure.persistence.repositories import TaskRepository
 
 class CreateTaskUseCase:
-    def __init__(self, task_repo: TaskRepository):# Wrong!
+    def __init__(self, task_repo: TaskRepository):  # Wrong!
         ...
-
 ```
 
 ---
 
 **Related Files:**
 
-- [SKILL.md](SKILL.md) - Main guide
-- [clean-architecture.md](clean-architecture.md) - Architecture overview
-- [domain-layer.md](domain-layer.md) - Domain layer details
-- [api-layer.md](api-layer.md) - API layer details
-- [testing-guide.md](testing-guide.md) - Testing use cases
+- [SKILL.md](SKILL.md) - Main guide
+- [clean-architecture.md](clean-architecture.md) - Architecture overview
+- [domain-layer.md](domain-layer.md) - Domain layer details
+- [api-layer.md](api-layer.md) - API layer details
+- [testing-guide.md](testing-guide.md) - Testing use cases

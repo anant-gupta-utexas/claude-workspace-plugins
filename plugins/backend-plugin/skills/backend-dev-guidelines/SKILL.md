@@ -7,7 +7,7 @@ description: Comprehensive backend development guide for Python/FastAPI Clean Ar
 
 ## **Purpose**
 
-Establish consistency and best practices for Python/FastAPI applications following **Clean Architecture** principles.
+Establish consistency and best practices for Python/FastAPI applications following **Clean Architecture** principles.
 
 ## **When to Use This Skill**
 
@@ -30,19 +30,19 @@ Automatically activates when working on:
 
 ### **New Feature Checklist**
 
-- [ ]  [ ] **Domain Entity**: Pure business logic, no dependencies
-- [ ]  [ ] **Domain Interface**: Abstract repository/gateway contract
-- [ ]  [ ] **Use Case**: Orchestrate domain logic
-- [ ]  [ ] **DTO**: Application boundary data transfer (dataclass)
-- [ ]  [ ] **Repository**: Implement domain interface
-- [ ]  [ ] **API Route**: FastAPI endpoint with Pydantic validation
-- [ ]  [ ] **Tests**: Unit (domain) + Use Case + Integration tests
-- [ ]  [ ] **Config**: Use Pydantic Settings
+- [ ]  **Domain Entity**: Pure business logic, no dependencies
+- [ ]  **Domain Interface**: Abstract repository/gateway contract
+- [ ]  **Use Case**: Orchestrate domain logic
+- [ ]  **DTO**: Application boundary data transfer (dataclass)
+- [ ]  **Repository**: Implement domain interface
+- [ ]  **API Route**: FastAPI endpoint with Pydantic validation
+- [ ]  **Tests**: Unit (domain) + Use Case + Integration tests
+- [ ]  **Config**: Use Pydantic Settings
 
 ### **New Project Checklist**
 
-- [ ]  Directory structure (see [clean-architecture.md](resources/clean-architecture.md))
-- [ ]  [ ] `uv` for dependency management with dependency groups
+- [ ]  Directory structure (see [clean-architecture.md](resources/clean-architecture.md))
+- [ ]  `uv` for dependency management with dependency groups
 - [ ]  Pydantic Settings for configuration
 - [ ]  OpenTelemetry setup for observability
 - [ ]  Base repository pattern with generics
@@ -68,17 +68,16 @@ Automatically activates when working on:
 │    Domain Layer                      │
 │  (Entities, Value Objects, Rules)    │
 └─────────────────────────────────────┘
-
 ```
 
-**Dependency Rule:** Dependencies flow INWARD
+**Dependency Rule:** Dependencies flow INWARD
 
 - Infrastructure → Application → Domain
-- Domain has **zero** external dependencies
+- Domain has **zero** external dependencies
 - Application depends only on Domain
 - Infrastructure depends on Application and Domain
 
-See [clean-architecture.md](resources/clean-architecture.md) for complete details.
+See [clean-architecture.md](resources/clean-architecture.md) for complete details.
 
 ---
 
@@ -88,74 +87,39 @@ See [clean-architecture.md](resources/clean-architecture.md) for complete deta
 src/
 ├── domain/                          # Domain Layer
 │   ├── entities/                   # Business entities
-│   │   ├── conversation.py
-│   │   ├── task.py
-│   │   └── agent.py
 │   ├── value_objects/              # Immutable value types
-│   │   ├── conversation_status.py
-│   │   └── task_status.py
 │   ├── services/                   # Domain services
-│   │   └── state_machine.py
 │   ├── interfaces/                 # Ports (abstractions)
-│   │   ├── repositories.py
-│   │   └── gateways.py
 │   └── exceptions/                 # Domain exceptions
-│       └── domain_exceptions.py
 │
 ├── application/                     # Application Layer
 │   ├── use_cases/                  # Use case implementations
-│   │   ├── conversation/
-│   │   │   ├── create_conversation.py
-│   │   │   └── get_conversation.py
-│   │   └── task/
-│   │       ├── create_task.py
-│   │       └── complete_task.py
 │   ├── services/                   # Application services
-│   │   └── orchestrator_service.py
-│   ├── dtos/                       # Data Transfer Objects
-│   │   ├── conversation_dto.py    # Use dataclasses
-│   │   └── task_dto.py
+│   ├── dtos/                       # Data Transfer Objects (dataclasses)
 │   └── exceptions.py               # Application exceptions
 │
 └── infrastructure/                  # Infrastructure Layer
     ├── api/rest/                   # Inbound adapters
     │   ├── main.py                 # FastAPI app
     │   ├── settings.py             # Pydantic Settings
-    │   ├── routes/
-    │   │   ├── conversations.py   # Use Pydantic BaseModel
-    │   │   └── tasks.py
+    │   ├── routes/                # API routes (Pydantic BaseModel)
     │   └── middleware/
-    │       ├── logging_middleware.py
-    │       └── context_middleware.py
     ├── persistence/                # Outbound adapters
-    │   ├── repositories/
-    │   │   ├── base_repository.py # Generic base
-    │   │   ├── conversation_repository.py
-    │   │   └── task_repository.py
+    │   ├── repositories/          # Repository implementations
     │   ├── models/                # ORM models
-    │   │   ├── conversation_model.py
-    │   │   └── task_model.py
     │   └── session.py             # DB session management
     ├── messaging/                  # Message queue adapters
-    │   ├── kafka_publisher.py
-    │   └── kafka_consumer.py
     ├── observability/              # Cross-cutting concerns
-    │   ├── logger.py
-    │   └── tracer_setup.py        # OpenTelemetry
-    ├── config/                     # Configuration loaders
-    │   └── llm_providers_config.py
-    └── utils/                      # Shared utilities
-
+    └── config/                     # Configuration loaders
 ```
 
 **Naming Conventions:**
 
-- **Domain Entities**: PascalCase - `Conversation`, `Task`
-- **Value Objects**: PascalCase - `ConversationStatus`, `TaskStatus`
-- **Use Cases**: PascalCase + UseCase - `CreateConversationUseCase`
-- **DTOs**: PascalCase + DTO suffix - `ConversationDTO`, `CreateTaskRequest`
-- **Repositories**: PascalCase + Repository - `ConversationRepository`
-- **Services**: snake_case files - `orchestrator_service.py`
+- **Domain Entities**: PascalCase - `Conversation`, `Task`
+- **Value Objects**: PascalCase - `ConversationStatus`, `TaskStatus`
+- **Use Cases**: PascalCase + UseCase - `CreateConversationUseCase`
+- **DTOs**: PascalCase + DTO suffix - `ConversationDTO`, `CreateTaskRequest`
+- **Repositories**: PascalCase + Repository - `ConversationRepository`
 
 ---
 
@@ -164,7 +128,8 @@ src/
 ### **1. Domain Layer Has Zero Dependencies**
 
 ```python
-# ✅ GOOD: Pure domain entityfrom dataclasses import dataclass
+# ✅ GOOD: Pure domain entity
+from dataclasses import dataclass
 from datetime import datetime
 from uuid import UUID
 
@@ -172,18 +137,22 @@ from uuid import UUID
 class Conversation:
     id: UUID
     user_id: str
-    status: ConversationStatus# Value object from domaindef transition_phase(self, new_phase: ConversationPhase) -> None:
+    status: ConversationStatus  # Value object from domain
+    def transition_phase(self, new_phase: ConversationPhase) -> None:
         if not self._is_valid_transition(self.phase, new_phase):
             raise ValueError(f"Invalid transition: {self.phase} -> {new_phase}")
         self.phase = new_phase
 
-# ❌ BAD: Domain importing infrastructurefrom sqlalchemy import Column, String# NO!from fastapi import HTTPException# NO!
+# ❌ BAD: Domain importing infrastructure
+from sqlalchemy import Column, String  # NO!
+from fastapi import HTTPException  # NO!
 ```
 
 ### **2. Use Dataclasses for DTOs, Pydantic for API**
 
 ```python
-# ✅ Application Layer: Dataclass DTOsfrom dataclasses import dataclass
+# ✅ Application Layer: Dataclass DTOs
+from dataclasses import dataclass
 from uuid import UUID
 
 @dataclass
@@ -192,13 +161,13 @@ class CreateConversationRequest:
     initial_message: str
     agent_id: Optional[str] = None
 
-# ✅ Infrastructure API Layer: Pydantic for validationfrom pydantic import BaseModel, Field
+# ✅ Infrastructure API Layer: Pydantic for validation
+from pydantic import BaseModel, Field
 
 class StartConversationApiRequest(BaseModel):
     initial_message: str = Field(..., min_length=1)
     agent_id: Optional[str] = None
     metadata: Optional[dict] = Field(default_factory=dict)
-
 ```
 
 ### **3. All Observability via OpenTelemetry**
@@ -219,39 +188,40 @@ async def execute(self, request: CreateTaskRequest):
         except Exception as e:
             logger.error(f"Task creation failed: {e}", exc_info=True)
             raise
-
 ```
 
 ### **4. Use Pydantic Settings, NEVER os.environ**
 
 ```python
-# ❌ NEVERimport os
+# ❌ NEVER
+import os
 timeout = int(os.environ.get("TIMEOUT_MS", "5000"))
 
-# ✅ ALWAYSfrom src.infrastructure.api.rest.settings import settings
+# ✅ ALWAYS
+from src.infrastructure.api.rest.settings import settings
 timeout = settings.TIMEOUT_MS
-
 ```
 
 ### **5. Use Dependency Injection**
 
 ```python
-# Use case with injected dependenciesclass CreateConversationUseCase:
+# Use case with injected dependencies
+class CreateConversationUseCase:
     def __init__(
         self,
-        conversation_repo: IConversationRepository,# Interface from domain
+        conversation_repo: IConversationRepository,  # Interface from domain
         agent_repo: IAgentRepository,
     ):
         self.conversation_repo = conversation_repo
         self.agent_repo = agent_repo
 
-# FastAPI dependencyasync def get_create_conversation_use_case(
+# FastAPI dependency
+async def get_create_conversation_use_case(
     session: AsyncSession = Depends(get_session),
 ) -> CreateConversationUseCase:
     conv_repo = ConversationRepository(session)
     agent_repo = AgentRepository(session)
     return CreateConversationUseCase(conv_repo, agent_repo)
-
 ```
 
 ### **6. Use Generic Base Repository Pattern**
@@ -260,8 +230,10 @@ timeout = settings.TIMEOUT_MS
 from typing import Generic, TypeVar, Type
 from sqlalchemy.ext.asyncio import AsyncSession
 
-TModel = TypeVar('TModel')# SQLAlchemy model
-TEntity = TypeVar('TEntity')# Domain entityclass BaseRepository(Generic[TModel, TEntity]):
+TModel = TypeVar('TModel')  # SQLAlchemy model
+TEntity = TypeVar('TEntity')  # Domain entity
+
+class BaseRepository(Generic[TModel, TEntity]):
     def __init__(self, session: AsyncSession, model_class: Type[TModel]):
         self.session = session
         self.model_class = model_class
@@ -274,7 +246,6 @@ TEntity = TypeVar('TEntity')# Domain entityclass BaseRepository(Generic[TModel, 
     def _to_entity(self, model: TModel) -> TEntity:
         """Convert ORM model to domain entity."""
         pass
-
 ```
 
 ### **7. Comprehensive Testing with pytest Markers**
@@ -294,7 +265,6 @@ class TestCreateConversationUseCase:
         use_case = CreateConversationUseCase(conversation_repo, agent_repo)
         result = await use_case.execute(request)
         assert result.conversation.id is not None
-
 ```
 
 ---
@@ -302,36 +272,42 @@ class TestCreateConversationUseCase:
 ## **Common Imports**
 
 ```python
-# Domain Layer - NO external dependenciesfrom dataclasses import dataclass, field
+# Domain Layer - NO external dependencies
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Optional, List, Dict, Any
 from uuid import UUID, uuid4
 from enum import Enum
 from abc import ABC, abstractmethod
 
-# Application Layerfrom dataclasses import dataclass
+# Application Layer
+from dataclasses import dataclass
 from typing import Optional, List
 from uuid import UUID
 
-# Infrastructure API Layerfrom fastapi import FastAPI, APIRouter, Depends, HTTPException, status
+# Infrastructure API Layer
+from fastapi import FastAPI, APIRouter, Depends, HTTPException, status
 from fastapi import Request, Response, Query, Path, Body
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, EmailStr, validator
 from pydantic_settings import BaseSettings
 
-# Infrastructure Persistence Layerfrom sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
+# Infrastructure Persistence Layer
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import select, insert, update, delete
 
-# Observabilityfrom opentelemetry import trace
+# Observability
+from opentelemetry import trace
 from opentelemetry.trace import Status, StatusCode
 from src.infrastructure.observability.logger import get_logger
 
-# Configfrom src.infrastructure.api.rest.settings import settings
+# Config
+from src.infrastructure.api.rest.settings import settings
 
-# Testingimport pytest
+# Testing
+import pytest
 from unittest.mock import AsyncMock, Mock
-
 ```
 
 ---
@@ -353,13 +329,13 @@ uv sync
 # Add dependency to group
 uv add --group test pytest pytest-asyncio
 uv add --group persistence sqlalchemy asyncpg
-
 ```
 
 ### **Dependency Groups**
 
 ```toml
-# pyproject.toml[dependency-groups]
+# pyproject.toml
+[dependency-groups]
 persistence = [
     "sqlalchemy[asyncio]>=2.0.0",
     "asyncpg>=0.29.0",
@@ -388,25 +364,6 @@ test = [
     "pytest-mock>=3.12.0",
     "pytest-cov>=4.1.0",
 ]
-
-```
-
-### **Common Commands**
-
-```bash
-# Sync all dependencies
-uv sync
-
-# Add to specific group
-uv add --group test pytest-cov
-
-# Run with uv
-uv run python main.py
-uv run pytest
-
-# Update dependencies
-uv lock --upgrade
-
 ```
 
 ---
@@ -448,14 +405,22 @@ pytest -m "not integration"
 
 # Run use case and service tests
 pytest -m "use_case or service"
-
 ```
 
 ---
 
 ## **Anti-Patterns to Avoid**
 
-❌ Domain layer importing from Application or Infrastructure ❌ Direct os.environ usage (use Pydantic Settings) ❌ Business logic in API routes ❌ Pydantic models in Application layer (use dataclasses) ❌ Missing error handling and logging ❌ No type hints ❌ Synchronous database operations ❌ Using Sentry (use OpenTelemetry) ❌ Not using generic base repository ❌ Tests without pytest markers
+❌ Domain layer importing from Application or Infrastructure
+❌ Direct os.environ usage (use Pydantic Settings)
+❌ Business logic in API routes
+❌ Pydantic models in Application layer (use dataclasses)
+❌ Missing error handling and logging
+❌ No type hints
+❌ Synchronous database operations
+❌ Using Sentry (use OpenTelemetry)
+❌ Not using generic base repository
+❌ Tests without pytest markers
 
 ---
 
@@ -526,5 +491,5 @@ Full feature examples across all three layers
 ---
 
 - **Skill Status**: COMPLETE ✅
-- **Line Count**: < 600 ✅
+- **Line Count**: < 500 ✅
 - **Progressive Disclosure**: 11 resource files ✅
