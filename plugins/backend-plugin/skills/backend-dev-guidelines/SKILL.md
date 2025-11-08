@@ -41,7 +41,7 @@ Automatically activates when working on:
 
 ### **New Project Checklist**
 
-- [ ]  Directory structure (see [clean-architecture.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/clean-architecture.md))
+- [ ]  Directory structure (see [clean-architecture.md](resources/clean-architecture.md))
 - [ ]  [ ] `uv` for dependency management with dependency groups
 - [ ]  Pydantic Settings for configuration
 - [ ]  OpenTelemetry setup for observability
@@ -78,7 +78,7 @@ Automatically activates when working on:
 - Application depends only on Domain
 - Infrastructure depends on Application and Domain
 
-See [clean-architecture.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/clean-architecture.md) for complete details.
+See [clean-architecture.md](resources/clean-architecture.md) for complete details.
 
 ---
 
@@ -463,63 +463,63 @@ pytest -m "use_case or service"
 
 | Need to... | Read this |
 | --- | --- |
-| Understand Clean Architecture | [clean-architecture.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/clean-architecture.md) |
-| Implement domain entities | [domain-layer.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/domain-layer.md) |
-| Create use cases | [application-layer.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/application-layer.md) |
-| Build API endpoints | [api-layer.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/api-layer.md) |
-| Implement repositories | [repository-pattern.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/repository-pattern.md) |
-| Validate input | [validation-patterns.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/validation-patterns.md) |
-| Add observability | [observability.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/observability.md) |
-| Manage config | [configuration.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/configuration.md) |
-| Handle async/errors | [async-and-errors.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/async-and-errors.md) |
-| Write tests | [testing-guide.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/testing-guide.md) |
-| See complete examples | [complete-examples.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/complete-examples.md) |
+| Understand Clean Architecture | [clean-architecture.md](resources/clean-architecture.md) |
+| Implement domain entities | [domain-layer.md](resources/domain-layer.md) |
+| Create use cases | [application-layer.md](resources/application-layer.md) |
+| Build API endpoints | [api-layer.md](resources/api-layer.md) |
+| Implement repositories | [repository-pattern.md](resources/repository-pattern.md) |
+| Validate input | [validation-patterns.md](resources/validation-patterns.md) |
+| Add observability | [observability.md](resources/observability.md) |
+| Manage config | [configuration.md](resources/configuration.md) |
+| Handle async/errors | [async-and-errors.md](resources/async-and-errors.md) |
+| Write tests | [testing-guide.md](resources/testing-guide.md) |
+| See complete examples | [complete-examples.md](resources/complete-examples.md) |
 
 ---
 
 ## **Resource Files**
 
-### [**clean-architecture.md**](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/clean-architecture.md)
+### [**clean-architecture.md**](resources/clean-architecture.md)
 
 Three-layer architecture, dependency rule, separation of concerns
 
-### [**domain-layer.md**](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/domain-layer.md)
+### [**domain-layer.md**](resources/domain-layer.md)
 
 Entities, value objects, domain services, interfaces (ports)
 
-### [**application-layer.md**](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/application-layer.md)
+### [**application-layer.md**](resources/application-layer.md)
 
 Use cases, DTOs, application services, orchestration
 
-### [**api-layer.md**](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/api-layer.md)
+### [**api-layer.md**](resources/api-layer.md)
 
 FastAPI routes, Pydantic validation, middleware, dependencies
 
-### [**repository-pattern.md**](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/repository-pattern.md)
+### [**repository-pattern.md**](resources/repository-pattern.md)
 
 Generic base repository, SQLAlchemy async, ORM models
 
-### [**validation-patterns.md**](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/validation-patterns.md)
+### [**validation-patterns.md**](resources/validation-patterns.md)
 
 Pydantic (API layer), dataclasses (Application layer), domain validation
 
-### [**observability.md**](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/observability.md)
+### [**observability.md**](resources/observability.md)
 
 OpenTelemetry setup, tracing, logging, structured logs
 
-### [**configuration.md**](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/configuration.md)
+### [**configuration.md**](resources/configuration.md)
 
 Pydantic Settings, uv dependency groups, environment configs
 
-### [**async-and-errors.md**](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/async-and-errors.md)
+### [**async-and-errors.md**](resources/async-and-errors.md)
 
 Async patterns, exception hierarchy, error handlers
 
-### [**testing-guide.md**](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/testing-guide.md)
+### [**testing-guide.md**](resources/testing-guide.md)
 
 pytest markers, async tests, fixtures, mocking, coverage
 
-### [**complete-examples.md**](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/complete-examples.md)
+### [**complete-examples.md**](resources/complete-examples.md)
 
 Full feature examples across all three layers
 

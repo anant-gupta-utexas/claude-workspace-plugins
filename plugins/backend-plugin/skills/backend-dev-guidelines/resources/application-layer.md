@@ -4,11 +4,11 @@ Complete guide to implementing the Application Layer in Clean Architecture.
 
 ## **Table of Contents**
 
-- [Purpose and Rules](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/application-layer.md#purpose-and-rules)
-- [Use Cases](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/application-layer.md#use-cases)
-- [Application Services](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/application-layer.md#application-services)
-- [Data Transfer Objects (DTOs)](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/application-layer.md#data-transfer-objects-dtos)
-- [Application Exceptions](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/application-layer.md#application-exceptions)
+- [Purpose and Rules](application-layer.md#purpose-and-rules)
+- [Use Cases](application-layer.md#use-cases)
+- [Application Services](application-layer.md#application-services)
+- [Data Transfer Objects (DTOs)](application-layer.md#data-transfer-objects-dtos)
+- [Application Exceptions](application-layer.md#application-exceptions)
 
 ---
 
@@ -532,8 +532,8 @@ class CreateTaskUseCase:
 
 **Related Files:**
 
-- [SKILL.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/SKILL.md) - Main guide
-- [clean-architecture.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/clean-architecture.md) - Architecture overview
-- [domain-layer.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/domain-layer.md) - Domain layer details
-- [api-layer.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/api-layer.md) - API layer details
-- [testing-guide.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/testing-guide.md) - Testing use cases
+- [SKILL.md](SKILL.md) - Main guide
+- [clean-architecture.md](clean-architecture.md) - Architecture overview
+- [domain-layer.md](domain-layer.md) - Domain layer details
+- [api-layer.md](api-layer.md) - API layer details
+- [testing-guide.md](testing-guide.md) - Testing use cases

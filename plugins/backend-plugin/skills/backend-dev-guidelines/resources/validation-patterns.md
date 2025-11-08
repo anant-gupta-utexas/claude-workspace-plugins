@@ -4,11 +4,12 @@ Complete guide to validation patterns across Clean Architecture layers.
 
 ## **Table of Contents**
 
-- [Overview](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/validation-patterns.md#overview)
-- [Domain Layer Validation](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/validation-patterns.md#domain-layer-validation)
-- [Application Layer DTOs](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/validation-patterns.md#application-layer-dtos)
-- [Infrastructure API Layer](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/validation-patterns.md#infrastructure-api-layer)
-- [When to Use What](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/validation-patterns.md#when-to-use-what)
+- [Overview](#overview)
+- [Domain Layer Validation](#domain-layer-validation)
+- [Application Layer DTOs](#application-layer-dtos)
+- [Infrastructure API Layer](#infrastructure-api-layer)
+- [When to Use What](#when-to-use-what)
+- [Best Practices](#best-practices)
 
 ---
 
@@ -30,75 +31,59 @@ Complete guide to validation patterns across Clean Architecture layers.
 
 ### **Entity Validation**
 
-Domain entities validate **business rules**, not data formats.
+Domain entities validate **business rules**, not data formats.
 
 ```python
-# src/domain/entities/task.pyfrom dataclasses import dataclass, field
+# src/domain/entities/task.py
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from uuid import UUID, uuid4
 from ..value_objects import TaskStatus
 
 @dataclass
 class Task:
-    """
-    Task entity with business rule validation.
-    """
     id: UUID = field(default_factory=uuid4)
     conversation_id: UUID = field(default=None)
     agent_id: str = field(default="")
     status: TaskStatus = TaskStatus.PENDING
 
     def __post_init__(self):
-        """Validate business rules."""
-# Business rule: Task must have conversationif not self.conversation_id:
+        if not self.conversation_id:
             raise ValueError("conversation_id is required")
-
-# Business rule: Task must have agentif not self.agent_id:
+        if not self.agent_id:
             raise ValueError("agent_id is required")
 
     def start(self) -> None:
-        """
-        Mark task as started.
-
-        Business rule: Can only start pending tasks.
-        """
         if self.status != TaskStatus.PENDING:
-            raise ValueError(
-                f"Can only start pending tasks, current: {self.status}"
-            )
-
+            raise ValueError(f"Can only start pending tasks, current: {self.status}")
         self.status = TaskStatus.RUNNING
         self.started_at = datetime.now(timezone.utc)
-
 ```
 
 ### **Value Object Validation**
 
 ```python
-# src/domain/value_objects/agent_metadata.pyfrom dataclasses import dataclass
+# src/domain/value_objects/agent_metadata.py
+from dataclasses import dataclass
 
-@dataclass(frozen=True)# Immutableclass AgentMetadata:
-    """Agent metadata value object with validation."""
+@dataclass(frozen=True)
+class AgentMetadata:
     agent_id: str
     name: str
     capabilities: tuple[str, ...]
 
     def __post_init__(self):
-        """Validate value object."""
         if not self.agent_id:
             raise ValueError("agent_id is required")
         if not self.name:
             raise ValueError("name is required")
         if not self.capabilities:
             raise ValueError("at least one capability required")
-
-# Business rule: agent_id formatif not self.agent_id.isalnum():
+        if not self.agent_id.isalnum():
             raise ValueError("agent_id must be alphanumeric")
-
 ```
 
 **Key Points**:
-
 - ✅ Use Python's built-in validation
 - ✅ Validate business rules
 - ❌ NO Pydantic
@@ -110,21 +95,17 @@ class Task:
 
 ### **Using Dataclasses**
 
-Application DTOs use **dataclasses** for simplicity and performance.
+Application DTOs use **dataclasses** for simplicity and performance.
 
 ```python
-# src/application/dtos/task_dto.pyfrom dataclasses import dataclass
+# src/application/dtos/task_dto.py
+from dataclasses import dataclass
 from datetime import datetime
 from typing import Dict, Any, Optional
 from uuid import UUID
 
 @dataclass
 class TaskDTO:
-    """
-    Data Transfer Object for tasks.
-
-    Simple dataclass - no validation beyond types.
-    """
     id: UUID
     conversation_id: UUID
     agent_id: str
@@ -135,7 +116,6 @@ class TaskDTO:
 
     @classmethod
     def from_entity(cls, entity) -> "TaskDTO":
-        """Convert domain entity to DTO."""
         return cls(
             id=entity.id,
             conversation_id=entity.conversation_id,
@@ -148,7 +128,6 @@ class TaskDTO:
 
 @dataclass
 class CreateTaskRequest:
-    """Request DTO for creating a task."""
     conversation_id: UUID
     agent_id: str
     input: Dict[str, Any]
@@ -156,23 +135,19 @@ class CreateTaskRequest:
 
 @dataclass
 class CreateTaskResponse:
-    """Response DTO after creating a task."""
     task: TaskDTO
     status: str
-
 ```
 
 ### **Why Dataclasses?**
 
 **Benefits**:
-
 - ⚡ Fast (no validation overhead)
 - 🎯 Simple (just data structures)
 - 🔒 Type-safe (with type hints)
 - 📦 Lightweight (standard library)
 
 **Use When**:
-
 - Transferring data between layers
 - Internal application boundaries
 - No external validation needed
@@ -183,50 +158,32 @@ class CreateTaskResponse:
 
 ### **Using Pydantic**
 
-The API layer uses **Pydantic** for HTTP request/response validation.
+The API layer uses **Pydantic** for HTTP request/response validation.
 
 ```python
-# src/infrastructure/api/rest/routes/tasks.pyfrom pydantic import BaseModel, Field, validator
+# src/infrastructure/api/rest/routes/tasks.py
+from pydantic import BaseModel, Field, validator
 from typing import Optional, Dict, Any
 from uuid import UUID
 
 class CreateTaskApiRequest(BaseModel):
-    """
-    API request model with Pydantic validation.
-
-    Validates HTTP input from external clients.
-    """
-    agent_id: str = Field(
-        ...,
-        min_length=1,
-        max_length=255,
-        description="Agent ID to assign task"
-    )
-    input: Dict[str, Any] = Field(
-        ...,
-        description="Task input data"
-    )
-    parent_task_id: Optional[str] = Field(
-        None,
-        description="Parent task ID if this is a subtask"
-    )
+    agent_id: str = Field(..., min_length=1, max_length=255, description="Agent ID to assign task")
+    input: Dict[str, Any] = Field(..., description="Task input data")
+    parent_task_id: Optional[str] = Field(None, description="Parent task ID if this is a subtask")
 
     @validator('agent_id')
     def agent_id_not_empty(cls, v):
-        """Validate agent_id is not empty or whitespace."""
         if not v or not v.strip():
             raise ValueError('agent_id cannot be empty or whitespace')
         return v.strip()
 
     @validator('input')
     def input_not_empty(cls, v):
-        """Validate input is not empty."""
         if not v:
             raise ValueError('input cannot be empty')
         return v
 
 class TaskApiResponse(BaseModel):
-    """API response model."""
     id: str
     conversation_id: str
     agent_id: str
@@ -239,12 +196,10 @@ class TaskApiResponse(BaseModel):
         from_attributes = True
 
 class TaskListResponse(BaseModel):
-    """Paginated list response."""
     tasks: list[TaskApiResponse]
     total: int
     page: int
     page_size: int
-
 ```
 
 ### **Route with Validation**
@@ -257,22 +212,12 @@ from src.application.exceptions import AgentNotFoundException
 
 router = APIRouter()
 
-@router.post(
-    "/tasks",
-    response_model=TaskApiResponse,
-    status_code=status.HTTP_201_CREATED
-)
+@router.post("/tasks", response_model=TaskApiResponse, status_code=status.HTTP_201_CREATED)
 async def create_task(
-    request: CreateTaskApiRequest,# Pydantic validates THIS
+    request: CreateTaskApiRequest,
     conversation_id: UUID,
     use_case: CreateTaskUseCase = Depends(get_create_task_use_case),
 ):
-    """
-    Create a new task.
-
-    Pydantic validates the HTTP request automatically.
-    """
-# Convert API model (Pydantic) to Application DTO (dataclass)
     app_request = CreateTaskRequest(
         conversation_id=conversation_id,
         agent_id=request.agent_id,
@@ -280,7 +225,7 @@ async def create_task(
         parent_task_id=UUID(request.parent_task_id) if request.parent_task_id else None,
     )
 
-# Execute use casetry:
+    try:
         result = await use_case.execute(app_request)
     except AgentNotFoundException as e:
         raise HTTPException(
@@ -288,7 +233,7 @@ async def create_task(
             detail=f"Agent not found: {e.agent_id}"
         )
 
-# Convert Application DTO to API response (Pydantic)return TaskApiResponse(
+    return TaskApiResponse(
         id=str(result.task.id),
         conversation_id=str(result.task.conversation_id),
         agent_id=result.task.agent_id,
@@ -297,7 +242,6 @@ async def create_task(
         output=result.task.output,
         created_at=result.task.created_at.isoformat(),
     )
-
 ```
 
 ---
@@ -314,7 +258,6 @@ Is this for HTTP API?
     └─ NO → Is this transferring data between layers?
         ├─ YES → Use dataclass (Application DTOs)
         └─ NO → Use appropriate data structure
-
 ```
 
 ### **Comparison Table**
@@ -331,10 +274,10 @@ Is this for HTTP API?
 
 ### **Examples by Layer**
 
-### **Domain Layer**
-
+**Domain Layer**:
 ```python
-# ✅ GOOD: Dataclass with business validation@dataclass
+# ✅ GOOD: Dataclass with business validation
+@dataclass
 class Conversation:
     id: UUID
     user_id: str
@@ -343,43 +286,43 @@ class Conversation:
         if not self.user_id:
             raise ValueError("user_id is required")
 
-# ❌ BAD: Pydantic in domainclass Conversation(BaseModel):# NO!
+# ❌ BAD: Pydantic in domain
+class Conversation(BaseModel):  # NO!
     ...
-
 ```
 
-### **Application Layer**
-
+**Application Layer**:
 ```python
-# ✅ GOOD: Simple dataclass DTOs@dataclass
+# ✅ GOOD: Simple dataclass DTOs
+@dataclass
 class CreateConversationRequest:
     user_id: str
     initial_message: str
     agent_id: Optional[str] = None
 
-# ❌ BAD: Pydantic in application layerclass CreateConversationRequest(BaseModel):# NO!
+# ❌ BAD: Pydantic in application layer
+class CreateConversationRequest(BaseModel):  # NO!
     ...
-
 ```
 
-### **Infrastructure API Layer**
-
+**Infrastructure API Layer**:
 ```python
-# ✅ GOOD: Pydantic for API validationclass CreateConversationApiRequest(BaseModel):
+# ✅ GOOD: Pydantic for API validation
+class CreateConversationApiRequest(BaseModel):
     initial_message: str = Field(..., min_length=1)
     agent_id: Optional[str] = None
 
-# ❌ BAD: Dataclass for API (no validation)@dataclass
-class CreateConversationApiRequest:# Missing validation!
+# ❌ BAD: Dataclass for API (no validation)
+@dataclass
+class CreateConversationApiRequest:  # Missing validation!
     ...
-
 ```
 
 ---
 
-## **Advanced Patterns**
+## **Best Practices**
 
-### **Custom Validators**
+### **1. Custom Validators**
 
 ```python
 from pydantic import BaseModel, validator, root_validator
@@ -391,7 +334,6 @@ class TaskUpdateRequest(BaseModel):
 
     @validator('status')
     def validate_status(cls, v):
-        """Validate status is one of allowed values."""
         allowed = ['running', 'completed', 'failed', 'cancelled']
         if v not in allowed:
             raise ValueError(f'status must be one of {allowed}')
@@ -399,145 +341,92 @@ class TaskUpdateRequest(BaseModel):
 
     @root_validator
     def validate_status_output_combination(cls, values):
-        """Validate business rules across fields."""
         status = values.get('status')
         output = values.get('output')
         error = values.get('error')
 
         if status == 'completed' and not output:
             raise ValueError('output required when status is completed')
-
         if status == 'failed' and not error:
             raise ValueError('error required when status is failed')
-
         return values
-
 ```
 
-### **Generic Response Wrapper**
+### **2. Convert at Boundaries**
 
 ```python
-from typing import Generic, TypeVar, Optional
-from pydantic import BaseModel
-
-T = TypeVar('T')
-
-class ApiResponse(BaseModel, Generic[T]):
-    """Generic API response wrapper."""
-    success: bool
-    data: Optional[T]
-    error: Optional[str]
-    message: Optional[str]
-
-# Usageclass UserData(BaseModel):
-    id: str
-    name: str
-
-@router.get("/users/{id}")
-async def get_user(id: str) -> ApiResponse[UserData]:
-    return ApiResponse(
-        success=True,
-        data=UserData(id=id, name="John"),
-        error=None,
-        message="User retrieved successfully"
-    )
-
-```
-
-### **Nested Validation**
-
-```python
-class AddressModel(BaseModel):
-    """Nested address model."""
-    street: str = Field(..., min_length=1)
-    city: str = Field(..., min_length=1)
-    country: str = Field(..., min_length=2, max_length=2)
-
-class UserProfileRequest(BaseModel):
-    """User profile with nested validation."""
-    name: str = Field(..., min_length=1, max_length=100)
-    email: EmailStr
-    address: AddressModel# Nested validation    @validator('email')
-    def email_domain_check(cls, v):
-        """Validate email domain."""
-        if not v.endswith('@company.com'):
-            raise ValueError('must use company email')
-        return v
-
-```
-
----
-
-## **Best Practices**
-
-### **1. Convert at Boundaries**
-
-```python
-# ✅ GOOD: Convert between API and Application layers@router.post("/tasks")
+# ✅ GOOD: Convert between API and Application layers
+@router.post("/tasks")
 async def create_task(
-    api_request: TaskApiRequest,# Pydantic (API layer)
+    api_request: TaskApiRequest,
     use_case: CreateTaskUseCase = Depends(...)
 ):
-# Convert Pydantic → Dataclass
     app_request = CreateTaskRequest(
         agent_id=api_request.agent_id,
         input=api_request.input,
     )
-
-# Use case returns dataclass
     result = await use_case.execute(app_request)
-
-# Convert Dataclass → Pydanticreturn TaskApiResponse(
+    return TaskApiResponse(
         id=str(result.task.id),
         status=result.task.status,
     )
-
 ```
 
-### **2. Keep Validation Appropriate**
+### **3. Keep Validation Appropriate**
 
 ```python
-# ✅ GOOD: API validates format, Domain validates business rulesclass CreateTaskApiRequest(BaseModel):
-    agent_id: str = Field(..., min_length=1)# Format validation# Domain validates business rules@dataclass
+# ✅ GOOD: API validates format, Domain validates business rules
+class CreateTaskApiRequest(BaseModel):
+    agent_id: str = Field(..., min_length=1)  # Format validation
+
+@dataclass
 class Task:
     agent_id: str
 
     def __post_init__(self):
         if not self.agent_id:
-            raise ValueError("agent_id required")# Business rule# ❌ BAD: Business rules in API modelclass CreateTaskApiRequest(BaseModel):
+            raise ValueError("agent_id required")  # Business rule
+
+# ❌ BAD: Business rules in API model
+class CreateTaskApiRequest(BaseModel):
     @validator('agent_id')
     def check_agent_exists(cls, v):
-# Database call in validator! Wrong layer!if not agent_repo.exists(v):
+        if not agent_repo.exists(v):  # Database call in validator! Wrong layer!
             raise ValueError("agent not found")
         return v
-
 ```
 
-### **3. Don't Mix Concerns**
+### **4. Don't Mix Concerns**
 
 ```python
-# ✅ GOOD: Clear separation# API layerclass UserApiRequest(BaseModel):
-    email: EmailStr# Format validation# Application layer@dataclass
+# ✅ GOOD: Clear separation
+class UserApiRequest(BaseModel):
+    email: EmailStr  # Format validation
+
+@dataclass
 class CreateUserRequest:
-    email: str# Just data# Domain layer@dataclass
+    email: str  # Just data
+
+@dataclass
 class User:
     email: str
 
     def __post_init__(self):
-        if '@' not in self.email:# Business ruleraise ValueError("invalid email")
+        if '@' not in self.email:  # Business rule
+            raise ValueError("invalid email")
 
-# ❌ BAD: Using API model in use caseclass CreateUserUseCase:
-    async def execute(self, request: UserApiRequest):# Wrong!# Should use application DTO, not API model
+# ❌ BAD: Using API model in use case
+class CreateUserUseCase:
+    async def execute(self, request: UserApiRequest):  # Wrong!
+        # Should use application DTO, not API model
         ...
-
 ```
 
 ---
 
 **Related Files:**
-
-- [SKILL.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/SKILL.md) - Main guide
-- [clean-architecture.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/clean-architecture.md) - Layer separation
-- [domain-layer.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/domain-layer.md) - Domain validation
-- [application-layer.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/application-layer.md) - Application DTOs
-- [api-layer.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/api-layer.md) - Pydantic for API
+- [SKILL.md](../SKILL.md) - Main guide
+- [clean-architecture.md](clean-architecture.md) - Layer separation
+- [domain-layer.md](domain-layer.md) - Domain validation
+- [application-layer.md](application-layer.md) - Application DTOs
+- [api-layer.md](api-layer.md) - Pydantic for API

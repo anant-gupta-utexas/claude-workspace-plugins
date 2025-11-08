@@ -4,13 +4,13 @@ Complete guide to creating and using middleware in FastAPI microservices.
 
 ## **Table of Contents**
 
-- [Authentication Middleware](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/middleware-guide.md#authentication-middleware)
-- [Logging Middleware](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/middleware-guide.md#logging-middleware)
-- [Error Handler Middleware](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/middleware-guide.md#error-handler-middleware)
-- [CORS Middleware](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/middleware-guide.md#cors-middleware)
-- [Rate Limiting Middleware](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/middleware-guide.md#rate-limiting-middleware)
-- [Request ID Middleware](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/middleware-guide.md#request-id-middleware)
-- [Middleware Ordering](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/middleware-guide.md#middleware-ordering)
+- [Authentication Middleware](middleware-guide.md#authentication-middleware)
+- [Logging Middleware](middleware-guide.md#logging-middleware)
+- [Error Handler Middleware](middleware-guide.md#error-handler-middleware)
+- [CORS Middleware](middleware-guide.md#cors-middleware)
+- [Rate Limiting Middleware](middleware-guide.md#rate-limiting-middleware)
+- [Request ID Middleware](middleware-guide.md#request-id-middleware)
+- [Middleware Ordering](middleware-guide.md#middleware-ordering)
 
 ---
 
@@ -536,7 +536,7 @@ app.add_middleware(
 
 **Related Files:**
 
-- [SKILL.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/SKILL.md) - Main guide
-- [api-layer.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/api-layer.md) - Using middleware with routes
-- [observability.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/observability.md) - OpenTelemetry integration
-- [async-and-errors.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/async-and-errors.md) - Error handling patterns
+- [SKILL.md](SKILL.md) - Main guide
+- [api-layer.md](api-layer.md) - Using middleware with routes
+- [observability.md](observability.md) - OpenTelemetry integration
+- [async-and-errors.md](async-and-errors.md) - Error handling patterns

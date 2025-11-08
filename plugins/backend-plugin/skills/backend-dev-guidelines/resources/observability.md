@@ -4,11 +4,11 @@ Complete guide to observability in Python/FastAPI Clean Architecture projects.
 
 ## **Table of Contents**
 
-- [OpenTelemetry Overview](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/observability.md#opentelemetry-overview)
-- [Setup and Configuration](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/observability.md#setup-and-configuration)
-- [Tracing](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/observability.md#tracing)
-- [Structured Logging](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/observability.md#structured-logging)
-- [Best Practices](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/observability.md#best-practices)
+- [OpenTelemetry Overview](observability.md#opentelemetry-overview)
+- [Setup and Configuration](observability.md#setup-and-configuration)
+- [Tracing](observability.md#tracing)
+- [Structured Logging](observability.md#structured-logging)
+- [Best Practices](observability.md#best-practices)
 
 ---
 
@@ -406,6 +406,6 @@ logger.info(f"Password: {password}")# NEVER!
 
 **Related Files:**
 
-- [SKILL.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/SKILL.md) - Main guide
-- [clean-architecture.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/clean-architecture.md) - Architecture overview
-- [configuration.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/configuration.md) - OpenTelemetry configuration
+- [SKILL.md](SKILL.md) - Main guide
+- [clean-architecture.md](clean-architecture.md) - Architecture overview
+- [configuration.md](configuration.md) - OpenTelemetry configuration
