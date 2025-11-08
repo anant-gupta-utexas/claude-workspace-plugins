@@ -1,638 +1,680 @@
-# Complete Examples - Full Working Code
+# **Complete Examples - Full Feature Implementation**
 
-Real-world examples showing complete implementation patterns.
+Complete end-to-end examples showing features implemented across all Clean Architecture layers.
 
-## Table of Contents
+## **Table of Contents**
 
-- [Complete Controller Example](#complete-controller-example)
-- [Complete Service with DI](#complete-service-with-di)
-- [Complete Route File](#complete-route-file)
-- [Complete Repository](#complete-repository)
-- [Refactoring Example: Bad to Good](#refactoring-example-bad-to-good)
-- [End-to-End Feature Example](#end-to-end-feature-example)
+- [Task Management Feature](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/complete-examples.md#task-management-feature)
+- [Conversation Lifecycle](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/complete-examples.md#conversation-lifecycle)
+- [Testing Full Stack](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/complete-examples.md#testing-full-stack)
 
 ---
 
-## Complete Controller Example
+## **Task Management Feature**
 
-### UserController (Following All Best Practices)
+### **Overview**
 
-```typescript
-// controllers/UserController.ts
-import { Request, Response } from 'express';
-import { BaseController } from './BaseController';
-import { UserService } from '../services/userService';
-import { createUserSchema, updateUserSchema } from '../validators/userSchemas';
-import { z } from 'zod';
+Complete implementation of task creation across all three layers.
 
-export class UserController extends BaseController {
-    private userService: UserService;
+### **1. Domain Layer**
 
-    constructor() {
-        super();
-        this.userService = new UserService();
-    }
+### **Task Entity**
 
-    async getUser(req: Request, res: Response): Promise<void> {
-        try {
-            this.addBreadcrumb('Fetching user', 'user_controller', {
-                userId: req.params.id,
-            });
+```python
+# src/domain/entities/task.pyfrom dataclasses import dataclass, field
+from datetime import datetime, timezone
+from typing import Dict, Any, Optional
+from uuid import UUID, uuid4
 
-            const user = await this.withTransaction(
-                'user.get',
-                'db.query',
-                () => this.userService.findById(req.params.id)
-            );
+from ..value_objects import TaskStatus
 
-            if (!user) {
-                return this.handleError(
-                    new Error('User not found'),
-                    res,
-                    'getUser',
-                    404
-                );
+@dataclass
+class Task:
+    """
+    Task entity representing a unit of work.
+
+    Business Rules:
+    - Must have conversation_id and agent_id
+    - Status transitions must be valid
+    - Terminal states cannot be changed
+    """
+    id: UUID = field(default_factory=uuid4)
+    conversation_id: UUID = field(default=None)
+    agent_id: str = field(default="")
+    parent_task_id: Optional[UUID] = None
+    status: TaskStatus = TaskStatus.PENDING
+    input: Dict[str, Any] = field(default_factory=dict)
+    output: Optional[Dict[str, Any]] = None
+    error: Optional[str] = None
+    metadata: Dict[str, Any] = field(default_factory=dict)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    started_at: Optional[datetime] = None
+    completed_at: Optional[datetime] = None
+    updated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+
+    def __post_init__(self):
+        """Validate business rules."""
+        if not self.conversation_id:
+            raise ValueError("conversation_id is required")
+        if not self.agent_id:
+            raise ValueError("agent_id is required")
+
+    def start(self) -> None:
+        """Mark task as started."""
+        if self.status != TaskStatus.PENDING:
+            raise ValueError(f"Can only start pending tasks, current: {self.status}")
+
+        self.status = TaskStatus.RUNNING
+        self.started_at = datetime.now(timezone.utc)
+        self.updated_at = self.started_at
+
+    def complete(self, output: Dict[str, Any]) -> None:
+        """Complete task with output."""
+        if self.status != TaskStatus.RUNNING:
+            raise ValueError(f"Can only complete running tasks, current: {self.status}")
+
+        self.status = TaskStatus.COMPLETED
+        self.output = output
+        self.completed_at = datetime.now(timezone.utc)
+        self.updated_at = self.completed_at
+
+```
+
+### **Task Status Value Object**
+
+```python
+# src/domain/value_objects/task_status.pyfrom enum import Enum
+
+class TaskStatus(str, Enum):
+    """Task lifecycle status."""
+    PENDING = "pending"
+    RUNNING = "running"
+    WAITING_FOR_USER = "waiting_for_user"
+    WAITING_FOR_SUBTASK = "waiting_for_subtask"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    CANCELLED = "cancelled"
+
+    @classmethod
+    def from_string(cls, value: str) -> "TaskStatus":
+        """Convert string to enum."""
+        try:
+            return cls(value)
+        except ValueError:
+            raise ValueError(f"Invalid task status: {value}")
+
+    def is_terminal(self) -> bool:
+        """Check if this is a terminal status."""
+        return self in {self.COMPLETED, self.FAILED, self.CANCELLED}
+
+```
+
+### **Repository Interface**
+
+```python
+# src/domain/interfaces/repositories.pyfrom abc import ABC, abstractmethod
+from typing import List, Optional
+from uuid import UUID
+from ..entities import Task
+
+class ITaskRepository(ABC):
+    """Interface for task persistence."""
+
+    @abstractmethod
+    async def create(self, task: Task) -> Task:
+        """Create a new task."""
+        pass
+
+    @abstractmethod
+    async def get_by_id(self, task_id: UUID) -> Optional[Task]:
+        """Get task by ID."""
+        pass
+
+    @abstractmethod
+    async def update(self, task: Task) -> Task:
+        """Update an existing task."""
+        pass
+
+    @abstractmethod
+    async def find_pending_for_agent(self, agent_id: str) -> List[Task]:
+        """Find all pending tasks for an agent."""
+        pass
+
+```
+
+### **2. Application Layer**
+
+### **DTOs**
+
+```python
+# src/application/dtos/task_dto.pyfrom dataclasses import dataclass
+from datetime import datetime
+from typing import Dict, Any, Optional
+from uuid import UUID
+
+@dataclass
+class TaskDTO:
+    """DTO for task data."""
+    id: UUID
+    conversation_id: UUID
+    agent_id: str
+    parent_task_id: Optional[UUID]
+    status: str
+    input: Dict[str, Any]
+    output: Optional[Dict[str, Any]]
+    error: Optional[str]
+    metadata: Dict[str, Any]
+    created_at: datetime
+    started_at: Optional[datetime]
+    completed_at: Optional[datetime]
+    updated_at: datetime
+
+    @classmethod
+    def from_entity(cls, entity: Task) -> "TaskDTO":
+        """Convert domain entity to DTO."""
+        return cls(
+            id=entity.id,
+            conversation_id=entity.conversation_id,
+            agent_id=entity.agent_id,
+            parent_task_id=entity.parent_task_id,
+            status=entity.status.value,
+            input=entity.input,
+            output=entity.output,
+            error=entity.error,
+            metadata=entity.metadata,
+            created_at=entity.created_at,
+            started_at=entity.started_at,
+            completed_at=entity.completed_at,
+            updated_at=entity.updated_at,
+        )
+
+@dataclass
+class CreateTaskRequest:
+    """Request to create a new task."""
+    conversation_id: UUID
+    agent_id: str
+    input: Dict[str, Any]
+    parent_task_id: Optional[UUID] = None
+
+@dataclass
+class CreateTaskResponse:
+    """Response after creating a task."""
+    task: TaskDTO
+    status: str
+
+```
+
+### **Use Case**
+
+```python
+# src/application/use_cases/task/create_task.pyfrom uuid import UUID
+from ...dtos import CreateTaskRequest, CreateTaskResponse, TaskDTO
+from ...exceptions import AgentNotFoundException
+from ....domain.entities import Task
+from ....domain.interfaces import (
+    ITaskRepository,
+    IMessagingGateway,
+    IAgentRepository,
+)
+from ....domain.value_objects import TaskStatus
+
+class CreateTaskUseCase:
+    """
+    Use case for creating a new task.
+
+    Business Rules:
+    1. Agent must exist
+    2. Conversation must exist
+    3. Task created with PENDING status
+    4. Message published to agent queue
+    """
+
+    def __init__(
+        self,
+        task_repository: ITaskRepository,
+        messaging_gateway: IMessagingGateway,
+        agent_repository: IAgentRepository,
+    ):
+        self.task_repo = task_repository
+        self.messaging = messaging_gateway
+        self.agent_repo = agent_repository
+
+    async def execute(self, request: CreateTaskRequest) -> CreateTaskResponse:
+# Step 1: Validate agent exists
+        agent = await self.agent_repo.get_by_id(request.agent_id)
+        if not agent:
+            raise AgentNotFoundException(request.agent_id)
+
+# Step 2: Create task entity
+        task = Task(
+            conversation_id=request.conversation_id,
+            agent_id=request.agent_id,
+            parent_task_id=request.parent_task_id,
+            status=TaskStatus.PENDING,
+            input=request.input,
+        )
+
+# Step 3: Persist task
+        created_task = await self.task_repo.create(task)
+
+# Step 4: Publish message to agent queueawait self.messaging.publish_message(
+            agent_id=request.agent_id,
+            payload={
+                "task_id": str(created_task.id),
+                "conversation_id": str(created_task.conversation_id),
+                "input": created_task.input,
             }
+        )
 
-            this.handleSuccess(res, user);
-        } catch (error) {
-            this.handleError(error, res, 'getUser');
-        }
-    }
+# Step 5: Return responsereturn CreateTaskResponse(
+            task=TaskDTO.from_entity(created_task),
+            status="initiated",
+        )
 
-    async listUsers(req: Request, res: Response): Promise<void> {
-        try {
-            const users = await this.userService.getAll();
-            this.handleSuccess(res, users);
-        } catch (error) {
-            this.handleError(error, res, 'listUsers');
-        }
-    }
+```
 
-    async createUser(req: Request, res: Response): Promise<void> {
-        try {
-            // Validate input with Zod
-            const validated = createUserSchema.parse(req.body);
+### **3. Infrastructure Layer**
 
-            // Track performance
-            const user = await this.withTransaction(
-                'user.create',
-                'db.mutation',
-                () => this.userService.create(validated)
-            );
+### **ORM Model**
 
-            this.handleSuccess(res, user, 'User created successfully', 201);
-        } catch (error) {
-            if (error instanceof z.ZodError) {
-                return this.handleError(error, res, 'createUser', 400);
-            }
-            this.handleError(error, res, 'createUser');
-        }
-    }
+```python
+# src/infrastructure/persistence/models/task_model.pyfrom datetime import datetime, timezone
+from typing import Optional, Dict, Any
+from uuid import UUID, uuid4
 
-    async updateUser(req: Request, res: Response): Promise<void> {
-        try {
-            const validated = updateUserSchema.parse(req.body);
+from sqlalchemy import String, Text, JSON, DateTime, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column
 
-            const user = await this.userService.update(
-                req.params.id,
-                validated
-            );
+from .base import Base
 
-            this.handleSuccess(res, user, 'User updated');
-        } catch (error) {
-            if (error instanceof z.ZodError) {
-                return this.handleError(error, res, 'updateUser', 400);
-            }
-            this.handleError(error, res, 'updateUser');
-        }
-    }
+class TaskModel(Base):
+    """SQLAlchemy ORM model for tasks."""
+    __tablename__ = "tasks"
 
-    async deleteUser(req: Request, res: Response): Promise<void> {
-        try {
-            await this.userService.delete(req.params.id);
-            this.handleSuccess(res, null, 'User deleted', 204);
-        } catch (error) {
-            this.handleError(error, res, 'deleteUser');
-        }
-    }
-}
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    conversation_id: Mapped[UUID] = mapped_column(
+        ForeignKey("conversations.id", ondelete="CASCADE")
+    )
+    parent_task_id: Mapped[Optional[UUID]] = mapped_column(
+        ForeignKey("tasks.id", ondelete="SET NULL"),
+        nullable=True
+    )
+    agent_id: Mapped[str] = mapped_column(String(255), nullable=False)
+    status: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
+    input: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, nullable=True)
+    output: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, nullable=True)
+    error: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    metadata_: Mapped[Optional[Dict[str, Any]]] = mapped_column("metadata", JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    started_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    completed_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+```
+
+### **Repository Implementation**
+
+```python
+# src/infrastructure/persistence/repositories/task_repository.pyfrom typing import Optional, List
+from uuid import UUID
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.domain.entities import Task
+from src.domain.interfaces import ITaskRepository
+from src.domain.value_objects import TaskStatus
+from ..models import TaskModel
+from .base_repository import BaseRepository
+
+class TaskRepository(
+    BaseRepository[TaskModel, Task],
+    ITaskRepository
+):
+    """Repository for task persistence."""
+
+    def __init__(self, session: AsyncSession):
+        super().__init__(session, TaskModel, "Task")
+
+    def _to_entity(self, model: TaskModel) -> Task:
+        """Convert ORM model to domain entity."""
+        return Task(
+            id=model.id,
+            conversation_id=model.conversation_id,
+            agent_id=model.agent_id,
+            parent_task_id=model.parent_task_id,
+            status=TaskStatus.from_string(model.status),
+            input=model.input or {},
+            output=model.output,
+            error=model.error,
+            metadata=model.metadata_ or {},
+            created_at=model.created_at,
+            started_at=model.started_at,
+            completed_at=model.completed_at,
+            updated_at=model.updated_at
+        )
+
+    def _to_model(self, entity: Task) -> TaskModel:
+        """Convert domain entity to ORM model."""
+        return TaskModel(
+            id=entity.id,
+            conversation_id=entity.conversation_id,
+            agent_id=entity.agent_id,
+            parent_task_id=entity.parent_task_id,
+            status=entity.status.value,
+            input=entity.input,
+            output=entity.output,
+            error=entity.error,
+            metadata_=entity.metadata,
+            created_at=entity.created_at,
+            started_at=entity.started_at,
+            completed_at=entity.completed_at,
+            updated_at=entity.updated_at
+        )
+
+    async def create(self, task: Task) -> Task:
+        """Create a new task."""
+        model = self._to_model(task)
+        created_model = await self._create(model)
+        return self._to_entity(created_model)
+
+    async def get_by_id(self, task_id: UUID) -> Optional[Task]:
+        """Get task by ID."""
+        model = await self._get_by_id(task_id)
+        return self._to_entity(model) if model else None
+
+    async def update(self, task: Task) -> Task:
+        """Update an existing task."""
+        existing = await self._get_by_id(task.id)
+        if not existing:
+            raise EntityNotFoundError("Task", task.id)
+
+        existing.status = task.status.value
+        existing.output = task.output
+        existing.error = task.error
+        existing.started_at = task.started_at
+        existing.completed_at = task.completed_at
+        existing.updated_at = task.updated_at
+
+        updated_model = await self._update(existing)
+        return self._to_entity(updated_model)
+
+    async def find_pending_for_agent(self, agent_id: str) -> List[Task]:
+        """Find all pending tasks for an agent."""
+        query = select(TaskModel).where(
+            TaskModel.agent_id == agent_id,
+            TaskModel.status == TaskStatus.PENDING.value
+        )
+        result = await self.session.execute(query)
+        models = list(result.scalars().all())
+        return [self._to_entity(model) for model in models]
+
+```
+
+### **API Route**
+
+```python
+# src/infrastructure/api/rest/routes/tasks.pyfrom fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel, Field
+from typing import Optional, Dict, Any
+from uuid import UUID
+
+from ..dependencies import get_create_task_use_case
+from src.application.use_cases.task import CreateTaskUseCase
+from src.application.dtos import CreateTaskRequest
+from src.application.exceptions import AgentNotFoundException
+
+router = APIRouter()
+
+# Pydantic models for APIclass CreateTaskApiRequest(BaseModel):
+    """API request to create a task."""
+    agent_id: str = Field(..., min_length=1, description="Agent to assign task")
+    input: Dict[str, Any] = Field(..., description="Task input data")
+    parent_task_id: Optional[str] = Field(None, description="Parent task if subtask")
+
+class TaskApiResponse(BaseModel):
+    """API response for task."""
+    id: str
+    conversation_id: str
+    agent_id: str
+    status: str
+    input: Dict[str, Any]
+    created_at: str
+
+@router.post(
+    "",
+    response_model=TaskApiResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="Create a new task"
+)
+async def create_task(
+    conversation_id: UUID,
+    request: CreateTaskApiRequest,
+    use_case: CreateTaskUseCase = Depends(get_create_task_use_case),
+) -> TaskApiResponse:
+    """Create a new task for a conversation."""
+    try:
+# Convert API request to application DTO
+        app_request = CreateTaskRequest(
+            conversation_id=conversation_id,
+            agent_id=request.agent_id,
+            input=request.input,
+            parent_task_id=UUID(request.parent_task_id) if request.parent_task_id else None,
+        )
+
+# Execute use case
+        result = await use_case.execute(app_request)
+
+# Convert application DTO to API responsereturn TaskApiResponse(
+            id=str(result.task.id),
+            conversation_id=str(result.task.conversation_id),
+            agent_id=result.task.agent_id,
+            status=result.task.status,
+            input=result.task.input,
+            created_at=result.task.created_at.isoformat(),
+        )
+    except AgentNotFoundException as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Agent not found: {e.agent_id}"
+        )
+
 ```
 
 ---
 
-## Complete Service with DI
+## **Testing Full Stack**
 
-### UserService
+### **Domain Tests**
 
-```typescript
-// services/userService.ts
-import { UserRepository } from '../repositories/UserRepository';
-import { ConflictError, NotFoundError, ValidationError } from '../types/errors';
-import type { CreateUserDTO, UpdateUserDTO, User } from '../types/user.types';
+```python
+# tests/domain/test_entities/test_task.pyimport pytest
+from datetime import datetime
+from uuid import uuid4
 
-export class UserService {
-    private userRepository: UserRepository;
+from src.domain.entities import Task
+from src.domain.value_objects import TaskStatus
 
-    constructor(userRepository?: UserRepository) {
-        this.userRepository = userRepository || new UserRepository();
-    }
+pytestmark = pytest.mark.unit
 
-    async findById(id: string): Promise<User | null> {
-        return await this.userRepository.findById(id);
-    }
+def test_task_creation():
+    """Test task entity creation."""
+    task = Task(
+        conversation_id=uuid4(),
+        agent_id="test_agent",
+    )
 
-    async getAll(): Promise<User[]> {
-        return await this.userRepository.findActive();
-    }
+    assert task.id is not None
+    assert task.status == TaskStatus.PENDING
 
-    async create(data: CreateUserDTO): Promise<User> {
-        // Business rule: validate age
-        if (data.age < 18) {
-            throw new ValidationError('User must be 18 or older');
-        }
+def test_task_requires_conversation_id():
+    """Test that task requires conversation_id."""
+    with pytest.raises(ValueError, match="conversation_id is required"):
+        Task(conversation_id=None, agent_id="test_agent")
 
-        // Business rule: check email uniqueness
-        const existing = await this.userRepository.findByEmail(data.email);
-        if (existing) {
-            throw new ConflictError('Email already in use');
-        }
+def test_task_start():
+    """Test starting a task."""
+    task = Task(conversation_id=uuid4(), agent_id="test_agent")
 
-        // Create user with profile
-        return await this.userRepository.create({
-            email: data.email,
-            profile: {
-                create: {
-                    firstName: data.firstName,
-                    lastName: data.lastName,
-                    age: data.age,
-                },
-            },
-        });
-    }
+    task.start()
 
-    async update(id: string, data: UpdateUserDTO): Promise<User> {
-        // Check exists
-        const existing = await this.userRepository.findById(id);
-        if (!existing) {
-            throw new NotFoundError('User not found');
-        }
+    assert task.status == TaskStatus.RUNNING
+    assert task.started_at is not None
 
-        // Business rule: email uniqueness if changing
-        if (data.email && data.email !== existing.email) {
-            const emailTaken = await this.userRepository.findByEmail(data.email);
-            if (emailTaken) {
-                throw new ConflictError('Email already in use');
-            }
-        }
+def test_task_cannot_start_if_not_pending():
+    """Test that only pending tasks can be started."""
+    task = Task(conversation_id=uuid4(), agent_id="test_agent")
+    task.status = TaskStatus.RUNNING
 
-        return await this.userRepository.update(id, data);
-    }
+    with pytest.raises(ValueError, match="Can only start pending tasks"):
+        task.start()
 
-    async delete(id: string): Promise<void> {
-        const existing = await this.userRepository.findById(id);
-        if (!existing) {
-            throw new NotFoundError('User not found');
-        }
-
-        await this.userRepository.delete(id);
-    }
-}
 ```
 
----
+### **Application Tests**
 
-## Complete Route File
+```python
+# tests/application/use_cases/test_create_task.pyimport pytest
+from unittest.mock import AsyncMock
+from uuid import uuid4
 
-### userRoutes.ts
+from src.application.use_cases.task import CreateTaskUseCase
+from src.application.dtos import CreateTaskRequest
+from src.application.exceptions import AgentNotFoundException
+from tests.factories import TaskFactory, AgentFactory
 
-```typescript
-// routes/userRoutes.ts
-import { Router } from 'express';
-import { UserController } from '../controllers/UserController';
-import { SSOMiddlewareClient } from '../middleware/SSOMiddleware';
-import { auditMiddleware } from '../middleware/auditMiddleware';
+pytestmark = [pytest.mark.asyncio, pytest.mark.use_case]
 
-const router = Router();
-const controller = new UserController();
+@pytest.fixture
+def task_repo():
+    """Mock task repository."""
+    return AsyncMock()
 
-// GET /users - List all users
-router.get('/',
-    SSOMiddlewareClient.verifyLoginStatus,
-    auditMiddleware,
-    async (req, res) => controller.listUsers(req, res)
-);
+@pytest.fixture
+def messaging_gateway():
+    """Mock messaging gateway."""
+    return AsyncMock()
 
-// GET /users/:id - Get single user
-router.get('/:id',
-    SSOMiddlewareClient.verifyLoginStatus,
-    auditMiddleware,
-    async (req, res) => controller.getUser(req, res)
-);
+@pytest.fixture
+def agent_repo():
+    """Mock agent repository."""
+    return AsyncMock()
 
-// POST /users - Create user
-router.post('/',
-    SSOMiddlewareClient.verifyLoginStatus,
-    auditMiddleware,
-    async (req, res) => controller.createUser(req, res)
-);
+@pytest.fixture
+def use_case(task_repo, messaging_gateway, agent_repo):
+    """Create use case with mocked dependencies."""
+    return CreateTaskUseCase(
+        task_repository=task_repo,
+        messaging_gateway=messaging_gateway,
+        agent_repository=agent_repo,
+    )
 
-// PUT /users/:id - Update user
-router.put('/:id',
-    SSOMiddlewareClient.verifyLoginStatus,
-    auditMiddleware,
-    async (req, res) => controller.updateUser(req, res)
-);
+class TestCreateTaskUseCase:
+    """Tests for CreateTaskUseCase."""
 
-// DELETE /users/:id - Delete user
-router.delete('/:id',
-    SSOMiddlewareClient.verifyLoginStatus,
-    auditMiddleware,
-    async (req, res) => controller.deleteUser(req, res)
-);
+    async def test_create_task_successfully(
+        self,
+        use_case,
+        task_repo,
+        messaging_gateway,
+        agent_repo,
+    ):
+        """Test successful task creation."""
+# Arrange
+        agent = AgentFactory.create(agent_id="test_agent")
+        agent_repo.get_by_id.return_value = agent
 
-export default router;
+        task = TaskFactory.create()
+        task_repo.create.return_value = task
+
+        request = CreateTaskRequest(
+            conversation_id=uuid4(),
+            agent_id="test_agent",
+            input={"message": "test"},
+        )
+
+# Act
+        result = await use_case.execute(request)
+
+# Assertassert result.task.id == task.id
+        agent_repo.get_by_id.assert_called_once_with("test_agent")
+        task_repo.create.assert_called_once()
+        messaging_gateway.publish_message.assert_called_once()
+
+    async def test_create_task_agent_not_found(
+        self,
+        use_case,
+        agent_repo,
+    ):
+        """Test task creation with invalid agent."""
+# Arrange
+        agent_repo.get_by_id.return_value = None
+
+        request = CreateTaskRequest(
+            conversation_id=uuid4(),
+            agent_id="nonexistent",
+            input={"message": "test"},
+        )
+
+# Act & Assertwith pytest.raises(AgentNotFoundException):
+            await use_case.execute(request)
+
 ```
 
----
+### **Integration Tests**
 
-## Complete Repository
+```python
+# tests/infrastructure/persistence/test_task_repository.pyimport pytest
+from uuid import uuid4
 
-### UserRepository
+from src.domain.entities import Task
+from src.domain.value_objects import TaskStatus
+from src.infrastructure.persistence.repositories import TaskRepository
 
-```typescript
-// repositories/UserRepository.ts
-import { PrismaService } from '@project-lifecycle-portal/database';
-import type { User, Prisma } from '@prisma/client';
+pytestmark = [pytest.mark.asyncio, pytest.mark.integration]
 
-export class UserRepository {
-    async findById(id: string): Promise<User | null> {
-        return PrismaService.main.user.findUnique({
-            where: { id },
-            include: { profile: true },
-        });
-    }
+async def test_create_task(db_session):
+    """Test creating a task in database."""
+# Arrange
+    repo = TaskRepository(db_session)
+    task = Task(
+        conversation_id=uuid4(),
+        agent_id="test_agent",
+        input={"message": "test"},
+    )
 
-    async findByEmail(email: string): Promise<User | null> {
-        return PrismaService.main.user.findUnique({
-            where: { email },
-            include: { profile: true },
-        });
-    }
+# Act
+    created = await repo.create(task)
 
-    async findActive(): Promise<User[]> {
-        return PrismaService.main.user.findMany({
-            where: { isActive: true },
-            include: { profile: true },
-            orderBy: { createdAt: 'desc' },
-        });
-    }
+# Assertassert created.id is not None
+    assert created.status == TaskStatus.PENDING
 
-    async create(data: Prisma.UserCreateInput): Promise<User> {
-        return PrismaService.main.user.create({
-            data,
-            include: { profile: true },
-        });
-    }
+async def test_find_pending_for_agent(db_session):
+    """Test finding pending tasks for agent."""
+# Arrange
+    repo = TaskRepository(db_session)
+    task1 = Task(conversation_id=uuid4(), agent_id="agent1", input={})
+    task2 = Task(conversation_id=uuid4(), agent_id="agent1", input={})
+    task3 = Task(conversation_id=uuid4(), agent_id="agent2", input={})
 
-    async update(id: string, data: Prisma.UserUpdateInput): Promise<User> {
-        return PrismaService.main.user.update({
-            where: { id },
-            data,
-            include: { profile: true },
-        });
-    }
+    await repo.create(task1)
+    await repo.create(task2)
+    await repo.create(task3)
 
-    async delete(id: string): Promise<User> {
-        // Soft delete
-        return PrismaService.main.user.update({
-            where: { id },
-            data: {
-                isActive: false,
-                deletedAt: new Date(),
-            },
-        });
-    }
-}
-```
+# Act
+    pending = await repo.find_pending_for_agent("agent1")
 
----
+# Assertassert len(pending) == 2
+    assert all(t.agent_id == "agent1" for t in pending)
 
-## Refactoring Example: Bad to Good
-
-### BEFORE: Business Logic in Routes ❌
-
-```typescript
-// routes/postRoutes.ts (BAD - 200+ lines)
-router.post('/posts', async (req, res) => {
-    try {
-        const username = res.locals.claims.preferred_username;
-        const responses = req.body.responses;
-        const stepInstanceId = req.body.stepInstanceId;
-
-        // ❌ Permission check in route
-        const userId = await userProfileService.getProfileByEmail(username).then(p => p.id);
-        const canComplete = await permissionService.canCompleteStep(userId, stepInstanceId);
-        if (!canComplete) {
-            return res.status(403).json({ error: 'No permission' });
-        }
-
-        // ❌ Business logic in route
-        const post = await postRepository.create({
-            title: req.body.title,
-            content: req.body.content,
-            authorId: userId
-        });
-
-        // ❌ More business logic...
-        if (res.locals.isImpersonating) {
-            impersonationContextStore.storeContext(...);
-        }
-
-        // ... 100+ more lines
-
-        res.json({ success: true, data: result });
-    } catch (e) {
-        handler.handleException(res, e);
-    }
-});
-```
-
-### AFTER: Clean Separation ✅
-
-**1. Clean Route:**
-```typescript
-// routes/postRoutes.ts
-import { PostController } from '../controllers/PostController';
-
-const router = Router();
-const controller = new PostController();
-
-// ✅ CLEAN: 8 lines total!
-router.post('/',
-    SSOMiddlewareClient.verifyLoginStatus,
-    auditMiddleware,
-    async (req, res) => controller.createPost(req, res)
-);
-
-export default router;
-```
-
-**2. Controller:**
-```typescript
-// controllers/PostController.ts
-export class PostController extends BaseController {
-    private postService: PostService;
-
-    constructor() {
-        super();
-        this.postService = new PostService();
-    }
-
-    async createPost(req: Request, res: Response): Promise<void> {
-        try {
-            const validated = createPostSchema.parse({
-                ...req.body,
-            });
-
-            const result = await this.postService.createPost(
-                validated,
-                res.locals.userId
-            );
-
-            this.handleSuccess(res, result, 'Post created successfully');
-        } catch (error) {
-            this.handleError(error, res, 'createPost');
-        }
-    }
-}
-```
-
-**3. Service:**
-```typescript
-// services/postService.ts
-export class PostService {
-    async createPost(
-        data: CreatePostDTO,
-        userId: string
-    ): Promise<SubmissionResult> {
-        // Permission check
-        const canComplete = await permissionService.canCompleteStep(
-            userId,
-            data.stepInstanceId
-        );
-
-        if (!canComplete) {
-            throw new ForbiddenError('No permission to complete step');
-        }
-
-        // Execute workflow
-        const engine = await createWorkflowEngine();
-        const command = new CompleteStepCommand(
-            data.stepInstanceId,
-            userId,
-            data.responses
-        );
-        const events = await engine.executeCommand(command);
-
-        // Handle impersonation
-        if (context.isImpersonating) {
-            await this.handleImpersonation(data.stepInstanceId, context);
-        }
-
-        return { events, success: true };
-    }
-
-    private async handleImpersonation(stepInstanceId: number, context: any) {
-        impersonationContextStore.storeContext(stepInstanceId, {
-            originalUserId: context.originalUserId,
-            effectiveUserId: context.effectiveUserId,
-        });
-    }
-}
-```
-
-**Result:**
-- Route: 8 lines (was 200+)
-- Controller: 25 lines
-- Service: 40 lines
-- **Testable, maintainable, reusable!**
-
----
-
-## End-to-End Feature Example
-
-### Complete User Management Feature
-
-**1. Types:**
-```typescript
-// types/user.types.ts
-export interface User {
-    id: string;
-    email: string;
-    isActive: boolean;
-    profile?: UserProfile;
-}
-
-export interface CreateUserDTO {
-    email: string;
-    firstName: string;
-    lastName: string;
-    age: number;
-}
-
-export interface UpdateUserDTO {
-    email?: string;
-    firstName?: string;
-    lastName?: string;
-}
-```
-
-**2. Validators:**
-```typescript
-// validators/userSchemas.ts
-import { z } from 'zod';
-
-export const createUserSchema = z.object({
-    email: z.string().email(),
-    firstName: z.string().min(1).max(100),
-    lastName: z.string().min(1).max(100),
-    age: z.number().int().min(18).max(120),
-});
-
-export const updateUserSchema = z.object({
-    email: z.string().email().optional(),
-    firstName: z.string().min(1).max(100).optional(),
-    lastName: z.string().min(1).max(100).optional(),
-});
-```
-
-**3. Repository:**
-```typescript
-// repositories/UserRepository.ts
-export class UserRepository {
-    async findById(id: string): Promise<User | null> {
-        return PrismaService.main.user.findUnique({
-            where: { id },
-            include: { profile: true },
-        });
-    }
-
-    async create(data: Prisma.UserCreateInput): Promise<User> {
-        return PrismaService.main.user.create({
-            data,
-            include: { profile: true },
-        });
-    }
-}
-```
-
-**4. Service:**
-```typescript
-// services/userService.ts
-export class UserService {
-    private userRepository: UserRepository;
-
-    constructor() {
-        this.userRepository = new UserRepository();
-    }
-
-    async create(data: CreateUserDTO): Promise<User> {
-        const existing = await this.userRepository.findByEmail(data.email);
-        if (existing) {
-            throw new ConflictError('Email already exists');
-        }
-
-        return await this.userRepository.create({
-            email: data.email,
-            profile: {
-                create: {
-                    firstName: data.firstName,
-                    lastName: data.lastName,
-                    age: data.age,
-                },
-            },
-        });
-    }
-}
-```
-
-**5. Controller:**
-```typescript
-// controllers/UserController.ts
-export class UserController extends BaseController {
-    private userService: UserService;
-
-    constructor() {
-        super();
-        this.userService = new UserService();
-    }
-
-    async createUser(req: Request, res: Response): Promise<void> {
-        try {
-            const validated = createUserSchema.parse(req.body);
-            const user = await this.userService.create(validated);
-            this.handleSuccess(res, user, 'User created', 201);
-        } catch (error) {
-            this.handleError(error, res, 'createUser');
-        }
-    }
-}
-```
-
-**6. Routes:**
-```typescript
-// routes/userRoutes.ts
-const router = Router();
-const controller = new UserController();
-
-router.post('/',
-    SSOMiddlewareClient.verifyLoginStatus,
-    async (req, res) => controller.createUser(req, res)
-);
-
-export default router;
-```
-
-**7. Register in app.ts:**
-```typescript
-// app.ts
-import userRoutes from './routes/userRoutes';
-
-app.use('/api/users', userRoutes);
-```
-
-**Complete Request Flow:**
-```
-POST /api/users
-  ↓
-userRoutes matches /
-  ↓
-SSOMiddleware authenticates
-  ↓
-controller.createUser called
-  ↓
-Validates with Zod
-  ↓
-userService.create called
-  ↓
-Checks business rules
-  ↓
-userRepository.create called
-  ↓
-Prisma creates user
-  ↓
-Returns up the chain
-  ↓
-Controller formats response
-  ↓
-200/201 sent to client
 ```
 
 ---
 
 **Related Files:**
-- [SKILL.md](SKILL.md)
-- [routing-and-controllers.md](routing-and-controllers.md)
-- [services-and-repositories.md](services-and-repositories.md)
-- [validation-patterns.md](validation-patterns.md)
+
+- [SKILL.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/SKILL.md) - Main guide
+- [clean-architecture.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/clean-architecture.md) - Architecture overview
+- [domain-layer.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/domain-layer.md) - Domain patterns
+- [application-layer.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/application-layer.md) - Use case patterns
+- [api-layer.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/api-layer.md) - API patterns
+- [testing-guide.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/testing-guide.md) - Testing strategies

@@ -1,754 +1,543 @@
-# Validation Patterns - Input Validation with Zod
+# **Validation Patterns - Dataclasses vs Pydantic**
 
-Complete guide to input validation using Zod schemas for type-safe validation.
+Complete guide to validation patterns across Clean Architecture layers.
 
-## Table of Contents
+## **Table of Contents**
 
-- [Why Zod?](#why-zod)
-- [Basic Zod Patterns](#basic-zod-patterns)
-- [Schema Examples from Codebase](#schema-examples-from-codebase)
-- [Route-Level Validation](#route-level-validation)
-- [Controller Validation](#controller-validation)
-- [DTO Pattern](#dto-pattern)
-- [Error Handling](#error-handling)
-- [Advanced Patterns](#advanced-patterns)
+- [Overview](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/validation-patterns.md#overview)
+- [Domain Layer Validation](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/validation-patterns.md#domain-layer-validation)
+- [Application Layer DTOs](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/validation-patterns.md#application-layer-dtos)
+- [Infrastructure API Layer](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/validation-patterns.md#infrastructure-api-layer)
+- [When to Use What](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/validation-patterns.md#when-to-use-what)
 
 ---
 
-## Why Zod?
+## **Overview**
 
-### Benefits Over Joi/Other Libraries
+### **Validation by Layer**
 
-**Type Safety:**
-- ✅ Full TypeScript inference
-- ✅ Runtime + compile-time validation
-- ✅ Automatic type generation
+| Layer | Tool | Purpose |
+| --- | --- | --- |
+| **Domain** | Python validation | Business rule enforcement |
+| **Application** | Dataclasses | Simple data transfer |
+| **Infrastructure (API)** | **Pydantic** | HTTP request/response validation |
 
-**Developer Experience:**
-- ✅ Intuitive API
-- ✅ Composable schemas
-- ✅ Excellent error messages
-
-**Performance:**
-- ✅ Fast validation
-- ✅ Small bundle size
-- ✅ Tree-shakeable
-
-### Migration from Joi
-
-Modern validation uses Zod instead of Joi:
-
-```typescript
-// ❌ OLD - Joi (being phased out)
-const schema = Joi.object({
-    email: Joi.string().email().required(),
-    name: Joi.string().min(3).required(),
-});
-
-// ✅ NEW - Zod (preferred)
-const schema = z.object({
-    email: z.string().email(),
-    name: z.string().min(3),
-});
-```
+**Key Rule**: Pydantic is ONLY for the API layer (HTTP boundary).
 
 ---
 
-## Basic Zod Patterns
+## **Domain Layer Validation**
 
-### Primitive Types
+### **Entity Validation**
 
-```typescript
-import { z } from 'zod';
+Domain entities validate **business rules**, not data formats.
 
-// Strings
-const nameSchema = z.string();
-const emailSchema = z.string().email();
-const urlSchema = z.string().url();
-const uuidSchema = z.string().uuid();
-const minLengthSchema = z.string().min(3);
-const maxLengthSchema = z.string().max(100);
+```python
+# src/domain/entities/task.pyfrom dataclasses import dataclass, field
+from datetime import datetime, timezone
+from uuid import UUID, uuid4
+from ..value_objects import TaskStatus
 
-// Numbers
-const ageSchema = z.number().int().positive();
-const priceSchema = z.number().positive();
-const rangeSchema = z.number().min(0).max(100);
+@dataclass
+class Task:
+    """
+    Task entity with business rule validation.
+    """
+    id: UUID = field(default_factory=uuid4)
+    conversation_id: UUID = field(default=None)
+    agent_id: str = field(default="")
+    status: TaskStatus = TaskStatus.PENDING
 
-// Booleans
-const activeSchema = z.boolean();
+    def __post_init__(self):
+        """Validate business rules."""
+# Business rule: Task must have conversationif not self.conversation_id:
+            raise ValueError("conversation_id is required")
 
-// Dates
-const dateSchema = z.string().datetime(); // ISO 8601 string
-const nativeDateSchema = z.date(); // Native Date object
+# Business rule: Task must have agentif not self.agent_id:
+            raise ValueError("agent_id is required")
 
-// Enums
-const roleSchema = z.enum(['admin', 'operations', 'user']);
-const statusSchema = z.enum(['PENDING', 'APPROVED', 'REJECTED']);
+    def start(self) -> None:
+        """
+        Mark task as started.
+
+        Business rule: Can only start pending tasks.
+        """
+        if self.status != TaskStatus.PENDING:
+            raise ValueError(
+                f"Can only start pending tasks, current: {self.status}"
+            )
+
+        self.status = TaskStatus.RUNNING
+        self.started_at = datetime.now(timezone.utc)
+
 ```
 
-### Objects
+### **Value Object Validation**
 
-```typescript
-// Simple object
-const userSchema = z.object({
-    email: z.string().email(),
-    name: z.string(),
-    age: z.number().int().positive(),
-});
+```python
+# src/domain/value_objects/agent_metadata.pyfrom dataclasses import dataclass
 
-// Nested objects
-const addressSchema = z.object({
-    street: z.string(),
-    city: z.string(),
-    zipCode: z.string().regex(/^\d{5}$/),
-});
+@dataclass(frozen=True)# Immutableclass AgentMetadata:
+    """Agent metadata value object with validation."""
+    agent_id: str
+    name: str
+    capabilities: tuple[str, ...]
 
-const userWithAddressSchema = z.object({
-    name: z.string(),
-    address: addressSchema,
-});
+    def __post_init__(self):
+        """Validate value object."""
+        if not self.agent_id:
+            raise ValueError("agent_id is required")
+        if not self.name:
+            raise ValueError("name is required")
+        if not self.capabilities:
+            raise ValueError("at least one capability required")
 
-// Optional fields
-const userSchema = z.object({
-    name: z.string(),
-    email: z.string().email().optional(),
-    phone: z.string().optional(),
-});
+# Business rule: agent_id formatif not self.agent_id.isalnum():
+            raise ValueError("agent_id must be alphanumeric")
 
-// Nullable fields
-const userSchema = z.object({
-    name: z.string(),
-    middleName: z.string().nullable(),
-});
 ```
 
-### Arrays
+**Key Points**:
 
-```typescript
-// Array of primitives
-const rolesSchema = z.array(z.string());
-const numbersSchema = z.array(z.number());
-
-// Array of objects
-const usersSchema = z.array(
-    z.object({
-        id: z.string(),
-        name: z.string(),
-    })
-);
-
-// Array with constraints
-const tagsSchema = z.array(z.string()).min(1).max(10);
-const nonEmptyArray = z.array(z.string()).nonempty();
-```
+- ✅ Use Python's built-in validation
+- ✅ Validate business rules
+- ❌ NO Pydantic
+- ❌ NO HTTP concerns
 
 ---
 
-## Schema Examples from Codebase
+## **Application Layer DTOs**
 
-### Form Validation Schemas
+### **Using Dataclasses**
 
-**File:** `/form/src/helpers/zodSchemas.ts`
+Application DTOs use **dataclasses** for simplicity and performance.
 
-```typescript
-import { z } from 'zod';
+```python
+# src/application/dtos/task_dto.pyfrom dataclasses import dataclass
+from datetime import datetime
+from typing import Dict, Any, Optional
+from uuid import UUID
 
-// Question types enum
-export const questionTypeSchema = z.enum([
-    'input',
-    'textbox',
-    'editor',
-    'dropdown',
-    'autocomplete',
-    'checkbox',
-    'radio',
-    'upload',
-]);
+@dataclass
+class TaskDTO:
+    """
+    Data Transfer Object for tasks.
 
-// Upload types
-export const uploadTypeSchema = z.array(
-    z.enum(['pdf', 'image', 'excel', 'video', 'powerpoint', 'word']).nullable()
-);
+    Simple dataclass - no validation beyond types.
+    """
+    id: UUID
+    conversation_id: UUID
+    agent_id: str
+    status: str
+    input: Dict[str, Any]
+    output: Optional[Dict[str, Any]]
+    created_at: datetime
 
-// Input types
-export const inputTypeSchema = z
-    .enum(['date', 'number', 'input', 'currency'])
-    .nullable();
+    @classmethod
+    def from_entity(cls, entity) -> "TaskDTO":
+        """Convert domain entity to DTO."""
+        return cls(
+            id=entity.id,
+            conversation_id=entity.conversation_id,
+            agent_id=entity.agent_id,
+            status=entity.status.value,
+            input=entity.input,
+            output=entity.output,
+            created_at=entity.created_at,
+        )
 
-// Question option
-export const questionOptionSchema = z.object({
-    id: z.number().int().positive().optional(),
-    controlTag: z.string().max(150).nullable().optional(),
-    label: z.string().max(100).nullable().optional(),
-    order: z.number().int().min(0).default(0),
-});
+@dataclass
+class CreateTaskRequest:
+    """Request DTO for creating a task."""
+    conversation_id: UUID
+    agent_id: str
+    input: Dict[str, Any]
+    parent_task_id: Optional[UUID] = None
 
-// Question schema
-export const questionSchema = z.object({
-    id: z.number().int().positive().optional(),
-    formID: z.number().int().positive(),
-    sectionID: z.number().int().positive().optional(),
-    options: z.array(questionOptionSchema).optional(),
-    label: z.string().max(500),
-    description: z.string().max(5000).optional(),
-    type: questionTypeSchema,
-    uploadTypes: uploadTypeSchema.optional(),
-    inputType: inputTypeSchema.optional(),
-    tags: z.array(z.string().max(150)).optional(),
-    required: z.boolean(),
-    isStandard: z.boolean().optional(),
-    deprecatedKey: z.string().nullable().optional(),
-    maxLength: z.number().int().positive().nullable().optional(),
-    isOptionsSorted: z.boolean().optional(),
-});
+@dataclass
+class CreateTaskResponse:
+    """Response DTO after creating a task."""
+    task: TaskDTO
+    status: str
 
-// Form section schema
-export const formSectionSchema = z.object({
-    id: z.number().int().positive(),
-    formID: z.number().int().positive(),
-    questions: z.array(questionSchema).optional(),
-    label: z.string().max(500),
-    description: z.string().max(5000).optional(),
-    isStandard: z.boolean(),
-});
-
-// Create form schema
-export const createFormSchema = z.object({
-    id: z.number().int().positive(),
-    label: z.string().max(150),
-    description: z.string().max(6000).nullable().optional(),
-    isPhase: z.boolean().optional(),
-    username: z.string(),
-});
-
-// Update order schema
-export const updateOrderSchema = z.object({
-    source: z.object({
-        index: z.number().int().min(0),
-        sectionID: z.number().int().min(0),
-    }),
-    destination: z.object({
-        index: z.number().int().min(0),
-        sectionID: z.number().int().min(0),
-    }),
-});
-
-// Controller-specific validation schemas
-export const createQuestionValidationSchema = z.object({
-    formID: z.number().int().positive(),
-    sectionID: z.number().int().positive(),
-    question: questionSchema,
-    index: z.number().int().min(0).nullable().optional(),
-    username: z.string(),
-});
-
-export const updateQuestionValidationSchema = z.object({
-    questionID: z.number().int().positive(),
-    username: z.string(),
-    question: questionSchema,
-});
 ```
 
-### Proxy Relationship Schema
+### **Why Dataclasses?**
 
-```typescript
-// Proxy relationship validation
-const createProxySchema = z.object({
-    originalUserID: z.string().min(1),
-    proxyUserID: z.string().min(1),
-    startsAt: z.string().datetime(),
-    expiresAt: z.string().datetime(),
-});
+**Benefits**:
 
-// With custom validation
-const createProxySchemaWithValidation = createProxySchema.refine(
-    (data) => new Date(data.expiresAt) > new Date(data.startsAt),
-    {
-        message: 'expiresAt must be after startsAt',
-        path: ['expiresAt'],
-    }
-);
-```
+- ⚡ Fast (no validation overhead)
+- 🎯 Simple (just data structures)
+- 🔒 Type-safe (with type hints)
+- 📦 Lightweight (standard library)
 
-### Workflow Validation
+**Use When**:
 
-```typescript
-// Workflow start schema
-const startWorkflowSchema = z.object({
-    workflowCode: z.string().min(1),
-    entityType: z.enum(['Post', 'User', 'Comment']),
-    entityID: z.number().int().positive(),
-    dryRun: z.boolean().optional().default(false),
-});
-
-// Workflow step completion schema
-const completeStepSchema = z.object({
-    stepInstanceID: z.number().int().positive(),
-    answers: z.record(z.string(), z.any()),
-    dryRun: z.boolean().optional().default(false),
-});
-```
+- Transferring data between layers
+- Internal application boundaries
+- No external validation needed
 
 ---
 
-## Route-Level Validation
+## **Infrastructure API Layer**
 
-### Pattern 1: Inline Validation
+### **Using Pydantic**
 
-```typescript
-// routes/proxyRoutes.ts
-import { z } from 'zod';
+The API layer uses **Pydantic** for HTTP request/response validation.
 
-const createProxySchema = z.object({
-    originalUserID: z.string().min(1),
-    proxyUserID: z.string().min(1),
-    startsAt: z.string().datetime(),
-    expiresAt: z.string().datetime(),
-});
+```python
+# src/infrastructure/api/rest/routes/tasks.pyfrom pydantic import BaseModel, Field, validator
+from typing import Optional, Dict, Any
+from uuid import UUID
 
-router.post(
-    '/',
-    SSOMiddlewareClient.verifyLoginStatus,
-    async (req, res) => {
-        try {
-            // Validate at route level
-            const validated = createProxySchema.parse(req.body);
+class CreateTaskApiRequest(BaseModel):
+    """
+    API request model with Pydantic validation.
 
-            // Delegate to service
-            const proxy = await proxyService.createProxyRelationship(validated);
+    Validates HTTP input from external clients.
+    """
+    agent_id: str = Field(
+        ...,
+        min_length=1,
+        max_length=255,
+        description="Agent ID to assign task"
+    )
+    input: Dict[str, Any] = Field(
+        ...,
+        description="Task input data"
+    )
+    parent_task_id: Optional[str] = Field(
+        None,
+        description="Parent task ID if this is a subtask"
+    )
 
-            res.status(201).json({ success: true, data: proxy });
-        } catch (error) {
-            if (error instanceof z.ZodError) {
-                return res.status(400).json({
-                    success: false,
-                    error: {
-                        message: 'Validation failed',
-                        details: error.errors,
-                    },
-                });
-            }
-            handler.handleException(res, error);
-        }
-    }
-);
+    @validator('agent_id')
+    def agent_id_not_empty(cls, v):
+        """Validate agent_id is not empty or whitespace."""
+        if not v or not v.strip():
+            raise ValueError('agent_id cannot be empty or whitespace')
+        return v.strip()
+
+    @validator('input')
+    def input_not_empty(cls, v):
+        """Validate input is not empty."""
+        if not v:
+            raise ValueError('input cannot be empty')
+        return v
+
+class TaskApiResponse(BaseModel):
+    """API response model."""
+    id: str
+    conversation_id: str
+    agent_id: str
+    status: str
+    input: Dict[str, Any]
+    output: Optional[Dict[str, Any]]
+    created_at: str
+
+    class Config:
+        from_attributes = True
+
+class TaskListResponse(BaseModel):
+    """Paginated list response."""
+    tasks: list[TaskApiResponse]
+    total: int
+    page: int
+    page_size: int
+
 ```
 
-**Pros:**
-- Quick and simple
-- Good for simple routes
+### **Route with Validation**
 
-**Cons:**
-- Validation logic in routes
-- Harder to test
-- Not reusable
+```python
+from fastapi import APIRouter, Depends, HTTPException, status
+from src.application.use_cases.task import CreateTaskUseCase
+from src.application.dtos import CreateTaskRequest
+from src.application.exceptions import AgentNotFoundException
 
----
+router = APIRouter()
 
-## Controller Validation
+@router.post(
+    "/tasks",
+    response_model=TaskApiResponse,
+    status_code=status.HTTP_201_CREATED
+)
+async def create_task(
+    request: CreateTaskApiRequest,# Pydantic validates THIS
+    conversation_id: UUID,
+    use_case: CreateTaskUseCase = Depends(get_create_task_use_case),
+):
+    """
+    Create a new task.
 
-### Pattern 2: Controller Validation (Recommended)
+    Pydantic validates the HTTP request automatically.
+    """
+# Convert API model (Pydantic) to Application DTO (dataclass)
+    app_request = CreateTaskRequest(
+        conversation_id=conversation_id,
+        agent_id=request.agent_id,
+        input=request.input,
+        parent_task_id=UUID(request.parent_task_id) if request.parent_task_id else None,
+    )
 
-```typescript
-// validators/userSchemas.ts
-import { z } from 'zod';
+# Execute use casetry:
+        result = await use_case.execute(app_request)
+    except AgentNotFoundException as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Agent not found: {e.agent_id}"
+        )
 
-export const createUserSchema = z.object({
-    email: z.string().email(),
-    name: z.string().min(2).max(100),
-    roles: z.array(z.enum(['admin', 'operations', 'user'])),
-    isActive: z.boolean().default(true),
-});
+# Convert Application DTO to API response (Pydantic)return TaskApiResponse(
+        id=str(result.task.id),
+        conversation_id=str(result.task.conversation_id),
+        agent_id=result.task.agent_id,
+        status=result.task.status,
+        input=result.task.input,
+        output=result.task.output,
+        created_at=result.task.created_at.isoformat(),
+    )
 
-export const updateUserSchema = z.object({
-    email: z.string().email().optional(),
-    name: z.string().min(2).max(100).optional(),
-    roles: z.array(z.enum(['admin', 'operations', 'user'])).optional(),
-    isActive: z.boolean().optional(),
-});
-
-export type CreateUserDTO = z.infer<typeof createUserSchema>;
-export type UpdateUserDTO = z.infer<typeof updateUserSchema>;
-```
-
-```typescript
-// controllers/UserController.ts
-import { Request, Response } from 'express';
-import { BaseController } from './BaseController';
-import { UserService } from '../services/userService';
-import { createUserSchema, updateUserSchema } from '../validators/userSchemas';
-import { z } from 'zod';
-
-export class UserController extends BaseController {
-    private userService: UserService;
-
-    constructor() {
-        super();
-        this.userService = new UserService();
-    }
-
-    async createUser(req: Request, res: Response): Promise<void> {
-        try {
-            // Validate input
-            const validated = createUserSchema.parse(req.body);
-
-            // Call service
-            const user = await this.userService.createUser(validated);
-
-            this.handleSuccess(res, user, 'User created successfully', 201);
-        } catch (error) {
-            if (error instanceof z.ZodError) {
-                // Handle validation errors with 400 status
-                return this.handleError(error, res, 'createUser', 400);
-            }
-            this.handleError(error, res, 'createUser');
-        }
-    }
-
-    async updateUser(req: Request, res: Response): Promise<void> {
-        try {
-            // Validate params and body
-            const userId = req.params.id;
-            const validated = updateUserSchema.parse(req.body);
-
-            const user = await this.userService.updateUser(userId, validated);
-
-            this.handleSuccess(res, user, 'User updated successfully');
-        } catch (error) {
-            if (error instanceof z.ZodError) {
-                return this.handleError(error, res, 'updateUser', 400);
-            }
-            this.handleError(error, res, 'updateUser');
-        }
-    }
-}
-```
-
-**Pros:**
-- Clean separation
-- Reusable schemas
-- Easy to test
-- Type-safe DTOs
-
-**Cons:**
-- More files to manage
-
----
-
-## DTO Pattern
-
-### Type Inference from Schemas
-
-```typescript
-import { z } from 'zod';
-
-// Define schema
-const createUserSchema = z.object({
-    email: z.string().email(),
-    name: z.string(),
-    age: z.number().int().positive(),
-});
-
-// Infer TypeScript type from schema
-type CreateUserDTO = z.infer<typeof createUserSchema>;
-
-// Equivalent to:
-// type CreateUserDTO = {
-//     email: string;
-//     name: string;
-//     age: number;
-// }
-
-// Use in service
-class UserService {
-    async createUser(data: CreateUserDTO): Promise<User> {
-        // data is fully typed!
-        console.log(data.email); // ✅ TypeScript knows this exists
-        console.log(data.invalid); // ❌ TypeScript error!
-    }
-}
-```
-
-### Input vs Output Types
-
-```typescript
-// Input schema (what API receives)
-const createUserInputSchema = z.object({
-    email: z.string().email(),
-    name: z.string(),
-    password: z.string().min(8),
-});
-
-// Output schema (what API returns)
-const userOutputSchema = z.object({
-    id: z.string().uuid(),
-    email: z.string().email(),
-    name: z.string(),
-    createdAt: z.string().datetime(),
-    // password excluded!
-});
-
-type CreateUserInput = z.infer<typeof createUserInputSchema>;
-type UserOutput = z.infer<typeof userOutputSchema>;
 ```
 
 ---
 
-## Error Handling
+## **When to Use What**
 
-### Zod Error Format
+### **Decision Tree**
 
-```typescript
-try {
-    const validated = schema.parse(data);
-} catch (error) {
-    if (error instanceof z.ZodError) {
-        console.log(error.errors);
-        // [
-        //   {
-        //     code: 'invalid_type',
-        //     expected: 'string',
-        //     received: 'number',
-        //     path: ['email'],
-        //     message: 'Expected string, received number'
-        //   }
-        // ]
-    }
-}
+```
+Is this for HTTP API?
+├─ YES → Use Pydantic (Infrastructure/API layer)
+└─ NO → Is this a domain entity?
+    ├─ YES → Use dataclass + __post_init__ validation (Domain)
+    └─ NO → Is this transferring data between layers?
+        ├─ YES → Use dataclass (Application DTOs)
+        └─ NO → Use appropriate data structure
+
 ```
 
-### Custom Error Messages
+### **Comparison Table**
 
-```typescript
-const userSchema = z.object({
-    email: z.string().email({ message: 'Please provide a valid email address' }),
-    name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
-    age: z.number().int().positive({ message: 'Age must be a positive number' }),
-});
+| Aspect | Dataclass | Pydantic |
+| --- | --- | --- |
+| **Layer** | Domain, Application | Infrastructure (API) |
+| **Purpose** | Internal data | HTTP validation |
+| **Validation** | Manual (`__post_init__`) | Automatic |
+| **Performance** | Fast | Slower (validation overhead) |
+| **Type Coercion** | No | Yes |
+| **JSON** | Manual | Automatic |
+| **When to Use** | Internal boundaries | External API |
+
+### **Examples by Layer**
+
+### **Domain Layer**
+
+```python
+# ✅ GOOD: Dataclass with business validation@dataclass
+class Conversation:
+    id: UUID
+    user_id: str
+
+    def __post_init__(self):
+        if not self.user_id:
+            raise ValueError("user_id is required")
+
+# ❌ BAD: Pydantic in domainclass Conversation(BaseModel):# NO!
+    ...
+
 ```
 
-### Formatted Error Response
+### **Application Layer**
 
-```typescript
-// Helper function to format Zod errors
-function formatZodError(error: z.ZodError) {
-    return {
-        message: 'Validation failed',
-        errors: error.errors.map((err) => ({
-            field: err.path.join('.'),
-            message: err.message,
-            code: err.code,
-        })),
-    };
-}
+```python
+# ✅ GOOD: Simple dataclass DTOs@dataclass
+class CreateConversationRequest:
+    user_id: str
+    initial_message: str
+    agent_id: Optional[str] = None
 
-// In controller
-catch (error) {
-    if (error instanceof z.ZodError) {
-        return res.status(400).json({
-            success: false,
-            error: formatZodError(error),
-        });
-    }
-}
+# ❌ BAD: Pydantic in application layerclass CreateConversationRequest(BaseModel):# NO!
+    ...
 
-// Response example:
-// {
-//   "success": false,
-//   "error": {
-//     "message": "Validation failed",
-//     "errors": [
-//       {
-//         "field": "email",
-//         "message": "Invalid email",
-//         "code": "invalid_string"
-//       }
-//     ]
-//   }
-// }
+```
+
+### **Infrastructure API Layer**
+
+```python
+# ✅ GOOD: Pydantic for API validationclass CreateConversationApiRequest(BaseModel):
+    initial_message: str = Field(..., min_length=1)
+    agent_id: Optional[str] = None
+
+# ❌ BAD: Dataclass for API (no validation)@dataclass
+class CreateConversationApiRequest:# Missing validation!
+    ...
+
 ```
 
 ---
 
-## Advanced Patterns
+## **Advanced Patterns**
 
-### Conditional Validation
+### **Custom Validators**
 
-```typescript
-// Validate based on other field values
-const submissionSchema = z.object({
-    type: z.enum(['NEW', 'UPDATE']),
-    postId: z.number().optional(),
-}).refine(
-    (data) => {
-        // If type is UPDATE, postId is required
-        if (data.type === 'UPDATE') {
-            return data.postId !== undefined;
-        }
-        return true;
-    },
-    {
-        message: 'postId is required when type is UPDATE',
-        path: ['postId'],
-    }
-);
+```python
+from pydantic import BaseModel, validator, root_validator
+
+class TaskUpdateRequest(BaseModel):
+    status: Optional[str]
+    output: Optional[Dict[str, Any]]
+    error: Optional[str]
+
+    @validator('status')
+    def validate_status(cls, v):
+        """Validate status is one of allowed values."""
+        allowed = ['running', 'completed', 'failed', 'cancelled']
+        if v not in allowed:
+            raise ValueError(f'status must be one of {allowed}')
+        return v
+
+    @root_validator
+    def validate_status_output_combination(cls, values):
+        """Validate business rules across fields."""
+        status = values.get('status')
+        output = values.get('output')
+        error = values.get('error')
+
+        if status == 'completed' and not output:
+            raise ValueError('output required when status is completed')
+
+        if status == 'failed' and not error:
+            raise ValueError('error required when status is failed')
+
+        return values
+
 ```
 
-### Transform Data
+### **Generic Response Wrapper**
 
-```typescript
-// Transform strings to numbers
-const userSchema = z.object({
-    name: z.string(),
-    age: z.string().transform((val) => parseInt(val, 10)),
-});
+```python
+from typing import Generic, TypeVar, Optional
+from pydantic import BaseModel
 
-// Transform dates
-const eventSchema = z.object({
-    name: z.string(),
-    date: z.string().transform((str) => new Date(str)),
-});
+T = TypeVar('T')
+
+class ApiResponse(BaseModel, Generic[T]):
+    """Generic API response wrapper."""
+    success: bool
+    data: Optional[T]
+    error: Optional[str]
+    message: Optional[str]
+
+# Usageclass UserData(BaseModel):
+    id: str
+    name: str
+
+@router.get("/users/{id}")
+async def get_user(id: str) -> ApiResponse[UserData]:
+    return ApiResponse(
+        success=True,
+        data=UserData(id=id, name="John"),
+        error=None,
+        message="User retrieved successfully"
+    )
+
 ```
 
-### Preprocess Data
+### **Nested Validation**
 
-```typescript
-// Trim strings before validation
-const userSchema = z.object({
-    email: z.preprocess(
-        (val) => typeof val === 'string' ? val.trim().toLowerCase() : val,
-        z.string().email()
-    ),
-    name: z.preprocess(
-        (val) => typeof val === 'string' ? val.trim() : val,
-        z.string().min(2)
-    ),
-});
+```python
+class AddressModel(BaseModel):
+    """Nested address model."""
+    street: str = Field(..., min_length=1)
+    city: str = Field(..., min_length=1)
+    country: str = Field(..., min_length=2, max_length=2)
+
+class UserProfileRequest(BaseModel):
+    """User profile with nested validation."""
+    name: str = Field(..., min_length=1, max_length=100)
+    email: EmailStr
+    address: AddressModel# Nested validation    @validator('email')
+    def email_domain_check(cls, v):
+        """Validate email domain."""
+        if not v.endswith('@company.com'):
+            raise ValueError('must use company email')
+        return v
+
 ```
 
-### Union Types
+---
 
-```typescript
-// Multiple possible types
-const idSchema = z.union([z.string(), z.number()]);
+## **Best Practices**
 
-// Discriminated unions
-const notificationSchema = z.discriminatedUnion('type', [
-    z.object({
-        type: z.literal('email'),
-        recipient: z.string().email(),
-        subject: z.string(),
-    }),
-    z.object({
-        type: z.literal('sms'),
-        phoneNumber: z.string(),
-        message: z.string(),
-    }),
-]);
+### **1. Convert at Boundaries**
+
+```python
+# ✅ GOOD: Convert between API and Application layers@router.post("/tasks")
+async def create_task(
+    api_request: TaskApiRequest,# Pydantic (API layer)
+    use_case: CreateTaskUseCase = Depends(...)
+):
+# Convert Pydantic → Dataclass
+    app_request = CreateTaskRequest(
+        agent_id=api_request.agent_id,
+        input=api_request.input,
+    )
+
+# Use case returns dataclass
+    result = await use_case.execute(app_request)
+
+# Convert Dataclass → Pydanticreturn TaskApiResponse(
+        id=str(result.task.id),
+        status=result.task.status,
+    )
+
 ```
 
-### Recursive Schemas
+### **2. Keep Validation Appropriate**
 
-```typescript
-// For nested structures like trees
-type Category = {
-    id: number;
-    name: string;
-    children?: Category[];
-};
+```python
+# ✅ GOOD: API validates format, Domain validates business rulesclass CreateTaskApiRequest(BaseModel):
+    agent_id: str = Field(..., min_length=1)# Format validation# Domain validates business rules@dataclass
+class Task:
+    agent_id: str
 
-const categorySchema: z.ZodType<Category> = z.lazy(() =>
-    z.object({
-        id: z.number(),
-        name: z.string(),
-        children: z.array(categorySchema).optional(),
-    })
-);
+    def __post_init__(self):
+        if not self.agent_id:
+            raise ValueError("agent_id required")# Business rule# ❌ BAD: Business rules in API modelclass CreateTaskApiRequest(BaseModel):
+    @validator('agent_id')
+    def check_agent_exists(cls, v):
+# Database call in validator! Wrong layer!if not agent_repo.exists(v):
+            raise ValueError("agent not found")
+        return v
+
 ```
 
-### Schema Composition
+### **3. Don't Mix Concerns**
 
-```typescript
-// Base schemas
-const timestampsSchema = z.object({
-    createdAt: z.string().datetime(),
-    updatedAt: z.string().datetime(),
-});
+```python
+# ✅ GOOD: Clear separation# API layerclass UserApiRequest(BaseModel):
+    email: EmailStr# Format validation# Application layer@dataclass
+class CreateUserRequest:
+    email: str# Just data# Domain layer@dataclass
+class User:
+    email: str
 
-const auditSchema = z.object({
-    createdBy: z.string(),
-    updatedBy: z.string(),
-});
+    def __post_init__(self):
+        if '@' not in self.email:# Business ruleraise ValueError("invalid email")
 
-// Compose schemas
-const userSchema = z.object({
-    id: z.string(),
-    email: z.string().email(),
-    name: z.string(),
-}).merge(timestampsSchema).merge(auditSchema);
+# ❌ BAD: Using API model in use caseclass CreateUserUseCase:
+    async def execute(self, request: UserApiRequest):# Wrong!# Should use application DTO, not API model
+        ...
 
-// Extend schemas
-const adminUserSchema = userSchema.extend({
-    adminLevel: z.number().int().min(1).max(5),
-    permissions: z.array(z.string()),
-});
-
-// Pick specific fields
-const publicUserSchema = userSchema.pick({
-    id: true,
-    name: true,
-    // email excluded
-});
-
-// Omit fields
-const userWithoutTimestamps = userSchema.omit({
-    createdAt: true,
-    updatedAt: true,
-});
-```
-
-### Validation Middleware
-
-```typescript
-// Create reusable validation middleware
-import { Request, Response, NextFunction } from 'express';
-import { z } from 'zod';
-
-export function validateBody<T extends z.ZodType>(schema: T) {
-    return (req: Request, res: Response, next: NextFunction) => {
-        try {
-            req.body = schema.parse(req.body);
-            next();
-        } catch (error) {
-            if (error instanceof z.ZodError) {
-                return res.status(400).json({
-                    success: false,
-                    error: {
-                        message: 'Validation failed',
-                        details: error.errors,
-                    },
-                });
-            }
-            next(error);
-        }
-    };
-}
-
-// Usage
-router.post('/users',
-    validateBody(createUserSchema),
-    async (req, res) => {
-        // req.body is validated and typed!
-        const user = await userService.createUser(req.body);
-        res.json({ success: true, data: user });
-    }
-);
 ```
 
 ---
 
 **Related Files:**
-- [SKILL.md](SKILL.md) - Main guide
-- [routing-and-controllers.md](routing-and-controllers.md) - Using validation in controllers
-- [services-and-repositories.md](services-and-repositories.md) - Using DTOs in services
-- [async-and-errors.md](async-and-errors.md) - Error handling patterns
+
+- [SKILL.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/SKILL.md) - Main guide
+- [clean-architecture.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/clean-architecture.md) - Layer separation
+- [domain-layer.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/domain-layer.md) - Domain validation
+- [application-layer.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/application-layer.md) - Application DTOs
+- [api-layer.md](https://file+.vscode-resource.vscode-cdn.net/Users/a0g0noy/PycharmProjects/constellation/backend-python-dev-guidelines/resources/api-layer.md) - Pydantic for API
