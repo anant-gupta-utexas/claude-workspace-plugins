@@ -1,32 +1,22 @@
 # Claude Workspace Plugins Marketplace
 
-Production-tested Claude Code plugins for professional development workflows.
+Production-tested Claude Code plugin for building products from 0 to 1 with fullstack development patterns.
 
-## 🎯 Available Plugins
+## 🎯 Available Plugin
 
-### [Backend Plugin](./plugins/backend-plugin/)
-Complete backend development setup with Node.js/Express/TypeScript patterns.
+### [0-to-1 Plugin](./plugins/0-to-1/)
+Complete fullstack development setup for building products from scratch with backend/frontend patterns and expert guidance.
 
 **Includes:**
-- 2 Skills (backend-dev-guidelines, skill-developer)
-- 5 Agents (architecture review, refactoring, documentation, etc.)
+- 4 Skills (backend, frontend, experts nexus, skill-developer)
+- 6 Agents (business strategy, frontend debugging, planning, refactoring, UI/UX, research)
 - 3 Hooks (skill activation, file tracking, error handling reminders)
 - 2 Commands (/dev-docs, /dev-docs-update)
 
-**Tech Stack:** Node.js, Express, TypeScript, Prisma
-
----
-
-### [Frontend Plugin](./plugins/frontend-plugin/)
-Complete frontend development setup with React/TypeScript/MUI v7 patterns.
-
-**Includes:**
-- 2 Skills (frontend-dev-guidelines with GUARDRAIL, skill-developer)
-- 7 Agents (error fixing, refactoring, architecture review, etc.)
-- 2 Hooks (skill activation, file tracking)
-- 2 Commands (/dev-docs, /dev-docs-update)
-
-**Tech Stack:** React 18+, TypeScript, MUI v7, TanStack Query/Router
+**Tech Stack:**
+- Backend: Python/FastAPI or Node.js/Express
+- Frontend: React 18+, TypeScript, MUI v7
+- Database: Prisma ORM (optional)
 
 ---
 
@@ -35,7 +25,7 @@ Complete frontend development setup with React/TypeScript/MUI v7 patterns.
 ### 1. Add This Marketplace
 
 ```bash
-/plugin marketplace add yourusername/claude-workspace-plugins
+/plugin marketplace add anant-gupta-utexas/claude-workspace-plugins
 ```
 
 ### 2. Browse Available Plugins
@@ -46,49 +36,50 @@ Complete frontend development setup with React/TypeScript/MUI v7 patterns.
 
 This opens an interactive UI showing all available plugins from this marketplace.
 
-### 3. Install a Plugin
+### 3. Install the Plugin
 
 ```bash
-# For backend development
-/plugin install backend-plugin@claude-workspace-plugins
-
-# For frontend development
-/plugin install frontend-plugin@claude-workspace-plugins
+/plugin install 0-to-1@claude-workspace-plugins
 ```
 
 ### 4. Configure After Installation
 
-Each plugin requires minimal post-installation setup:
+The plugin requires minimal post-installation setup:
 
 1. Update `skill-rules.json` with your project paths
 2. Install hook dependencies: `cd .claude/hooks && npm install`
 3. Test skill activation
 
-See individual plugin READMEs for detailed instructions.
+See the [plugin README](./plugins/0-to-1/README.md) for detailed instructions.
 
 ---
 
 ## 📦 Plugin Details
 
-### Backend Plugin
+### 0-to-1 Plugin
 
 Perfect for:
-- REST API development
-- Microservices
-- Node.js/Express backends
-- TypeScript projects with Prisma
+- Building products from 0 to 1
+- Fullstack development (backend + frontend)
+- Python/FastAPI or Node.js/Express backends
+- React/TypeScript frontends with MUI v7
+- Getting expert guidance on business strategy and UI/UX
 
-[View Details →](./plugins/backend-plugin/README.md)
+**Skills:**
+- **backend-dev-guidelines** - Python/FastAPI Clean Architecture patterns
+- **frontend-dev-guidelines** - React/TypeScript/MUI v7 patterns (GUARDRAIL)
+- **experts-nexus** - Access specialized expert agents
+- **skill-developer** - Meta-skill for creating skills
 
-### Frontend Plugin
+**Agents:**
+- **business-strategist** - Business strategy and product guidance
+- **frontend-error-fixer** - Debug and fix frontend errors
+- **plan-reviewer** - Review development plans
+- **refactor-planner** - Create refactoring strategies
+- **uiux-specialist** - UI/UX design guidance
+- **web-research-specialist** - Research technical issues
 
-Perfect for:
-- React SPAs
-- Admin panels
-- Web applications with MUI v7
-- TypeScript frontends
-
-[View Details →](./plugins/frontend-plugin/README.md)
+[View Details →](./plugins/0-to-1/README.md)
 
 ---
 
@@ -114,16 +105,24 @@ After installation, skills automatically activate when:
 - You edit matching files
 - You work with specific technologies
 
-**Example:** Edit a TypeScript controller file → backend-dev-guidelines activates automatically
+**Example:** Edit a Python FastAPI file → backend-dev-guidelines activates automatically
 
 ### Using Agents
 
 Invoke agents for complex tasks:
 
 ```bash
-"Use the code-architecture-reviewer agent to review my authentication service"
-"Use the refactor-planner agent to plan breaking down this large component"
+"Use the business-strategist agent to help me plan my product strategy"
 "Use the frontend-error-fixer agent to debug this console error"
+"Use the uiux-specialist agent to review my dashboard design"
+```
+
+### Access Expert Agents via Skills
+
+The experts-nexus skill provides access to specialized expert agents:
+
+```bash
+"I need help with product strategy"  # Activates experts-nexus skill
 ```
 
 ### Slash Commands
@@ -141,7 +140,7 @@ Use commands for workflows:
 
 ### Path Patterns
 
-After installing a plugin, customize path patterns in `.claude/skills/skill-rules.json`:
+After installing the plugin, customize path patterns in `.claude/skills/skill-rules.json`:
 
 **Backend Example:**
 ```json
@@ -149,7 +148,8 @@ After installing a plugin, customize path patterns in `.claude/skills/skill-rule
   "backend-dev-guidelines": {
     "fileTriggers": {
       "pathPatterns": [
-        "src/**/*.ts",           // Single app
+        "src/**/*.py",           // Python backend
+        "backend/**/*.ts",       // Node.js backend
         "services/*/src/**/*.ts" // Monorepo
       ]
     }
@@ -181,16 +181,16 @@ After installing a plugin, customize path patterns in `.claude/skills/skill-rule
 /plugin list
 ```
 
-### Update a Plugin
+### Update the Plugin
 
 ```bash
-/plugin update backend-plugin
+/plugin update 0-to-1
 ```
 
-### Remove a Plugin
+### Remove the Plugin
 
 ```bash
-/plugin uninstall backend-plugin
+/plugin uninstall 0-to-1
 ```
 
 ### List All Marketplaces
@@ -208,15 +208,14 @@ After installing a plugin, customize path patterns in `.claude/skills/skill-rule
 - [Plugin Marketplaces](https://code.claude.com/docs/en/plugin-marketplaces)
 - [Creating Skills](https://code.claude.com/docs/en/skills)
 
-### Plugin READMEs
-- [Backend Plugin →](./plugins/backend-plugin/README.md)
-- [Frontend Plugin →](./plugins/frontend-plugin/README.md)
+### Plugin README
+- [0-to-1 Plugin →](./plugins/0-to-1/README.md)
 
 ---
 
 ## 🤝 Contributing
 
-Want to contribute to these plugins?
+Want to contribute to this plugin?
 
 1. Fork this repository
 2. Create a feature branch
@@ -249,21 +248,22 @@ MIT License - Use freely in your projects.
 ## 🆘 Support
 
 **Issues or questions?**
-- Check individual plugin READMEs
-- Review [troubleshooting sections](./plugins/backend-plugin/README.md#troubleshooting)
+- Check the [plugin README](./plugins/0-to-1/README.md)
+- Review [troubleshooting sections](./plugins/0-to-1/README.md#troubleshooting)
 - Open an issue on GitHub
 
 ---
 
 ## 🌟 What You Get
 
-After installing these plugins, you get:
+After installing this plugin, you get:
 
 - ✅ **Intelligent skill activation** - Skills suggest themselves when relevant
-- ✅ **Specialized agents** - AI assistants for complex tasks
+- ✅ **Specialized agents** - AI assistants for business strategy, UI/UX, and technical tasks
+- ✅ **Expert guidance** - Access to business strategist, tech lead, and UI/UX specialist agents
 - ✅ **Automated workflows** - Hooks that track and optimize your work
-- ✅ **Production patterns** - Best practices from real-world projects
-- ✅ **Tech stack validation** - Prevents common mistakes
+- ✅ **Production patterns** - Best practices from real-world projects (Python/FastAPI, React/MUI)
+- ✅ **Tech stack validation** - Prevents common mistakes with guardrails
 - ✅ **Comprehensive documentation** - Everything you need to know
 
-**Start building better software faster!** 🚀
+**Build better products faster from 0 to 1!** 🚀
