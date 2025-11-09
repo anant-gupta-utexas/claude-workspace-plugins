@@ -1,17 +1,22 @@
 {
-  "name": "backend-plugin",
+  "name": "0-to-1",
   "version": "1.0.0",
-  "description": "Complete backend development setup with Node.js/Express/TypeScript patterns, Prisma integration, and backend-focused agents",
-  "author": "Anant",
+  "description": "Complete fullstack development setup with backend/frontend patterns, expert agents, and comprehensive tooling for building products from 0 to 1",
+  "author": "Anant Gupta",
   "license": "MIT",
   "keywords": [
+    "fullstack",
+    "0-to-1",
     "backend",
+    "frontend",
     "nodejs",
     "express",
     "typescript",
+    "react",
+    "mui",
     "prisma",
-    "api",
-    "microservices"
+    "python",
+    "fastapi"
   ],
   "category": "development",
   "components": {
@@ -19,7 +24,7 @@
       {
         "name": "backend-dev-guidelines",
         "path": "skills/backend-dev-guidelines",
-        "description": "Node.js/Express/TypeScript development patterns with Prisma"
+        "description": "Python/FastAPI Clean Architecture with domain entities, use cases, and repositories"
       },
       {
         "name": "frontend-dev-guidelines",
@@ -29,7 +34,7 @@
       {
         "name": "experts-nexus",
         "path": "skills/experts-nexus",
-        "description": "Access specialized expert agents for business & product strategy, tech leadership and UI/UX design"
+        "description": "Access specialized expert agents for business strategy, tech leadership, and UI/UX design"
       },
       {
         "name": "skill-developer",
@@ -39,19 +44,9 @@
     ],
     "agents": [
       {
-        "name": "code-architecture-reviewer",
-        "path": "agents/code-architecture-reviewer.md",
-        "description": "Review code for architectural consistency and best practices"
-      },
-      {
-        "name": "refactor-planner",
-        "path": "agents/refactor-planner.md",
-        "description": "Create comprehensive refactoring strategies"
-      },
-      {
-        "name": "documentation-architect",
-        "path": "agents/documentation-architect.md",
-        "description": "Generate comprehensive documentation"
+        "name": "business-strategist",
+        "path": "agents/business-strategist.md",
+        "description": "Business strategy and product guidance for building products"
       },
       {
         "name": "frontend-error-fixer",
@@ -64,9 +59,19 @@
         "description": "Review development plans before implementation"
       },
       {
+        "name": "refactor-planner",
+        "path": "agents/refactor-planner.md",
+        "description": "Create comprehensive refactoring strategies"
+      },
+      {
+        "name": "uiux-specialist",
+        "path": "agents/uiux-specialist.md",
+        "description": "UI/UX design and specialist guidance for product interfaces"
+      },
+      {
         "name": "web-research-specialist",
         "path": "agents/web-research-specialist.md",
-        "description": "Research technical issues online"
+        "description": "Research technical issues and solutions online"
       }
     ],
     "hooks": [
@@ -104,9 +109,10 @@
   },
   "requirements": {
     "tech_stack": [
-      "Node.js/Express",
+      "Backend: Python/FastAPI or Node.js/Express",
+      "Frontend: React 18+/TypeScript/MUI v7",
       "TypeScript",
-      "Prisma ORM"
+      "Prisma ORM (optional)"
     ]
   },
   "post_install": {
