@@ -1,0 +1,119 @@
+{
+  "name": "backend-plugin",
+  "version": "1.0.0",
+  "description": "Complete backend development setup with Node.js/Express/TypeScript patterns, Prisma integration, and backend-focused agents",
+  "author": "Anant",
+  "license": "MIT",
+  "keywords": [
+    "backend",
+    "nodejs",
+    "express",
+    "typescript",
+    "prisma",
+    "api",
+    "microservices"
+  ],
+  "category": "development",
+  "components": {
+    "skills": [
+      {
+        "name": "backend-dev-guidelines",
+        "path": "skills/backend-dev-guidelines",
+        "description": "Node.js/Express/TypeScript development patterns with Prisma"
+      },
+      {
+        "name": "frontend-dev-guidelines",
+        "path": "skills/frontend-dev-guidelines",
+        "description": "React/TypeScript/MUI v7 patterns with GUARDRAIL enforcement"
+      },
+      {
+        "name": "experts-nexus",
+        "path": "skills/experts-nexus",
+        "description": "Access specialized expert agents for business & product strategy, tech leadership and UI/UX design"
+      },
+      {
+        "name": "skill-developer",
+        "path": "skills/skill-developer",
+        "description": "Meta-skill for creating and managing Claude Code skills"
+      }
+    ],
+    "agents": [
+      {
+        "name": "code-architecture-reviewer",
+        "path": "agents/code-architecture-reviewer.md",
+        "description": "Review code for architectural consistency and best practices"
+      },
+      {
+        "name": "refactor-planner",
+        "path": "agents/refactor-planner.md",
+        "description": "Create comprehensive refactoring strategies"
+      },
+      {
+        "name": "documentation-architect",
+        "path": "agents/documentation-architect.md",
+        "description": "Generate comprehensive documentation"
+      },
+      {
+        "name": "frontend-error-fixer",
+        "path": "agents/frontend-error-fixer.md",
+        "description": "Debug and fix frontend errors (build and runtime)"
+      },
+      {
+        "name": "plan-reviewer",
+        "path": "agents/plan-reviewer.md",
+        "description": "Review development plans before implementation"
+      },
+      {
+        "name": "web-research-specialist",
+        "path": "agents/web-research-specialist.md",
+        "description": "Research technical issues online"
+      }
+    ],
+    "hooks": [
+      {
+        "name": "skill-activation-prompt",
+        "path": "hooks/skill-activation-prompt.sh",
+        "type": "UserPromptSubmit",
+        "description": "Automatically suggests relevant skills based on prompts"
+      },
+      {
+        "name": "post-tool-use-tracker",
+        "path": "hooks/post-tool-use-tracker.sh",
+        "type": "PostToolUse",
+        "description": "Tracks file changes for context management"
+      },
+      {
+        "name": "error-handling-reminder",
+        "path": "hooks/error-handling-reminder.sh",
+        "type": "Stop",
+        "description": "Reminds developers about error handling best practices after editing backend/frontend code"
+      }
+    ],
+    "commands": [
+      {
+        "name": "dev-docs",
+        "path": "commands/dev-docs.md",
+        "description": "Create structured development documentation"
+      },
+      {
+        "name": "dev-docs-update",
+        "path": "commands/dev-docs-update.md",
+        "description": "Update docs before context reset"
+      }
+    ]
+  },
+  "requirements": {
+    "tech_stack": [
+      "Node.js/Express",
+      "TypeScript",
+      "Prisma ORM"
+    ]
+  },
+  "post_install": {
+    "instructions": [
+      "Update .claude/skills/skill-rules.json with your project path patterns",
+      "Install hook dependencies: cd .claude/hooks && npm install",
+      "Test skill activation: Ask 'How do I create a controller?'"
+    ]
+  }
+}
