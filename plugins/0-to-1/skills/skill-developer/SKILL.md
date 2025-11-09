@@ -43,8 +43,6 @@ Automatically activates when you mention:
 - **Method**: Analyzes edited files for risky patterns, displays reminder if needed
 - **Use Cases**: Error handling awareness without blocking friction
 
-**Philosophy Change (2025-10-27):** We moved away from blocking PreToolUse for Sentry/error handling. Instead, use gentle post-response reminders that don't block workflow but maintain code quality awareness.
-
 ### Configuration File
 
 **Location**: `.claude/skills/skill-rules.json`
@@ -140,7 +138,7 @@ The actual guidance, documentation, patterns, examples
 
 ### Step 2: Add to skill-rules.json
 
-See [REFERENCE.md](REFERENCE.md) for complete schema and examples.
+See `REFERENCE.md` for complete schema and examples.
 
 **Basic Template:**
 ```json
@@ -159,7 +157,7 @@ See [REFERENCE.md](REFERENCE.md) for complete schema and examples.
 
 ### Step 3: Test & Refine
 
-Test your triggers and refine patterns. See [REFERENCE.md - Testing Your Skills](REFERENCE.md#testing-your-skills) for test commands.
+Test your triggers and refine patterns. See `REFERENCE.md - Testing Your Skills` for test commands.
 
 ### Step 4: Refine Patterns
 
@@ -283,7 +281,7 @@ When creating a new skill, verify:
 
 For detailed information on specific topics, see:
 
-### [REFERENCE.md](REFERENCE.md) - Complete Configuration Guide
+### `REFERENCE.md` - Complete Configuration Guide
 - Complete skill-rules.json schema with TypeScript types
 - All trigger types (keywords, intent patterns, file paths, content patterns)
 - Ready-to-use pattern library (regex and glob patterns)
@@ -291,21 +289,21 @@ For detailed information on specific topics, see:
 - Testing commands and best practices
 - Validation guide and common errors
 
-### [INTERNALS.md](INTERNALS.md) - Technical Deep Dive
+### `INTERNALS.md` - Technical Deep Dive
 - UserPromptSubmit flow (detailed)
 - PreToolUse flow (detailed)
 - Exit code behavior table (CRITICAL)
 - Session state management
 - Performance considerations
 
-### [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Debugging Guide
+### `TROUBLESHOOTING.md` - Debugging Guide
 - Skill not triggering (UserPromptSubmit)
 - PreToolUse not blocking
 - False positives (too many triggers)
 - Hook not executing at all
 - Performance issues
 
-### [ADVANCED.md](ADVANCED.md) - Future Ideas
+### `ADVANCED.md` - Future Ideas
 - Dynamic rule updates
 - Skill dependencies
 - Conditional enforcement
@@ -331,7 +329,7 @@ For detailed information on specific topics, see:
 - **File Paths**: Location-based activation
 - **Content**: Technology-specific detection
 
-See [REFERENCE.md - Trigger Types Guide](REFERENCE.md#trigger-types-guide) for complete details.
+See `REFERENCE.md - Trigger Types Guide` for complete details.
 
 ### Enforcement
 
@@ -357,7 +355,7 @@ See [REFERENCE.md - Trigger Types Guide](REFERENCE.md#trigger-types-guide) for c
 
 ### Troubleshoot
 
-See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for complete debugging guide and [REFERENCE.md - Testing](REFERENCE.md#testing-your-skills) for test commands.
+See `TROUBLESHOOTING.md` for complete debugging guide and `REFERENCE.md - Testing` for test commands.
 
 ---
 
@@ -374,11 +372,3 @@ See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for complete debugging guide and [R
 
 **All Skills:**
 - `.claude/skills/*/SKILL.md` - Skill content files
-
----
-
-**Skill Status**: COMPLETE - Restructured following Anthropic best practices ✅
-**Line Count**: < 500 (following 500-line rule) ✅
-**Progressive Disclosure**: Reference files for detailed information ✅
-
-**Next**: Create more skills, refine patterns based on usage
