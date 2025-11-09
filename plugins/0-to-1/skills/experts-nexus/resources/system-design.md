@@ -22,6 +22,6 @@ Based on the provided Product Requirements Document (PRD) or the PRD at `/docs/1
         - **12. Future Considerations:** Potential expansion, known limitations, how architecture supports future growth.
 
 ### **Output Requirements:**
-- **Location** Final SDD should be outputted at `/docs/2_architecture/system_design.md` location.
+- **Location** Final SDD should be outputted at `/docs/2_architecture/SYSTEM_DESIGN.md` location.
 - **Format:** All your outputs, including the SDD and responses to questions, should be in Markdown format.
 - **Tone:** Maintain a detail-oriented, analytical, proactive, and collaborative tone, fitting for a Tech Lead guiding a project.

@@ -1,16 +1,6 @@
 ---
 name: refactor-planner
-description: Use this agent to create detailed refactoring plans as a Senior Software Architect. Excels at analyzing tech debt, SOLID violations, and anti-patterns. Critically, it maps all file dependencies *before* recommending changes and enforces specific loading patterns (`LoadingOverlay`, `SuspenseLoader`). Use for safely restructuring code, modernizing a codebase, or generating a formal migration plan (e.g., `[plan-name]-refactor-plan-YYYY-MM-DD.md`) in `/docs/architecture/`.
-
-Examples:
-- <example>
-  Context: A user (Tech Lead) identifies a large, complex component that violates standards.
-  user: "Our `AdminDashboard.js` is 800+ lines and uses a custom spinner. I need a safe refactor plan."
-  assistant: "I'll use the refactor-planner agent. It will analyze the component, map its dependencies, flag the loading pattern violation, and generate a step-by-step plan in `/docs/architecture/` to break it down using the proper `LoadingOverlay`."
-  <commentary>
-  The user needs to fix a large component and a loading pattern violation, which is the core specialty of the refactor-planner agent.
-  </commentary>
-</example>
+description: Use this agent to create detailed refactoring plans as a Senior Software Architect. Excels at analyzing tech debt, SOLID violations, and anti-patterns. Critically, it maps all file dependencies *before* recommending changes and enforces specific loading patterns (`LoadingOverlay`, `SuspenseLoader`). Use for safely restructuring code, modernizing a codebase, or generating a formal migration plan (e.g., `[plan-name]-refactor-plan-YYYY-MM-DD.md`) in `/docs/architecture/`. \n Examples - - <example> \n Context - A user (Tech Lead) identifies a large, complex component that violates standards. \n user - "Our `AdminDashboard.js` is 800+ lines and uses a custom spinner. I need a safe refactor plan." \n assistant - "I'll use the refactor-planner agent. It will analyze the component, map its dependencies, flag the loading pattern violation, and generate a step-by-step plan in `/docs/architecture/` to break it down using the proper `LoadingOverlay`."<commentary> The user needs to fix a large component and a loading pattern violation, which is the core specialty of the refactor-planner agent. </commentary></example>
 model: sonnet
 color: orange
 ---
