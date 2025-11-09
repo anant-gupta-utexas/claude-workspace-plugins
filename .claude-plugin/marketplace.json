@@ -9,10 +9,13 @@
   "plugins": [
     {
       "name": "0-to-1",
-      "source": "plugins/0-to-1",
+      "source": "./plugins/0-to-1",
       "description": "Complete fullstack development setup with backend/frontend patterns, expert agents, and comprehensive tooling for building products from 0 to 1",
       "version": "1.0.0",
-      "author": "Anant Gupta",
+      "author": {
+        "name": "Anant Gupta",
+        "contact": "anant.gupta@utexas.edu"
+      },
       "category": "development",
       "keywords": [
         "fullstack",
@@ -27,13 +30,7 @@
         "python",
         "fastapi",
         "0-to-1"
-      ],
-      "components": {
-        "skills": ["backend-dev-guidelines", "frontend-dev-guidelines", "experts-nexus", "skill-developer"],
-        "agents": ["business-strategist", "frontend-error-fixer", "plan-reviewer", "refactor-planner", "uiux-specialist", "web-research-specialist"],
-        "hooks": ["skill-activation-prompt", "post-tool-use-tracker", "error-handling-reminder"],
-        "commands": ["dev-docs", "dev-docs-update"]
-      }
+      ]
     }
   ],
   "repository": "https://github.com/anant-gupt-utexas/claude-workspace-plugins",
