@@ -7,7 +7,7 @@ Complete fullstack development plugin for building products from 0 to 1 with pro
 ### Skills (4)
 - **backend-dev-guidelines** - Python/FastAPI Clean Architecture with domain entities, use cases, and repositories
 - **frontend-dev-guidelines** - React/TypeScript/MUI v7 patterns (GUARDRAIL - blocks MUI v6 patterns)
-- **experts-nexus** - Access specialized expert agents for business strategy, tech leadership, and UI/UX design
+- **consult-experts** - Access specialized expert agents for business strategy, tech leadership, and UI/UX design
 - **skill-developer** - Meta-skill for creating and managing Claude Code skills
 
 ### Agents (6)
@@ -90,7 +90,7 @@ cd .claude/hooks && npm install
 Try asking:
 - "How do I create a FastAPI endpoint?" → backend-dev-guidelines activates
 - "Create a new React component" → frontend-dev-guidelines activates
-- "I need help with product strategy" → experts-nexus activates
+- "I need help with product strategy" → consult-experts activates
 
 ## Usage Examples
 
@@ -126,7 +126,7 @@ Try asking:
 
 ### Expert Guidance
 
-The **experts-nexus** skill provides access to specialized agents:
+The **consult-experts** skill provides access to specialized agents:
 
 **Business Strategy:**
 ```bash
@@ -288,7 +288,7 @@ Edit `.claude/skills/skill-rules.json` to add project-specific keywords:
 
 **Resources:** 10 detailed guides on React/MUI best practices
 
-### Experts Nexus
+### Consult Experts
 
 **Provides access to:**
 - Product Manager - Product strategy and roadmap planning

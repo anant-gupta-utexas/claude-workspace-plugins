@@ -149,6 +149,33 @@
                     "(setup|configure).*?skill"
                 ]
             }
+        },
+        "consult-experts": {
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "medium",
+            "description": "Access specialized expert agents for business strategy, tech leadership, and UI/UX design",
+            "promptTriggers": {
+                "keywords": [
+                    "expert",
+                    "consult",
+                    "business strategy",
+                    "product strategy",
+                    "tech leadership",
+                    "UI/UX",
+                    "design",
+                    "user experience",
+                    "product manager",
+                    "CTO",
+                    "designer"
+                ],
+                "intentPatterns": [
+                    "(need|want).*?(expert|help|advice).*?(strategy|design|leadership)",
+                    "(consult|ask).*?(expert|specialist)",
+                    "(product|business|tech).*?(strategy|advice|guidance)",
+                    "(UI|UX|design).*?(help|review|feedback)"
+                ]
+            }
         }
     },
     "notes": {

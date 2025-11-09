@@ -68,7 +68,7 @@ Perfect for:
 **Skills:**
 - **backend-dev-guidelines** - Python/FastAPI Clean Architecture patterns
 - **frontend-dev-guidelines** - React/TypeScript/MUI v7 patterns (GUARDRAIL)
-- **experts-nexus** - Access specialized expert agents
+- **consult-experts** - Access specialized expert agents
 - **skill-developer** - Meta-skill for creating skills
 
 **Agents:**
@@ -119,10 +119,10 @@ Invoke agents for complex tasks:
 
 ### Access Expert Agents via Skills
 
-The experts-nexus skill provides access to specialized expert agents:
+The consult-experts skill provides access to specialized expert agents:
 
 ```bash
-"I need help with product strategy"  # Activates experts-nexus skill
+"I need help with product strategy"  # Activates consult-experts skill
 ```
 
 ### Slash Commands
