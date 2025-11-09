@@ -135,9 +135,9 @@
             "description": "Access specialized expert agents for strategy, tech leadership, and UX design",
             "promptTriggers": {
                 "keywords": [
-                    "consult product expert",
-                    "consult tech lead",
-                    "consult ux designer",
+                    "consult product",
+                    "consult tech",
+                    "consult uiux",
                     "expert advice",
                     "product strategy",
                     "tech leadership"
