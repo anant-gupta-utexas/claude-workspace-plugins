@@ -1,61 +1,72 @@
 {
     "version": "1.0",
-    "description": "Skill activation triggers for backend plugin. Customize pathPatterns to match your project structure after installation.",
+    "description": "Skill activation triggers optimized for Python/FastAPI backend with React/TypeScript frontend. Uses explicit phrases and minimal regexes.",
+    "explicitTriggerPhrases": {
+        "RECOMMENDED": "Use these exact phrases in your prompts to reliably trigger skills without relying on keyword/regex matching",
+        "backend-dev-guidelines": [
+            "following backend guidelines",
+            "use backend best practices",
+            "apply domain-driven design",
+            "implement use case",
+            "create repository pattern",
+            "add infrastructure layer"
+        ],
+        "frontend-dev-guidelines": [
+            "following frontend guidelines",
+            "use react best practices",
+            "apply mui patterns",
+            "create ui component"
+        ],
+        "skill-developer": [
+            "help with skill development",
+            "update skill-rules.json",
+            "create new skill",
+            "configure skill triggers"
+        ],
+        "consult-experts": [
+            "consult the product expert",
+            "consult the tech lead",
+            "consult the ux designer",
+            "get expert advice"
+        ]
+    },
     "skills": {
         "backend-dev-guidelines": {
             "type": "domain",
             "enforcement": "suggest",
             "priority": "high",
-            "description": "Backend development patterns for Node.js/Express/TypeScript",
+            "description": "Python/FastAPI backend development with domain-driven design patterns",
             "promptTriggers": {
                 "keywords": [
-                    "backend",
-                    "backend development",
-                    "microservice",
-                    "controller",
-                    "service",
-                    "repository",
-                    "route",
-                    "routing",
-                    "express",
-                    "API",
-                    "endpoint",
-                    "middleware",
-                    "validation",
-                    "Zod",
-                    "Prisma",
-                    "database access",
-                    "BaseController",
-                    "dependency injection",
-                    "unifiedConfig",
-                    "configuration"
-                ],
-                "intentPatterns": [
-                    "(create|add|implement|build).*?(route|endpoint|API|controller|service|repository)",
-                    "(fix|handle|debug).*?(error|exception|backend)",
-                    "(add|implement).*?(middleware|validation|error.*?handling)",
-                    "(organize|structure|refactor).*?(backend|service|API)",
-                    "(how to|best practice).*?(backend|route|controller|service)"
+                    "backend guidelines",
+                    "backend best practices",
+                    "domain-driven design",
+                    "use case",
+                    "repository pattern",
+                    "infrastructure layer",
+                    "FastAPI",
+                    "Pydantic",
+                    "SQLAlchemy"
                 ]
             },
             "fileTriggers": {
                 "pathPatterns": [
-                    "src/**/*.ts",
-                    "backend/**/*.ts",
-                    "api/**/*.ts",
-                    "server/**/*.ts",
-                    "services/**/*.ts"
+                    "src/application/**/*.py",
+                    "src/domain/**/*.py",
+                    "src/infrastructure/**/*.py"
                 ],
                 "pathExclusions": [
-                    "**/*.test.ts",
-                    "**/*.spec.ts"
+                    "**/*_test.py",
+                    "**/test_*.py",
+                    "**/__pycache__/**"
                 ],
                 "contentPatterns": [
-                    "router\\.",
-                    "app\\.(get|post|put|delete|patch)",
-                    "export.*Controller",
-                    "export.*Service",
-                    "prisma\\."
+                    "from fastapi",
+                    "from pydantic",
+                    "from sqlalchemy",
+                    "@router\\.",
+                    "class.*Service:",
+                    "class.*Repository:"
                 ]
             }
         },
@@ -63,51 +74,29 @@
             "type": "guardrail",
             "enforcement": "block",
             "priority": "high",
-            "description": "React/TypeScript best practices including MUI v7 compatibility",
+            "description": "React/TypeScript with MUI v7 compatibility and best practices",
             "promptTriggers": {
                 "keywords": [
-                    "component",
-                    "react component",
-                    "UI",
-                    "interface",
-                    "page",
-                    "modal",
-                    "dialog",
-                    "form",
-                    "MUI",
-                    "Material-UI",
-                    "Grid",
-                    "styling",
-                    "frontend",
-                    "React"
-                ],
-                "intentPatterns": [
-                    "(create|add|make|build|update|modify|edit).*?(component|UI|page|modal|dialog|form)",
-                    "(how to|best practice).*?(component|react|MUI)",
-                    "(style|design|layout).*?(component|UI)"
+                    "frontend guidelines",
+                    "react best practices",
+                    "mui patterns",
+                    "ui component",
+                    "MUI v7",
+                    "Grid size prop"
                 ]
             },
             "fileTriggers": {
                 "pathPatterns": [
-                    "src/**/*.tsx",
-                    "src/**/*.ts",
-                    "frontend/src/**/*.tsx",
-                    "frontend/src/**/*.ts",
-                    "client/src/**/*.tsx",
-                    "client/src/**/*.ts"
+                    "src/**/*.tsx"
                 ],
                 "pathExclusions": [
                     "**/*.test.tsx",
-                    "**/*.test.ts",
                     "**/*.spec.tsx",
-                    "**/*.spec.ts",
-                    "**/*.styles.ts",
                     "**/vite.config.ts",
                     "**/tsconfig.json"
                 ],
                 "contentPatterns": [
-                    "from '@mui/material';",
-                    "import.*Grid.*from.*@mui",
+                    "from '@mui/material'",
                     "<Grid ",
                     "Grid2",
                     "Unstable_Grid",
@@ -115,7 +104,7 @@
                     "@material-ui/core"
                 ]
             },
-            "blockMessage": "⚠️ BLOCKED - Frontend Best Practices Required\n\n📋 REQUIRED ACTION:\n1. Use Skill tool: 'frontend-dev-guidelines'\n2. Review MUI v7 patterns (Grid uses size={{}} prop, NOT xs/sm props)\n3. Check React/TypeScript best practices\n4. Use proper styling patterns\n5. Then retry this edit\n\nReason: Enforce MUI v7 compatibility and React best practices\nFile: {file_path}\n\n💡 TIP: Add '// @skip-validation' comment to skip future checks",
+            "blockMessage": "⚠️ BLOCKED - Frontend Best Practices Required\n\n📋 REQUIRED ACTION:\n1. Use Skill tool: 'frontend-dev-guidelines'\n2. Review MUI v7 patterns (Grid uses size={{}} prop, NOT xs/sm props)\n3. Check React/TypeScript best practices\n4. Then retry this edit\n\nReason: Enforce MUI v7 compatibility and React best practices\nFile: {file_path}\n\n💡 TIP: Add '// @skip-validation' comment to skip future checks",
             "skipConditions": {
                 "sessionSkillUsed": true,
                 "fileMarkers": [
@@ -131,22 +120,11 @@
             "description": "Meta-skill for creating and managing Claude Code skills",
             "promptTriggers": {
                 "keywords": [
-                    "skill system",
-                    "create skill",
-                    "add skill",
-                    "skill triggers",
-                    "skill rules",
-                    "hook system",
                     "skill development",
                     "skill-rules.json",
-                    "skill activation",
-                    "manage skills"
-                ],
-                "intentPatterns": [
-                    "(how do|how does|explain).*?skill",
-                    "(create|add|modify|build).*?skill",
-                    "skill.*?(work|trigger|activate|system)",
-                    "(setup|configure).*?skill"
+                    "create new skill",
+                    "skill triggers",
+                    "configure skill"
                 ]
             }
         },
@@ -154,51 +132,40 @@
             "type": "domain",
             "enforcement": "suggest",
             "priority": "medium",
-            "description": "Access specialized expert agents for business strategy, tech leadership, and UI/UX design",
+            "description": "Access specialized expert agents for strategy, tech leadership, and UX design",
             "promptTriggers": {
                 "keywords": [
-                    "expert",
-                    "consult",
-                    "business strategy",
+                    "consult product expert",
+                    "consult tech lead",
+                    "consult ux designer",
+                    "expert advice",
                     "product strategy",
-                    "tech leadership",
-                    "UI/UX",
-                    "design",
-                    "user experience",
-                    "product manager",
-                    "CTO",
-                    "designer"
-                ],
-                "intentPatterns": [
-                    "(need|want).*?(expert|help|advice).*?(strategy|design|leadership)",
-                    "(consult|ask).*?(expert|specialist)",
-                    "(product|business|tech).*?(strategy|advice|guidance)",
-                    "(UI|UX|design).*?(help|review|feedback)"
+                    "tech leadership"
                 ]
             }
         }
     },
     "notes": {
+        "usage": {
+            "BEST_PRACTICE": "Use explicit trigger phrases from 'explicitTriggerPhrases' section above for reliable skill activation",
+            "EXAMPLE": "Instead of 'create an API endpoint', say 'following backend guidelines, create an API endpoint'"
+        },
         "enforcement_types": {
             "suggest": "Skill suggestion appears but doesn't block execution",
             "block": "Requires skill to be used before proceeding (guardrail)",
             "warn": "Shows warning but allows proceeding"
         },
         "priority_levels": {
-            "critical": "Highest - Always trigger when matched",
-            "high": "Important - Trigger for most matches",
-            "medium": "Moderate - Trigger for clear matches",
-            "low": "Optional - Trigger only for explicit matches"
+            "high": "Important - Trigger for clear matches",
+            "medium": "Moderate - Trigger for explicit matches",
+            "low": "Optional - Trigger only when explicitly requested"
         },
-        "customization": {
-            "IMPORTANT": "Update pathPatterns in fileTriggers to match YOUR project structure!",
-            "examples": {
-                "single_app": "src/**/*.ts",
-                "monorepo": "services/*/src/**/*.ts or packages/*/src/**/*.ts",
-                "specific_services": "blog-api/src/**/*.ts, auth-service/src/**/*.ts"
-            },
-            "keywords": "Add domain-specific terms relevant to your project",
-            "intentPatterns": "Use regex for flexible user intent matching"
+        "directory_structure": {
+            "dev/": "Work-in-progress technical designs (active/ and archive/)",
+            "docs/": "Evergreen documentation (1_product/, 2_architecture/, 3_guides/, 4_api/, 5_testing/)",
+            "src/application/": "Use cases - orchestrates workflows",
+            "src/domain/": "Business logic - pure entities and rules",
+            "src/infrastructure/": "Frameworks - FastAPI, SQLAlchemy, etc."
         }
     }
 }
