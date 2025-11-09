@@ -117,9 +117,8 @@
   },
   "post_install": {
     "instructions": [
-      "Update .claude/skills/skill-rules.json with your project path patterns",
-      "Install hook dependencies: cd .claude/hooks && npm install",
-      "Test skill activation: Ask 'How do I create a controller?'"
+      "The plugin is ready to use! Skills, agents, commands, and hooks are automatically available.",
+      "Test skill activation: Ask 'How do I create a controller?' or 'How should I structure my React components?'"
     ]
   }
 }
