@@ -102,14 +102,7 @@ If invalid JSON, jq will show the error.
 
 #### Debug Command
 
-Test the hook manually:
-
-```bash
-echo '{"session_id":"debug","prompt":"your test prompt here"}' | \
-  npx tsx .claude/hooks/skill-activation-prompt.ts
-```
-
-Expected: Your skill should appear in the output.
+See [REFERENCE.md - Testing Your Skills](REFERENCE.md#testing-your-skills) for test commands.
 
 ---
 
@@ -231,22 +224,7 @@ unset SKIP_DB_VERIFICATION
 
 #### Debug Command
 
-Test the hook manually:
-
-```bash
-cat <<'EOF' | npx tsx .claude/hooks/skill-verification-guard.ts 2>&1
-{
-  "session_id": "debug",
-  "tool_name": "Edit",
-  "tool_input": {"file_path": "/root/git/your-project/form/src/services/user.ts"}
-}
-EOF
-echo "Exit code: $?"
-```
-
-Expected:
-- Exit code 2 + stderr message if should block
-- Exit code 0 + no output if should allow
+See [REFERENCE.md - Testing Your Skills](REFERENCE.md#testing-your-skills) for test commands.
 
 ---
 
@@ -492,15 +470,7 @@ Content pattern matching reads entire file - slow for large files.
 
 ### Measure Performance
 
-```bash
-# UserPromptSubmit
-time echo '{"prompt":"test"}' | npx tsx .claude/hooks/skill-activation-prompt.ts
-
-# PreToolUse
-time cat <<'EOF' | npx tsx .claude/hooks/skill-verification-guard.ts
-{"tool_name":"Edit","tool_input":{"file_path":"test.ts"}}
-EOF
-```
+Use `time` command with test commands from [REFERENCE.md](REFERENCE.md#testing-your-skills).
 
 **Target metrics:**
 - UserPromptSubmit: < 100ms
@@ -510,5 +480,5 @@ EOF
 
 **Related Files:**
 - [SKILL.md](SKILL.md) - Main skill guide
-- [HOOK_MECHANISMS.md](HOOK_MECHANISMS.md) - How hooks work
-- [SKILL_RULES_REFERENCE.md](SKILL_RULES_REFERENCE.md) - Configuration reference
+- [REFERENCE.md](REFERENCE.md) - Complete configuration reference
+- [INTERNALS.md](INTERNALS.md) - How hooks work

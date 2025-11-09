@@ -1,6 +1,6 @@
-# Hook Mechanisms - Deep Dive
+# Internals - Hook Mechanisms Deep Dive
 
-Technical deep dive into how the UserPromptSubmit and PreToolUse hooks work.
+Technical deep dive into how the UserPromptSubmit and PreToolUse hooks work internally.
 
 ## Table of Contents
 
@@ -302,5 +302,5 @@ The hook cannot detect when the skill is *actually* invoked - it just blocks onc
 
 **Related Files:**
 - [SKILL.md](SKILL.md) - Main skill guide
+- [REFERENCE.md](REFERENCE.md) - Complete configuration reference
 - [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Debug hook issues
-- [SKILL_RULES_REFERENCE.md](SKILL_RULES_REFERENCE.md) - Configuration reference

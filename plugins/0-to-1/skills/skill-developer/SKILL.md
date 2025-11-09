@@ -140,7 +140,7 @@ The actual guidance, documentation, patterns, examples
 
 ### Step 2: Add to skill-rules.json
 
-See [SKILL_RULES_REFERENCE.md](SKILL_RULES_REFERENCE.md) for complete schema.
+See [REFERENCE.md](REFERENCE.md) for complete schema and examples.
 
 **Basic Template:**
 ```json
@@ -157,20 +157,9 @@ See [SKILL_RULES_REFERENCE.md](SKILL_RULES_REFERENCE.md) for complete schema.
 }
 ```
 
-### Step 3: Test Triggers
+### Step 3: Test & Refine
 
-**Test UserPromptSubmit:**
-```bash
-echo '{"session_id":"test","prompt":"your test prompt"}' | \
-  npx tsx .claude/hooks/skill-activation-prompt.ts
-```
-
-**Test PreToolUse:**
-```bash
-cat <<'EOF' | npx tsx .claude/hooks/skill-verification-guard.ts
-{"session_id":"test","tool_name":"Edit","tool_input":{"file_path":"test.ts"}}
-EOF
-```
+Test your triggers and refine patterns. See [REFERENCE.md - Testing Your Skills](REFERENCE.md#testing-your-skills) for test commands.
 
 ### Step 4: Refine Patterns
 
@@ -294,49 +283,29 @@ When creating a new skill, verify:
 
 For detailed information on specific topics, see:
 
-### [TRIGGER_TYPES.md](TRIGGER_TYPES.md)
-Complete guide to all trigger types:
-- Keyword triggers (explicit topic matching)
-- Intent patterns (implicit action detection)
-- File path triggers (glob patterns)
-- Content patterns (regex in files)
-- Best practices and examples for each
-- Common pitfalls and testing strategies
-
-### [SKILL_RULES_REFERENCE.md](SKILL_RULES_REFERENCE.md)
-Complete skill-rules.json schema:
-- Full TypeScript interface definitions
-- Field-by-field explanations
-- Complete guardrail skill example
-- Complete domain skill example
+### [REFERENCE.md](REFERENCE.md) - Complete Configuration Guide
+- Complete skill-rules.json schema with TypeScript types
+- All trigger types (keywords, intent patterns, file paths, content patterns)
+- Ready-to-use pattern library (regex and glob patterns)
+- Complete guardrail and domain skill examples
+- Testing commands and best practices
 - Validation guide and common errors
 
-### [HOOK_MECHANISMS.md](HOOK_MECHANISMS.md)
-Deep dive into hook internals:
+### [INTERNALS.md](INTERNALS.md) - Technical Deep Dive
 - UserPromptSubmit flow (detailed)
 - PreToolUse flow (detailed)
 - Exit code behavior table (CRITICAL)
 - Session state management
 - Performance considerations
 
-### [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
-Comprehensive debugging guide:
+### [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Debugging Guide
 - Skill not triggering (UserPromptSubmit)
 - PreToolUse not blocking
 - False positives (too many triggers)
 - Hook not executing at all
 - Performance issues
 
-### [PATTERNS_LIBRARY.md](PATTERNS_LIBRARY.md)
-Ready-to-use pattern collection:
-- Intent pattern library (regex)
-- File path pattern library (glob)
-- Content pattern library (regex)
-- Organized by use case
-- Copy-paste ready
-
-### [ADVANCED.md](ADVANCED.md)
-Future enhancements and ideas:
+### [ADVANCED.md](ADVANCED.md) - Future Ideas
 - Dynamic rule updates
 - Skill dependencies
 - Conditional enforcement
@@ -362,7 +331,7 @@ Future enhancements and ideas:
 - **File Paths**: Location-based activation
 - **Content**: Technology-specific detection
 
-See [TRIGGER_TYPES.md](TRIGGER_TYPES.md) for complete details.
+See [REFERENCE.md - Trigger Types Guide](REFERENCE.md#trigger-types-guide) for complete details.
 
 ### Enforcement
 
@@ -388,18 +357,7 @@ See [TRIGGER_TYPES.md](TRIGGER_TYPES.md) for complete details.
 
 ### Troubleshoot
 
-Test hooks manually:
-```bash
-# UserPromptSubmit
-echo '{"prompt":"test"}' | npx tsx .claude/hooks/skill-activation-prompt.ts
-
-# PreToolUse
-cat <<'EOF' | npx tsx .claude/hooks/skill-verification-guard.ts
-{"tool_name":"Edit","tool_input":{"file_path":"test.ts"}}
-EOF
-```
-
-See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for complete debugging guide.
+See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for complete debugging guide and [REFERENCE.md - Testing](REFERENCE.md#testing-your-skills) for test commands.
 
 ---
 
