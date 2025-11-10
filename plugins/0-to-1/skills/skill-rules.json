@@ -71,8 +71,8 @@
             }
         },
         "frontend-dev-guidelines": {
-            "type": "guardrail",
-            "enforcement": "block",
+            "type": "domain",
+            "enforcement": "suggest",
             "priority": "high",
             "description": "React/TypeScript with MUI v7 compatibility and best practices",
             "promptTriggers": {
@@ -103,14 +103,6 @@
                     "makeStyles",
                     "@material-ui/core"
                 ]
-            },
-            "blockMessage": "⚠️ BLOCKED - Frontend Best Practices Required\n\n📋 REQUIRED ACTION:\n1. Use Skill tool: 'frontend-dev-guidelines'\n2. Review MUI v7 patterns (Grid uses size={{}} prop, NOT xs/sm props)\n3. Check React/TypeScript best practices\n4. Then retry this edit\n\nReason: Enforce MUI v7 compatibility and React best practices\nFile: {file_path}\n\n💡 TIP: Add '// @skip-validation' comment to skip future checks",
-            "skipConditions": {
-                "sessionSkillUsed": true,
-                "fileMarkers": [
-                    "@skip-validation"
-                ],
-                "envOverride": "SKIP_FRONTEND_GUIDELINES"
             }
         },
         "skill-developer": {

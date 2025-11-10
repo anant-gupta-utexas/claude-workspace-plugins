@@ -152,8 +152,8 @@ if [[ "$repo" == "unknown" ]] || [[ -z "$repo" ]]; then
     exit 0  # Exit 0 for skip conditions
 fi
 
-# Log edited file
-echo "$(date +%s):$file_path:$repo" >> "$cache_dir/edited-files.log"
+# Log edited file (tab-separated: timestamp, tool_name, file_path)
+printf "%s\t%s\t%s\n" "$(date +%s)" "$tool_name" "$file_path" >> "$cache_dir/edited-files.log"
 
 # Update affected repos list
 if ! grep -q "^$repo$" "$cache_dir/affected-repos.txt" 2>/dev/null; then

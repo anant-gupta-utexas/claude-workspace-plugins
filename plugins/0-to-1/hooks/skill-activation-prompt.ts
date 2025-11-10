@@ -37,6 +37,20 @@ interface MatchedSkill {
 function loadSkillRules(): SkillRules {
     const mergedSkills: Record<string, SkillRule> = {};
 
+    // Try to load plugin-level skill rules first (from CLAUDE_PLUGIN_ROOT)
+    const pluginRoot = process.env.CLAUDE_PLUGIN_ROOT;
+    if (pluginRoot) {
+        const pluginRulesPath = join(pluginRoot, 'skills', 'skill-rules.json');
+        if (existsSync(pluginRulesPath)) {
+            try {
+                const pluginRules: SkillRules = JSON.parse(readFileSync(pluginRulesPath, 'utf-8'));
+                Object.assign(mergedSkills, pluginRules.skills);
+            } catch (err) {
+                console.error(`Warning: Failed to load plugin skill-rules.json: ${err}`);
+            }
+        }
+    }
+
     // Try to load user-level skill rules (~/.claude/skills/skill-rules.json)
     const userRulesPath = join(homedir(), '.claude', 'skills', 'skill-rules.json');
     if (existsSync(userRulesPath)) {
@@ -55,7 +69,7 @@ function loadSkillRules(): SkillRules {
         if (existsSync(projectRulesPath)) {
             try {
                 const projectRules: SkillRules = JSON.parse(readFileSync(projectRulesPath, 'utf-8'));
-                // Project rules override user rules
+                // Project rules override user and plugin rules
                 Object.assign(mergedSkills, projectRules.skills);
             } catch (err) {
                 console.error(`Warning: Failed to load project-level skill-rules.json: ${err}`);
