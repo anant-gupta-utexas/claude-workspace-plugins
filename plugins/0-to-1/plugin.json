@@ -76,22 +76,9 @@
     ],
     "hooks": [
       {
-        "name": "skill-activation-prompt",
-        "path": "hooks/skill-activation-prompt.sh",
-        "type": "UserPromptSubmit",
-        "description": "Automatically suggests relevant skills based on prompts"
-      },
-      {
-        "name": "post-tool-use-tracker",
-        "path": "hooks/post-tool-use-tracker.sh",
-        "type": "PostToolUse",
-        "description": "Tracks file changes for context management"
-      },
-      {
-        "name": "error-handling-reminder",
-        "path": "hooks/error-handling-reminder.sh",
-        "type": "Stop",
-        "description": "Reminds developers about error handling best practices after editing backend/frontend code"
+        "name": "0-to-1-hooks",
+        "path": "hooks/hooks.json",
+        "description": "0-to-1 plugin hooks for skill activation, file tracking, and error handling reminders"
       }
     ],
     "commands": [
