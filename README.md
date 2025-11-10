@@ -8,7 +8,7 @@ Production-tested Claude Code plugin for building products from 0 to 1 with full
 Complete fullstack development setup for building products from scratch with backend/frontend patterns and expert guidance.
 
 **Includes:**
-- 4 Skills (backend, frontend, experts nexus, skill-developer)
+- 4 Skills (backend, frontend, consult-experts, skill-developer)
 - 6 Agents (business strategy, frontend debugging, planning, refactoring, UI/UX, research)
 - 3 Hooks (skill activation, file tracking, error handling reminders)
 - 2 Commands (/dev-docs, /dev-docs-update)
