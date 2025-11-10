@@ -31,8 +31,6 @@ Complete fullstack development plugin for building products from 0 to 1 with pro
 
 ### Backend
 - Python/FastAPI with Clean Architecture
-- Node.js/Express (TypeScript)
-- Prisma ORM (optional)
 
 ### Frontend
 - React 18+
@@ -49,9 +47,13 @@ Complete fullstack development plugin for building products from 0 to 1 with pro
 
 ## Post-Installation Setup
 
-### 1. Customize Skill Triggers
+### 1. Customize Skill Triggers (Optional)
 
-Edit `.claude/skills/skill-rules.json` to match your project structure:
+The default file patterns work for most projects:
+- Backend: `src/application/**/*.py`, `src/domain/**/*.py`, `src/infrastructure/**/*.py`
+- Frontend: `src/**/*.tsx`
+
+**Only customize if your project structure differs.** Edit `.claude/skills/skill-rules.json`:
 
 ```json
 {
@@ -59,17 +61,15 @@ Edit `.claude/skills/skill-rules.json` to match your project structure:
     "backend-dev-guidelines": {
       "fileTriggers": {
         "pathPatterns": [
-          "src/**/*.py",           // Python backend
-          "backend/**/*.ts",       // Node.js backend
-          "services/*/src/**/*.ts" // Monorepo
+          "backend/**/*.py",       // Custom backend folder
+          "services/*/src/**/*.py" // Monorepo
         ]
       }
     },
     "frontend-dev-guidelines": {
       "fileTriggers": {
         "pathPatterns": [
-          "src/**/*.tsx",          // Single app
-          "apps/web/src/**/*.tsx"  // Monorepo
+          "apps/web/src/**/*.tsx"  // Monorepo frontend
         ]
       }
     }
@@ -77,51 +77,82 @@ Edit `.claude/skills/skill-rules.json` to match your project structure:
 }
 ```
 
-**Why?** The skill-activation-prompt hook uses these patterns to automatically activate skills when you edit matching files.
-
 ### 2. Install Hook Dependencies
 
 ```bash
-cd .claude/hooks && npm install
+cd ~/.claude/plugins/marketplaces/claude-workspace-plugins/plugins/0-to-1/hooks && npm install
 ```
 
 ### 3. Test Skill Activation
 
-Try asking:
-- "How do I create a FastAPI endpoint?" → backend-dev-guidelines activates
-- "Create a new React component" → frontend-dev-guidelines activates
-- "I need help with product strategy" → consult-experts activates
+Try using explicit trigger phrases:
+- "Following backend guidelines, how do I create a FastAPI endpoint?"
+- "Using react best practices, create a new dashboard component"
+- "Consult product expert for help with my roadmap"
+
+Or edit matching files and the skills will auto-activate.
+
+## How Skills Activate
+
+Skills activate automatically in two ways:
+
+### 1. File-Based Activation
+When you edit files matching these patterns (from `.claude/skills/skill-rules.json`):
+
+**backend-dev-guidelines:**
+- `src/application/**/*.py`
+- `src/domain/**/*.py`
+- `src/infrastructure/**/*.py`
+
+**frontend-dev-guidelines:**
+- `src/**/*.tsx`
+
+### 2. Keyword-Based Activation
+When your prompts contain these keywords:
+
+**backend-dev-guidelines:**
+- `backend guidelines`, `backend best practices`
+- `domain-driven design`
+- `use case`, `repository pattern`, `infrastructure layer`
+- `FastAPI`, `Pydantic`, `SQLAlchemy`
+
+**frontend-dev-guidelines:**
+- `frontend guidelines`, `react best practices`
+- `mui patterns`, `ui component`
+- `MUI v7`, `Grid size prop`
+
+**skill-developer:**
+- `skill development`, `skill-rules.json`
+- `create new skill`, `skill triggers`, `configure skill`
+
+**consult-experts:**
+- `consult product`, `consult tech`, `consult uiux`
+- `expert advice`, `product strategy`, `tech leadership`
+
+**💡 Best Practice:** Use explicit trigger phrases for reliable activation:
+- "Following backend guidelines, create a user endpoint"
+- "Using react best practices, create a dashboard component"
 
 ## Usage Examples
 
 ### Backend Development
 
-**Skills activate automatically when you:**
-- Mention backend topics: "FastAPI", "endpoint", "repository", "use case", "domain"
-- Edit backend files: `src/**/*.py`, `backend/**/*.ts`
-- Work with Clean Architecture patterns
-
 **Example prompts:**
 ```bash
-"Create a new user registration endpoint"
-"Implement repository pattern for orders"
-"Add validation to my Pydantic model"
+"Following backend guidelines, create a new user registration endpoint"
+"Using repository pattern, implement orders repository"
+"Following backend best practices, add validation to my Pydantic model"
 ```
 
 ### Frontend Development
-
-**Skills activate automatically when you:**
-- Mention frontend topics: "component", "React", "MUI", "styling"
-- Edit frontend files: `src/**/*.tsx`, `frontend/**/*.tsx`
-- Work with React or MUI code
 
 **⚠️ Important:** frontend-dev-guidelines is a GUARDRAIL and will BLOCK MUI v6 patterns!
 
 **Example prompts:**
 ```bash
-"Create a new dashboard component"
-"Add a data grid with sorting"
-"Style this button with MUI"
+"Following frontend guidelines, create a new dashboard component"
+"Using react best practices, add a data grid with sorting"
+"Following mui patterns, style this button"
 ```
 
 ### Expert Guidance
@@ -178,7 +209,7 @@ Invoke agents for complex tasks:
 
 ### Adding Custom Keywords
 
-Edit `.claude/skills/skill-rules.json` to add project-specific keywords:
+You can add project-specific keywords to `.claude/skills/skill-rules.json`:
 
 ```json
 {
@@ -186,9 +217,9 @@ Edit `.claude/skills/skill-rules.json` to add project-specific keywords:
     "backend-dev-guidelines": {
       "promptTriggers": {
         "keywords": [
-          "backend",
+          "backend guidelines",
           "FastAPI",
-          "endpoint",
+          "use case",
           // Add your custom keywords
           "my-custom-service",
           "project-specific-term"
@@ -199,23 +230,7 @@ Edit `.claude/skills/skill-rules.json` to add project-specific keywords:
 }
 ```
 
-### Adjusting File Patterns
-
-**Single fullstack app:**
-```json
-{
-  "backend-dev-guidelines": {
-    "fileTriggers": {
-      "pathPatterns": ["backend/**/*.py"]
-    }
-  },
-  "frontend-dev-guidelines": {
-    "fileTriggers": {
-      "pathPatterns": ["frontend/**/*.tsx"]
-    }
-  }
-}
-```
+### Common File Pattern Examples
 
 **Monorepo:**
 ```json
@@ -239,7 +254,7 @@ Edit `.claude/skills/skill-rules.json` to add project-specific keywords:
 }
 ```
 
-**Multiple services:**
+**Multiple backend services:**
 ```json
 {
   "backend-dev-guidelines": {
@@ -273,7 +288,7 @@ Edit `.claude/skills/skill-rules.json` to add project-specific keywords:
 
 ### Frontend Dev Guidelines
 
-**Focus:** React/TypeScript/MUI v7 (GUARDRAIL)
+**Focus:** React/TypeScript/MUI v7
 
 **Key Topics:**
 - Component patterns
@@ -283,8 +298,6 @@ Edit `.claude/skills/skill-rules.json` to add project-specific keywords:
 - State management
 - Performance optimization
 - TypeScript standards
-
-**⚠️ GUARDRAIL:** Prevents use of deprecated MUI v6 patterns
 
 **Resources:** 10 detailed guides on React/MUI best practices
 
@@ -314,7 +327,7 @@ Edit `.claude/skills/skill-rules.json` to add project-specific keywords:
 
 ## Important: GUARDRAIL Behavior
 
-**frontend-dev-guidelines is a GUARDRAIL** - it will **BLOCK** edits that use MUI v6 patterns!
+If **frontend-dev-guidelines is a GUARDRAIL** - it will **BLOCK** edits that use MUI v6 patterns!
 
 This prevents accidental use of deprecated patterns:
 - ❌ `<Grid xs={6}>` (MUI v6)

@@ -14,7 +14,7 @@ Complete fullstack development setup for building products from scratch with bac
 - 2 Commands (/dev-docs, /dev-docs-update)
 
 **Tech Stack:**
-- Backend: Python/FastAPI or Node.js/Express
+- Backend: Python/FastAPI
 - Frontend: React 18+, TypeScript, MUI v7
 - Database: Prisma ORM (optional)
 
@@ -46,9 +46,8 @@ This opens an interactive UI showing all available plugins from this marketplace
 
 The plugin requires minimal post-installation setup:
 
-1. Update `skill-rules.json` with your project paths
-2. Install hook dependencies: `cd .claude/hooks && npm install`
-3. Test skill activation
+1. Install hook dependencies: `cd ~/.claude/plugins/marketplaces/claude-workspace-plugins/plugins/0-to-1/hooks && npm install`
+2. Test skill activation
 
 See the [plugin README](./plugins/0-to-1/README.md) for detailed instructions.
 
@@ -67,7 +66,7 @@ Perfect for:
 
 **Skills:**
 - **backend-dev-guidelines** - Python/FastAPI Clean Architecture patterns
-- **frontend-dev-guidelines** - React/TypeScript/MUI v7 patterns (GUARDRAIL)
+- **frontend-dev-guidelines** - React/TypeScript/MUI v7 patterns
 - **consult-experts** - Access specialized expert agents
 - **skill-developer** - Meta-skill for creating skills
 
@@ -101,11 +100,15 @@ Together, they create an intelligent development environment tailored to your te
 ### Skills Auto-Activate
 
 After installation, skills automatically activate when:
-- You mention relevant keywords
-- You edit matching files
-- You work with specific technologies
+- You use specific keywords in your prompts (see skill-rules.json for the list)
+- You edit files matching configured patterns
+- You mention technologies like FastAPI, React, MUI v7
 
-**Example:** Edit a Python FastAPI file → backend-dev-guidelines activates automatically
+**Best Practice:** Use explicit trigger phrases:
+- "Following backend guidelines, create an endpoint"
+- "Using react best practices, create a component"
+
+**Example:** Edit `src/application/user_service.py` → backend-dev-guidelines activates automatically
 
 ### Using Agents
 
@@ -122,7 +125,8 @@ Invoke agents for complex tasks:
 The consult-experts skill provides access to specialized expert agents:
 
 ```bash
-"I need help with product strategy"  # Activates consult-experts skill
+"Consult product expert for help with my roadmap"  # Activates consult-experts skill
+"Consult tech lead for architecture decisions"     # Activates consult-experts skill
 ```
 
 ### Slash Commands
@@ -138,38 +142,37 @@ Use commands for workflows:
 
 ## ⚙️ Customization
 
-### Path Patterns
+The plugin works out-of-the-box with default patterns. Only customize if your project structure differs.
 
-After installing the plugin, customize path patterns in `.claude/skills/skill-rules.json`:
+### Adjusting Path Patterns
 
-**Backend Example:**
+Edit `.claude/skills/skill-rules.json` to match your project:
+
+**Monorepo Example:**
 ```json
 {
-  "backend-dev-guidelines": {
-    "fileTriggers": {
-      "pathPatterns": [
-        "src/**/*.py",           // Python backend
-        "backend/**/*.ts",       // Node.js backend
-        "services/*/src/**/*.ts" // Monorepo
-      ]
+  "skills": {
+    "backend-dev-guidelines": {
+      "fileTriggers": {
+        "pathPatterns": [
+          "services/*/src/**/*.py",
+          "packages/backend/**/*.ts"
+        ]
+      }
+    },
+    "frontend-dev-guidelines": {
+      "fileTriggers": {
+        "pathPatterns": [
+          "apps/web/src/**/*.tsx",
+          "packages/ui/src/**/*.tsx"
+        ]
+      }
     }
   }
 }
 ```
 
-**Frontend Example:**
-```json
-{
-  "frontend-dev-guidelines": {
-    "fileTriggers": {
-      "pathPatterns": [
-        "src/**/*.tsx",          // Single app
-        "apps/web/src/**/*.tsx"  // Monorepo
-      ]
-    }
-  }
-}
-```
+See the [plugin README](./plugins/0-to-1/README.md#advanced-customization) for more examples.
 
 ---
 
