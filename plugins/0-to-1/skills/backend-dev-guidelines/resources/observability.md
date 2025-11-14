@@ -406,6 +406,6 @@ logger.info(f"Password: {password}")# NEVER!
 
 **Related Files:**
 
-- [SKILL.md](SKILL.md) - Main guide
-- [clean-architecture.md](clean-architecture.md) - Architecture overview
-- [configuration.md](configuration.md) - OpenTelemetry configuration
+- `../SKILL.md` - Main guide
+- `./clean-architecture.md` - Architecture overview
+- `./configuration.md` - OpenTelemetry configuration

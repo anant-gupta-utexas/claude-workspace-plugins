@@ -425,8 +425,8 @@ class CreateUserUseCase:
 ---
 
 **Related Files:**
-- [SKILL.md](../SKILL.md) - Main guide
-- [clean-architecture.md](clean-architecture.md) - Layer separation
-- [domain-layer.md](domain-layer.md) - Domain validation
-- [application-layer.md](application-layer.md) - Application DTOs
-- [api-layer.md](api-layer.md) - Pydantic for API
+- `../SKILL.md` - Main guide
+- `./clean-architecture.md` - Layer separation
+- `./domain-layer.md` - Domain validation
+- `./application-layer.md` - Application DTOs
+- `./api-layer.md` - Pydantic for API

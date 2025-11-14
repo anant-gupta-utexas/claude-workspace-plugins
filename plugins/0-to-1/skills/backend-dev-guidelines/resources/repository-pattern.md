@@ -450,7 +450,7 @@ alembic upgrade head
 ---
 
 **Related Files:**
-- [SKILL.md](../SKILL.md) - Main guide
-- [clean-architecture.md](clean-architecture.md) - Architecture overview
-- [domain-layer.md](domain-layer.md) - Domain interfaces
-- [application-layer.md](application-layer.md) - Using repositories
+- `../SKILL.md` - Main guide
+- `./clean-architecture.md` - Architecture overview
+- `./domain-layer.md` - Domain interfaces
+- `./application-layer.md` - Using repositories

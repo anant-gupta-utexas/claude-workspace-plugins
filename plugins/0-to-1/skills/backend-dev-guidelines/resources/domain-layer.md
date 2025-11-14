@@ -421,7 +421,7 @@ class BusinessRuleViolationError(DomainException):
 ---
 
 **Related Files:**
-- [SKILL.md](../SKILL.md) - Main guide
-- [clean-architecture.md](clean-architecture.md) - Architecture overview
-- [application-layer.md](application-layer.md) - Application layer details
-- [repository-pattern.md](repository-pattern.md) - Implementing repositories
+- `../SKILL.md` - Main guide
+- `./clean-architecture.md` - Architecture overview
+- `./application-layer.md` - Application layer details
+- `./repository-pattern.md` - Implementing repositories

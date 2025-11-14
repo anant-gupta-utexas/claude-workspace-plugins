@@ -413,7 +413,7 @@ async def fetch_data():
 ---
 
 **Related Files:**
-- [SKILL.md](../SKILL.md) - Main guide
-- [observability.md](observability.md) - OpenTelemetry error tracking
-- [application-layer.md](application-layer.md) - Async in use cases
-- [complete-examples.md](complete-examples.md) - Full async examples
+- `../SKILL.md` - Main guide
+- `./observability.md` - OpenTelemetry error tracking
+- `./application-layer.md` - Async in use cases
+- `./complete-examples.md` - Full async examples

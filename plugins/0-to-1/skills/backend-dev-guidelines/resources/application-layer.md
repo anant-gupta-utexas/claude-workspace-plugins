@@ -480,8 +480,8 @@ class CreateTaskUseCase:
 
 **Related Files:**
 
-- [SKILL.md](SKILL.md) - Main guide
-- [clean-architecture.md](clean-architecture.md) - Architecture overview
-- [domain-layer.md](domain-layer.md) - Domain layer details
-- [api-layer.md](api-layer.md) - API layer details
-- [testing-guide.md](testing-guide.md) - Testing use cases
+- `../SKILL.md` - Main guide
+- `./clean-architecture.md` - Architecture overview
+- `./domain-layer.md` - Domain layer details
+- `./api-layer.md` - API layer details
+- `./testing-guide.md` - Testing use cases

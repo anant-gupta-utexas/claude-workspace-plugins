@@ -41,7 +41,7 @@ Automatically activates when working on:
 
 ### **New Project Checklist**
 
-- [ ]  Directory structure (see [clean-architecture.md](resources/clean-architecture.md))
+- [ ]  Directory structure (see `./resources/clean-architecture.md`)
 - [ ]  `uv` for dependency management with dependency groups
 - [ ]  Pydantic Settings for configuration
 - [ ]  OpenTelemetry setup for observability
@@ -59,14 +59,14 @@ Automatically activates when working on:
 ┌─────────────────────────────────────┐
 │    Infrastructure Layer             │
 │  (API, Database, Messaging, etc.)   │
-│           │                          │
-│           ▼                          │
-│    Application Layer                 │
-│  (Use Cases, Services, DTOs)         │
-│           │                          │
-│           ▼                          │
-│    Domain Layer                      │
-│  (Entities, Value Objects, Rules)    │
+│           │                         │
+│           ▼                         │
+│    Application Layer                │
+│  (Use Cases, Services, DTOs)        │
+│           │                         │
+│           ▼                         │
+│    Domain Layer                     │
+│  (Entities, Value Objects, Rules)   │
 └─────────────────────────────────────┘
 ```
 
@@ -77,7 +77,7 @@ Automatically activates when working on:
 - Application depends only on Domain
 - Infrastructure depends on Application and Domain
 
-See [clean-architecture.md](resources/clean-architecture.md) for complete details.
+See `./resources/clean-architecture.md` for complete details.
 
 ---
 
@@ -428,63 +428,63 @@ pytest -m "use_case or service"
 
 | Need to... | Read this |
 | --- | --- |
-| Understand Clean Architecture | [clean-architecture.md](resources/clean-architecture.md) |
-| Implement domain entities | [domain-layer.md](resources/domain-layer.md) |
-| Create use cases | [application-layer.md](resources/application-layer.md) |
-| Build API endpoints | [api-layer.md](resources/api-layer.md) |
-| Implement repositories | [repository-pattern.md](resources/repository-pattern.md) |
-| Validate input | [validation-patterns.md](resources/validation-patterns.md) |
-| Add observability | [observability.md](resources/observability.md) |
-| Manage config | [configuration.md](resources/configuration.md) |
-| Handle async/errors | [async-and-errors.md](resources/async-and-errors.md) |
-| Write tests | [testing-guide.md](resources/testing-guide.md) |
-| See complete examples | [complete-examples.md](resources/complete-examples.md) |
+| Understand Clean Architecture | `./resources/clean-architecture.md` |
+| Implement domain entities | `./resources/domain-layer.md` |
+| Create use cases | `./resources/application-layer.md` |
+| Build API endpoints | `./resources/api-layer.md` |
+| Implement repositories | `./resources/repository-pattern.md` |
+| Validate input | `./resources/validation-patterns.md` |
+| Add observability | `./resources/observability.md` |
+| Manage config | `./resources/configuration.md` |
+| Handle async/errors | `./resources/async-and-errors.md` |
+| Write tests | `./resources/testing-guide.md` |
+| See complete examples | `./resources/complete-examples.md` |
 
 ---
 
 ## **Resource Files**
 
-### [**clean-architecture.md**](resources/clean-architecture.md)
+### `./resources/clean-architecture.md`
 
 Three-layer architecture, dependency rule, separation of concerns
 
-### [**domain-layer.md**](resources/domain-layer.md)
+### `./resources/domain-layer.md`
 
 Entities, value objects, domain services, interfaces (ports)
 
-### [**application-layer.md**](resources/application-layer.md)
+### `./resources/application-layer.md`
 
 Use cases, DTOs, application services, orchestration
 
-### [**api-layer.md**](resources/api-layer.md)
+### `./resources/api-layer.md`
 
 FastAPI routes, Pydantic validation, middleware, dependencies
 
-### [**repository-pattern.md**](resources/repository-pattern.md)
+### `./resources/repository-pattern.md`
 
 Generic base repository, SQLAlchemy async, ORM models
 
-### [**validation-patterns.md**](resources/validation-patterns.md)
+### `./resources/validation-patterns.md`
 
 Pydantic (API layer), dataclasses (Application layer), domain validation
 
-### [**observability.md**](resources/observability.md)
+### `./resources/observability.md`
 
 OpenTelemetry setup, tracing, logging, structured logs
 
-### [**configuration.md**](resources/configuration.md)
+### `./resources/configuration.md`
 
 Pydantic Settings, uv dependency groups, environment configs
 
-### [**async-and-errors.md**](resources/async-and-errors.md)
+### `./resources/async-and-errors.md`
 
 Async patterns, exception hierarchy, error handlers
 
-### [**testing-guide.md**](resources/testing-guide.md)
+### `./resources/testing-guide.md`
 
 pytest markers, async tests, fixtures, mocking, coverage
 
-### [**complete-examples.md**](resources/complete-examples.md)
+### `./resources/complete-examples.md`
 
 Full feature examples across all three layers
 

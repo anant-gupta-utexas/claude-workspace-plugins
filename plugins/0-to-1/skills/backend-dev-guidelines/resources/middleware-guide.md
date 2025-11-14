@@ -454,7 +454,7 @@ app.add_middleware(
 
 **Related Files:**
 
-- [SKILL.md](SKILL.md) - Main guide
-- [api-layer.md](api-layer.md) - Using middleware with routes
-- [observability.md](observability.md) - OpenTelemetry integration
-- [async-and-errors.md](async-and-errors.md) - Error handling patterns
+- `../SKILL.md` - Main guide
+- `./api-layer.md` - Using middleware with routes
+- `./observability.md` - OpenTelemetry integration
+- `./async-and-errors.md` - Error handling patterns

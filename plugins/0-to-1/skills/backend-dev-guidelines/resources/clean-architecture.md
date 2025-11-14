@@ -406,8 +406,8 @@ async def test_create_conversation_use_case():
 ---
 
 **Related Files:**
-- [SKILL.md](../SKILL.md) - Main guide
-- [domain-layer.md](domain-layer.md) - Domain layer details
-- [application-layer.md](application-layer.md) - Application layer details
-- [api-layer.md](api-layer.md) - Infrastructure API details
-- [repository-pattern.md](repository-pattern.md) - Repository implementation
+- `../SKILL.md` - Main guide
+- `./domain-layer.md` - Domain layer details
+- `./application-layer.md` - Application layer details
+- `./api-layer.md` - Infrastructure API details
+- `./repository-pattern.md` - Repository implementation

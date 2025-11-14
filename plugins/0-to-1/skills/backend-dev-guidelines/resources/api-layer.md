@@ -484,7 +484,7 @@ async def create_conversation(...):
 ---
 
 **Related Files:**
-- [SKILL.md](../SKILL.md) - Main guide
-- [clean-architecture.md](clean-architecture.md) - Architecture overview
-- [application-layer.md](application-layer.md) - Use cases called by routes
-- [validation-patterns.md](validation-patterns.md) - Pydantic validation
+- `../SKILL.md` - Main guide
+- `./clean-architecture.md` - Architecture overview
+- `./application-layer.md` - Use cases called by routes
+- `./validation-patterns.md` - Pydantic validation

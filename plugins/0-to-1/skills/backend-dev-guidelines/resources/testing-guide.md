@@ -486,8 +486,8 @@ async def test_user_name():
 ---
 
 **Related Files:**
-- [SKILL.md](../SKILL.md) - Main guide
-- [domain-layer.md](domain-layer.md) - Domain entities to test
-- [application-layer.md](application-layer.md) - Use cases to test
-- [repository-pattern.md](repository-pattern.md) - Repository testing
-- [complete-examples.md](complete-examples.md) - Full test examples
+- `../SKILL.md` - Main guide
+- `./domain-layer.md` - Domain entities to test
+- `./application-layer.md` - Use cases to test
+- `./repository-pattern.md` - Repository testing
+- `./complete-examples.md` - Full test examples

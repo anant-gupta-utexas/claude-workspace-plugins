@@ -484,9 +484,9 @@ async def test_find_pending_for_agent(db_session):
 ```
 
 **Related Files:**
-- [SKILL.md](../SKILL.md) - Main guide
-- [clean-architecture.md](clean-architecture.md) - Architecture overview
-- [domain-layer.md](domain-layer.md) - Domain patterns
-- [application-layer.md](application-layer.md) - Use case patterns
-- [api-layer.md](api-layer.md) - API patterns
-- [testing-guide.md](testing-guide.md) - Testing strategies
+- `../SKILL.md` - Main guide
+- `./clean-architecture.md` - Architecture overview
+- `./domain-layer.md` - Domain patterns
+- `./application-layer.md` - Use case patterns
+- `./api-layer.md` - API patterns
+- `./testing-guide.md` - Testing strategies
