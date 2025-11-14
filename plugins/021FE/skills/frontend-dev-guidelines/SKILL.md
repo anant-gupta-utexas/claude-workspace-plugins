@@ -7,14 +7,14 @@ description: Frontend development guidelines for React/TypeScript applications. 
 
 ## **Purpose**
 
-Comprehensive guide for modern React development with TanStack Start, emphasizing Suspense-based data fetching, lazy loading, proper file organization, and performance optimization with an SSR-ready architecture.
+Comprehensive guide for modern React development with TanStack Router, emphasizing Suspense-based data fetching, lazy loading, proper file organization, and performance optimization with an SSR-ready architecture.
 
 ## **When to Use This Skill**
 
 - Creating new components or pages
 - Building new features
 - Fetching data with TanStack Query
-- Setting up routing with TanStack Start/Router
+- Setting up routing with TanStack Router/Router
 - Styling components with Tailwind CSS + shadcn/ui
 - Building forms with TanStack Form
 - Performance optimization
@@ -48,7 +48,7 @@ Creating a feature? Set up this structure:
 - [ ]  Create subdirectories: `api/`, `components/`, `hooks/`, `helpers/`, `types/`
 - [ ]  Create API service file: `api/{feature}Api.ts`
 - [ ]  Set up TypeScript types in `types/`
-- [ ]  Create route in `app/routes/{feature-name}/index.tsx`
+- [ ]  Create route in `src/routes/{feature-name}/index.tsx`
 - [ ]  Lazy load feature components
 - [ ]  Use Suspense boundaries
 - [ ]  Export public API from feature `index.ts`
@@ -59,12 +59,12 @@ Creating a feature? Set up this structure:
 
 | Alias | Resolves To | Example |
 | --- | --- | --- |
-| `@/` | `app/` or `src/` | `import { apiClient } from '@/lib/apiClient'` |
-| `~types` | `app/types` | `import type { User } from '~types/user'` |
-| `~components` | `app/components` | `import { SuspenseLoader } from '~components/SuspenseLoader'` |
-| `~features` | `app/features` | `import { authApi } from '~features/auth'` |
+| `@/` | `src/` | `import { apiClient } from '@/lib/apiClient'` |
+| `~types` | `src/types` | `import type { User } from '~types/user'` |
+| `~components` | `src/components` | `import { SuspenseLoader } from '~components/SuspenseLoader'` |
+| `~features` | `src/features` | `import { authApi } from '~features/auth'` |
 
-Defined in: TanStack Start configuration (tsconfig.json or vite.config.ts)
+Defined in: TanStack Router configuration (tsconfig.json or vite.config.ts)
 
 ---
 
@@ -140,7 +140,7 @@ import { zodValidator } from '@tanstack/zod-form-adapter';
 
 | Category | Technology |
 | --- | --- |
-| Framework | TanStack Start |
+| Framework | TanStack Router |
 | Router | TanStack Router |
 | UI Library | shadcn/ui |
 | Styling | Tailwind CSS |
@@ -154,7 +154,7 @@ import { zodValidator } from '@tanstack/zod-form-adapter';
 
 ## **External Resources**
 
-- [TanStack Start Documentation](https://tanstack.com/start/latest)
+- [TanStack Router Documentation](https://tanstack.com/start/latest)
 - [TanStack Router Documentation](https://tanstack.com/router/latest)
 - [TanStack Form Documentation](https://tanstack.com/form/latest)
 - [shadcn/ui Documentation](https://ui.shadcn.com/llms.txt)

@@ -463,8 +463,8 @@ export { useSuspenseMyFeature } from './hooks/useSuspenseMyFeature';
 ## **Directory Structure Visualization**
 
 ```
-app/
-├── routes/                      # TanStack Start routes
+src/
+├── routes/                      # TanStack Router routes
 │   ├── __root.tsx
 │   ├── index.tsx
 │   ├── posts/
@@ -518,10 +518,10 @@ app/
 
 **Key Principles:**
 
-1. **app/routes/** for TanStack Start routes
-2. **app/features/** for domain-specific code
-3. **app/components/ui/** for shadcn/ui components
-4. **app/components/** for truly reusable UI
+1. **src/routes/** for TanStack Router routes
+2. **src/features/** for domain-specific code
+3. **src/components/ui/** for shadcn/ui components
+4. **src/components/** for truly reusable UI
 5. Use subdirectories: api/, components/, hooks/, helpers/, types/
 6. Import aliases for clean imports (@/, ~types, ~components, ~features)
 7. Consistent naming: PascalCase components, camelCase utilities
