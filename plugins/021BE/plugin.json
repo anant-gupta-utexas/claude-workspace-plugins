@@ -1,0 +1,41 @@
+{
+  "name": "021BE",
+  "version": "1.0.0",
+  "description": "Python/FastAPI Clean Architecture backend development guidelines with domain entities, use cases, and repository patterns",
+  "author": "Anant Gupta",
+  "license": "MIT",
+  "keywords": [
+    "backend",
+    "python",
+    "fastapi",
+    "clean-architecture",
+    "domain-driven-design",
+    "repository-pattern",
+    "use-cases"
+  ],
+  "category": "development",
+  "components": {
+    "skills": [
+      {
+        "name": "backend-dev-guidelines",
+        "path": "${CLAUDE_PLUGIN_ROOT}/skills/backend-dev-guidelines",
+        "description": "Comprehensive Python/FastAPI Clean Architecture patterns with domain layer, application layer, and infrastructure guidance"
+      }
+    ]
+  },
+  "requirements": {
+    "tech_stack": [
+      "Python 3.9+",
+      "FastAPI",
+      "Pydantic",
+      "SQLAlchemy (optional)"
+    ]
+  },
+  "post_install": {
+    "instructions": [
+      "The backend-dev-guidelines skill is ready to use!",
+      "Skills activate automatically when working with Python backend files or using keywords like 'backend guidelines', 'use case', 'repository pattern'",
+      "Test activation: Ask 'Following backend guidelines, how do I create a user endpoint?'"
+    ]
+  }
+}

@@ -4,13 +4,13 @@
     "name": "Anant Gupta",
     "contact": "anant.gupta@utexas.edu"
   },
-  "description": "Production-tested Claude Code plugin for fullstack development (0-to-1)",
+  "description": "Production-tested Claude Code plugins for modern development workflows",
   "version": "1.0.0",
   "plugins": [
     {
-      "name": "0-to-1",
-      "source": "./plugins/0-to-1",
-      "description": "Complete fullstack development setup with backend/frontend patterns, expert agents, and comprehensive tooling for building products from 0 to 1",
+      "name": "021BE",
+      "source": "./plugins/021BE",
+      "description": "Python/FastAPI Clean Architecture backend development guidelines with domain entities, use cases, and repository patterns",
       "version": "1.0.0",
       "author": {
         "name": "Anant Gupta",
@@ -18,18 +18,73 @@
       },
       "category": "development",
       "keywords": [
-        "fullstack",
         "backend",
-        "frontend",
-        "nodejs",
-        "express",
-        "typescript",
-        "react",
-        "mui",
-        "prisma",
         "python",
         "fastapi",
-        "0-to-1"
+        "clean-architecture",
+        "domain-driven-design",
+        "repository-pattern",
+        "use-cases"
+      ]
+    },
+    {
+      "name": "021FE",
+      "source": "./plugins/021FE",
+      "description": "React/TypeScript/MUI v7 frontend development guidelines with GUARDRAIL enforcement to prevent deprecated patterns",
+      "version": "1.0.0",
+      "author": {
+        "name": "Anant Gupta",
+        "contact": "anant.gupta@utexas.edu"
+      },
+      "category": "development",
+      "keywords": [
+        "frontend",
+        "react",
+        "typescript",
+        "mui",
+        "mui-v7",
+        "tanstack-query",
+        "tanstack-router",
+        "component-patterns"
+      ]
+    },
+    {
+      "name": "documentation",
+      "source": "./plugins/documentation",
+      "description": "Comprehensive documentation tools including expert documentation architect agent and development docs commands",
+      "version": "1.0.0",
+      "author": {
+        "name": "Anant Gupta",
+        "contact": "anant.gupta@utexas.edu"
+      },
+      "category": "documentation",
+      "keywords": [
+        "documentation",
+        "dev-docs",
+        "architecture",
+        "technical-writing",
+        "documentation-architect"
+      ]
+    },
+    {
+      "name": "essentials",
+      "source": "./plugins/essentials",
+      "description": "Essential utilities including specialized agents, expert consultation skills, skill development tools, and intelligent hooks for enhanced development workflow",
+      "version": "1.0.0",
+      "author": {
+        "name": "Anant Gupta",
+        "contact": "anant.gupta@utexas.edu"
+      },
+      "category": "utilities",
+      "keywords": [
+        "utilities",
+        "agents",
+        "experts",
+        "skill-development",
+        "hooks",
+        "planning",
+        "research",
+        "refactoring"
       ]
     }
   ],

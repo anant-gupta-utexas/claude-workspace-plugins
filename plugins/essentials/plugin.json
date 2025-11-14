@@ -1,0 +1,76 @@
+{
+  "name": "essentials",
+  "version": "1.0.0",
+  "description": "Essential utilities including specialized agents, expert consultation skills, skill development tools, and intelligent hooks for enhanced development workflow",
+  "author": "Anant Gupta",
+  "license": "MIT",
+  "keywords": [
+    "utilities",
+    "agents",
+    "experts",
+    "skill-development",
+    "hooks",
+    "planning",
+    "research",
+    "refactoring"
+  ],
+  "category": "utilities",
+  "components": {
+    "skills": [
+      {
+        "name": "consult-experts",
+        "path": "${CLAUDE_PLUGIN_ROOT}/skills/consult-experts",
+        "description": "Access specialized expert agents for business strategy, tech leadership, and more"
+      },
+      {
+        "name": "skill-developer",
+        "path": "${CLAUDE_PLUGIN_ROOT}/skills/skill-developer",
+        "description": "Meta-skill for creating and managing Claude Code skills"
+      }
+    ],
+    "agents": [
+      {
+        "name": "business-strategist",
+        "path": "${CLAUDE_PLUGIN_ROOT}/agents/business-strategist.md",
+        "description": "Business strategy and product guidance for building products"
+      },
+      {
+        "name": "plan-reviewer",
+        "path": "${CLAUDE_PLUGIN_ROOT}/agents/plan-reviewer.md",
+        "description": "Review development plans before implementation"
+      },
+      {
+        "name": "refactor-planner",
+        "path": "${CLAUDE_PLUGIN_ROOT}/agents/refactor-planner.md",
+        "description": "Create comprehensive refactoring strategies"
+      },
+      {
+        "name": "web-research-specialist",
+        "path": "${CLAUDE_PLUGIN_ROOT}/agents/web-research-specialist.md",
+        "description": "Research technical issues and solutions online"
+      }
+    ],
+    "hooks": [
+      {
+        "name": "essentials-hooks",
+        "path": "${CLAUDE_PLUGIN_ROOT}/hooks/hooks.json",
+        "description": "Essential hooks for skill activation, file tracking, and error handling reminders"
+      }
+    ]
+  },
+  "requirements": {
+    "node_version": ">=14.0.0",
+    "npm_packages": [
+      "typescript",
+      "tsx"
+    ]
+  },
+  "post_install": {
+    "instructions": [
+      "Essential utilities are ready to use!",
+      "Install hook dependencies: cd ~/.claude/plugins/marketplaces/claude-workspace-plugins/plugins/essentials/hooks && npm install",
+      "Skills activate with keywords like 'consult expert' or 'skill development'",
+      "Test: 'Use the business-strategist agent to help with my product roadmap'"
+    ]
+  }
+}

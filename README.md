@@ -1,22 +1,62 @@
 # Claude Workspace Plugins Marketplace
 
-Production-tested Claude Code plugin for building products from 0 to 1 with fullstack development patterns.
+Production-tested Claude Code plugins for modern development workflows with specialized tools for backend, frontend, documentation, and essential utilities.
 
-## 🎯 Available Plugin
+## 🎯 Available Plugins
 
-### [0-to-1 Plugin](./plugins/0-to-1/)
-Complete fullstack development setup for building products from scratch with backend/frontend patterns and expert guidance.
+### Core Plugins (Recommended for All Projects)
+
+#### [essentials](./plugins/essentials/)
+Essential utilities with specialized agents, expert consultation, skill development tools, and intelligent hooks.
 
 **Includes:**
-- 4 Skills (backend, frontend, consult-experts, skill-developer)
-- 6 Agents (business strategy, frontend debugging, planning, refactoring, UI/UX, research)
+- 2 Skills (consult-experts, skill-developer)
+- 4 Agents (business-strategist, plan-reviewer, refactor-planner, web-research-specialist)
 - 3 Hooks (skill activation, file tracking, error handling reminders)
+
+**Perfect for:** Planning, research, refactoring, expert consultation
+
+#### [documentation](./plugins/documentation/)
+Comprehensive documentation tools for technical writing and architecture documentation.
+
+**Includes:**
+- 1 Agent (documentation-architect)
 - 2 Commands (/dev-docs, /dev-docs-update)
 
+**Perfect for:** Creating technical documentation, API docs, architecture documentation
+
+---
+
+### Specialized Plugins (Install Based on Your Stack)
+
+#### [021BE](./plugins/021BE/) - Backend Development
+Python/FastAPI Clean Architecture backend development guidelines.
+
+**Includes:**
+- 1 Skill (backend-dev-guidelines)
+
 **Tech Stack:**
-- Backend: Python/FastAPI
-- Frontend: React 18+, TypeScript, MUI v7
-- Database: Prisma ORM (optional)
+- Python 3.9+
+- FastAPI
+- Pydantic
+- Clean Architecture
+
+**Perfect for:** Python/FastAPI backend projects
+
+#### [021FE](./plugins/021FE/) - Frontend Development
+React/TypeScript/MUI v7 frontend development guidelines with GUARDRAIL enforcement.
+
+**Includes:**
+- 1 Skill (frontend-dev-guidelines)
+- 2 Agents (frontend-error-fixer, uiux-specialist)
+
+**Tech Stack:**
+- React 18+
+- TypeScript
+- MUI v7
+- TanStack Query/Router
+
+**Perfect for:** React/TypeScript frontend projects with MUI v7
 
 ---
 
@@ -36,49 +76,118 @@ Complete fullstack development setup for building products from scratch with bac
 
 This opens an interactive UI showing all available plugins from this marketplace.
 
-### 3. Install the Plugin
+### 3. Install Plugins
+
+**Recommended installation order:**
 
 ```bash
-/plugin install 0-to-1@claude-workspace-plugins
+# Core plugins (install these first)
+/plugin install essentials@claude-workspace-plugins
+/plugin install documentation@claude-workspace-plugins
+
+# Backend plugin (if you have a Python/FastAPI backend)
+/plugin install 021BE@claude-workspace-plugins
+
+# Frontend plugin (if you have a React/TypeScript frontend)
+/plugin install 021FE@claude-workspace-plugins
 ```
 
-### 4. Configure After Installation
+### 4. Post-Installation Setup
 
-The plugin requires minimal post-installation setup:
+**For essentials plugin (required):**
+```bash
+cd ~/.claude/plugins/marketplaces/claude-workspace-plugins/plugins/essentials/hooks && npm install
+```
 
-1. Install hook dependencies: `cd ~/.claude/plugins/marketplaces/claude-workspace-plugins/plugins/0-to-1/hooks && npm install`
-2. Test skill activation
-
-See the [plugin README](./plugins/0-to-1/README.md) for detailed instructions.
+Test skill activation:
+```bash
+"Use the business-strategist agent to help with my product roadmap"
+"Consult expert for architecture decisions"
+```
 
 ---
 
 ## 📦 Plugin Details
 
-### 0-to-1 Plugin
+### essentials Plugin (Core)
 
-Perfect for:
-- Building products from 0 to 1
-- Fullstack development (backend + frontend)
-- Python/FastAPI or Node.js/Express backends
-- React/TypeScript frontends with MUI v7
-- Getting expert guidance on business strategy and UI/UX
+**Why install:** Provides fundamental utilities that enhance all development workflows regardless of tech stack.
 
 **Skills:**
-- **backend-dev-guidelines** - Python/FastAPI Clean Architecture patterns
-- **frontend-dev-guidelines** - React/TypeScript/MUI v7 patterns
-- **consult-experts** - Access specialized expert agents
-- **skill-developer** - Meta-skill for creating skills
+- **consult-experts** - Access specialized expert agents (Product Manager, Tech Lead, Code Reviewer)
+- **skill-developer** - Meta-skill for creating and managing Claude Code skills
 
 **Agents:**
 - **business-strategist** - Business strategy and product guidance
-- **frontend-error-fixer** - Debug and fix frontend errors
-- **plan-reviewer** - Review development plans
-- **refactor-planner** - Create refactoring strategies
-- **uiux-specialist** - UI/UX design guidance
-- **web-research-specialist** - Research technical issues
+- **plan-reviewer** - Review development plans before implementation
+- **refactor-planner** - Create comprehensive refactoring strategies
+- **web-research-specialist** - Research technical issues and solutions
 
-[View Details →](./plugins/0-to-1/README.md)
+**Hooks:**
+- **skill-activation-prompt** - Auto-suggests relevant skills based on your work
+- **post-tool-use-tracker** - Tracks file changes for context management
+- **error-handling-reminder** - Reminds about error handling best practices
+
+[View Details →](./plugins/essentials/README.md)
+
+---
+
+### documentation Plugin (Core)
+
+**Why install:** Essential for creating and maintaining high-quality technical documentation.
+
+**Agent:**
+- **documentation-architect** - Expert agent for comprehensive documentation (APIs, architecture, system design)
+
+**Commands:**
+- **/dev-docs** - Create structured development documentation with task breakdown
+- **/dev-docs-update** - Update docs before context reset
+
+[View Details →](./plugins/documentation/README.md)
+
+---
+
+### 021BE Plugin (Backend Specialization)
+
+**When to install:** You're working on Python/FastAPI backend projects following Clean Architecture.
+
+**Skill:**
+- **backend-dev-guidelines** - Python/FastAPI Clean Architecture with domain entities, use cases, repository patterns
+
+**Key Topics:**
+- Domain layer (entities, value objects)
+- Application layer (use cases, DTOs)
+- Repository pattern and data access
+- FastAPI endpoint structure
+- Validation, error handling, testing
+
+**Resources:** 12 comprehensive guides on Clean Architecture patterns
+
+[View Details →](./plugins/021BE/README.md)
+
+---
+
+### 021FE Plugin (Frontend Specialization)
+
+**When to install:** You're working on React/TypeScript projects with MUI v7.
+
+**Skill:**
+- **frontend-dev-guidelines** - React/TypeScript/MUI v7 patterns with GUARDRAIL enforcement (blocks MUI v6)
+
+**Agents:**
+- **frontend-error-fixer** - Debug and fix frontend errors (build and runtime)
+- **uiux-specialist** - UI/UX design and specialist guidance
+
+**Key Topics:**
+- Component patterns (Suspense, lazy loading)
+- MUI v7 usage with guardrails
+- TanStack Query/Router
+- Performance optimization
+- TypeScript standards
+
+**Resources:** 10 comprehensive guides on React/MUI best practices
+
+[View Details →](./plugins/021FE/README.md)
 
 ---
 
@@ -86,12 +195,12 @@ Perfect for:
 
 A Claude Code plugin is a package of:
 
-- **Skills** - Domain knowledge and best practices
+- **Skills** - Domain knowledge and best practices that auto-activate
 - **Agents** - Specialized AI assistants for complex tasks
-- **Hooks** - Auto-activation and automation
-- **Commands** - Slash commands for workflows
+- **Hooks** - Auto-activation and automation for enhanced workflows
+- **Commands** - Slash commands for common workflows
 
-Together, they create an intelligent development environment tailored to your tech stack.
+Together, they create an intelligent development environment tailored to your needs.
 
 ---
 
@@ -100,33 +209,31 @@ Together, they create an intelligent development environment tailored to your te
 ### Skills Auto-Activate
 
 After installation, skills automatically activate when:
-- You use specific keywords in your prompts (see skill-rules.json for the list)
+- You use specific keywords in your prompts
 - You edit files matching configured patterns
-- You mention technologies like FastAPI, React, MUI v7
+- You mention relevant technologies
 
 **Best Practice:** Use explicit trigger phrases:
 - "Following backend guidelines, create an endpoint"
 - "Using react best practices, create a component"
-
-**Example:** Edit `src/application/user_service.py` → backend-dev-guidelines activates automatically
+- "Consult expert for architecture decisions"
 
 ### Using Agents
 
 Invoke agents for complex tasks:
 
 ```bash
+# Essential agents
 "Use the business-strategist agent to help me plan my product strategy"
+"Use the plan-reviewer agent to review my authentication implementation plan"
+"Use the web-research-specialist agent to find best practices for WebSockets"
+
+# Documentation agent
+"Use the documentation-architect agent to document my REST API"
+
+# Frontend agents (if 021FE installed)
 "Use the frontend-error-fixer agent to debug this console error"
 "Use the uiux-specialist agent to review my dashboard design"
-```
-
-### Access Expert Agents via Skills
-
-The consult-experts skill provides access to specialized expert agents:
-
-```bash
-"Consult product expert for help with my roadmap"  # Activates consult-experts skill
-"Consult tech lead for architecture decisions"     # Activates consult-experts skill
 ```
 
 ### Slash Commands
@@ -142,11 +249,13 @@ Use commands for workflows:
 
 ## ⚙️ Customization
 
-The plugin works out-of-the-box with default patterns. Only customize if your project structure differs.
-
 ### Adjusting Path Patterns
 
-Edit `.claude/skills/skill-rules.json` to match your project:
+The essentials plugin includes `skill-rules.json` that configures when skills activate. This file references all skills (backend and frontend) for comprehensive activation logic.
+
+**Important Note:** If you only install specialized plugins for your project type (e.g., only frontend), the skill activation hook will still check for keywords related to uninstalled skills. This doesn't cause errors - it simply won't find matches for those skills.
+
+Edit `.claude/skills/skill-rules.json` to customize activation patterns:
 
 **Monorepo Example:**
 ```json
@@ -172,7 +281,28 @@ Edit `.claude/skills/skill-rules.json` to match your project:
 }
 ```
 
-See the [plugin README](./plugins/0-to-1/README.md#advanced-customization) for more examples.
+**Frontend-Only Project:**
+```json
+{
+  "skills": {
+    "frontend-dev-guidelines": {
+      "fileTriggers": {
+        "pathPatterns": [
+          "src/**/*.tsx",
+          "components/**/*.tsx"
+        ]
+      },
+      "promptTriggers": {
+        "keywords": [
+          "react",
+          "frontend guidelines",
+          "mui patterns"
+        ]
+      }
+    }
+  }
+}
+```
 
 ---
 
@@ -184,16 +314,20 @@ See the [plugin README](./plugins/0-to-1/README.md#advanced-customization) for m
 /plugin list
 ```
 
-### Update the Plugin
+### Update Plugins
 
 ```bash
-/plugin update 0-to-1
+/plugin update essentials
+/plugin update documentation
+/plugin update 021BE
+/plugin update 021FE
 ```
 
-### Remove the Plugin
+### Remove Plugins
 
 ```bash
-/plugin uninstall 0-to-1
+/plugin uninstall 021BE
+/plugin uninstall 021FE
 ```
 
 ### List All Marketplaces
@@ -204,6 +338,50 @@ See the [plugin README](./plugins/0-to-1/README.md#advanced-customization) for m
 
 ---
 
+## 💡 Recommended Plugin Combinations
+
+### For Fullstack Projects (Backend + Frontend)
+
+```bash
+/plugin install essentials@claude-workspace-plugins
+/plugin install documentation@claude-workspace-plugins
+/plugin install 021BE@claude-workspace-plugins
+/plugin install 021FE@claude-workspace-plugins
+```
+
+**You get:** Complete development workflow with backend/frontend patterns, planning agents, documentation tools, and hooks.
+
+### For Backend-Only Projects
+
+```bash
+/plugin install essentials@claude-workspace-plugins
+/plugin install documentation@claude-workspace-plugins
+/plugin install 021BE@claude-workspace-plugins
+```
+
+**You get:** Backend development patterns, planning agents, documentation tools, and essential utilities.
+
+### For Frontend-Only Projects
+
+```bash
+/plugin install essentials@claude-workspace-plugins
+/plugin install documentation@claude-workspace-plugins
+/plugin install 021FE@claude-workspace-plugins
+```
+
+**You get:** Frontend development patterns with guardrails, UI/UX specialist, error fixing, planning agents, and documentation tools.
+
+### For Product Planning & Documentation
+
+```bash
+/plugin install essentials@claude-workspace-plugins
+/plugin install documentation@claude-workspace-plugins
+```
+
+**You get:** Business strategy, planning, documentation creation, and essential utilities without tech-specific development patterns.
+
+---
+
 ## 🎓 Learn More
 
 ### Official Claude Code Docs
@@ -211,14 +389,17 @@ See the [plugin README](./plugins/0-to-1/README.md#advanced-customization) for m
 - [Plugin Marketplaces](https://code.claude.com/docs/en/plugin-marketplaces)
 - [Creating Skills](https://code.claude.com/docs/en/skills)
 
-### Plugin README
-- [0-to-1 Plugin →](./plugins/0-to-1/README.md)
+### Plugin READMEs
+- [essentials Plugin →](./plugins/essentials/README.md)
+- [documentation Plugin →](./plugins/documentation/README.md)
+- [021BE Plugin →](./plugins/021BE/README.md)
+- [021FE Plugin →](./plugins/021FE/README.md)
 
 ---
 
 ## 🤝 Contributing
 
-Want to contribute to this plugin?
+Want to contribute to these plugins?
 
 1. Fork this repository
 2. Create a feature branch
@@ -251,22 +432,23 @@ MIT License - Use freely in your projects.
 ## 🆘 Support
 
 **Issues or questions?**
-- Check the [plugin README](./plugins/0-to-1/README.md)
-- Review [troubleshooting sections](./plugins/0-to-1/README.md#troubleshooting)
+- Check the relevant plugin README
+- Review troubleshooting sections
 - Open an issue on GitHub
 
 ---
 
 ## 🌟 What You Get
 
-After installing this plugin, you get:
+After installing these plugins, you get:
 
 - ✅ **Intelligent skill activation** - Skills suggest themselves when relevant
-- ✅ **Specialized agents** - AI assistants for business strategy, UI/UX, and technical tasks
+- ✅ **Specialized agents** - AI assistants for business strategy, planning, UI/UX, research, and error fixing
 - ✅ **Expert guidance** - Access to business strategist, tech lead, and UI/UX specialist agents
 - ✅ **Automated workflows** - Hooks that track and optimize your work
 - ✅ **Production patterns** - Best practices from real-world projects (Python/FastAPI, React/MUI)
-- ✅ **Tech stack validation** - Prevents common mistakes with guardrails
+- ✅ **Tech stack validation** - Prevents common mistakes with guardrails (MUI v7)
 - ✅ **Comprehensive documentation** - Everything you need to know
+- ✅ **Modular installation** - Install only what you need for your project
 
-**Build better products faster from 0 to 1!** 🚀
+**Build better products faster!** 🚀

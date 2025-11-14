@@ -1,0 +1,43 @@
+{
+  "name": "documentation",
+  "version": "1.0.0",
+  "description": "Comprehensive documentation tools including expert documentation architect agent and development docs commands",
+  "author": "Anant Gupta",
+  "license": "MIT",
+  "keywords": [
+    "documentation",
+    "dev-docs",
+    "architecture",
+    "technical-writing",
+    "documentation-architect"
+  ],
+  "category": "documentation",
+  "components": {
+    "agents": [
+      {
+        "name": "documentation-architect",
+        "path": "${CLAUDE_PLUGIN_ROOT}/agents/documentation-architect.md",
+        "description": "Comprehensive documentation creation for architecture, APIs, and system design"
+      }
+    ],
+    "commands": [
+      {
+        "name": "dev-docs",
+        "path": "${CLAUDE_PLUGIN_ROOT}/commands/dev-docs.md",
+        "description": "Create structured development documentation with task breakdown"
+      },
+      {
+        "name": "dev-docs-update",
+        "path": "${CLAUDE_PLUGIN_ROOT}/commands/dev-docs-update.md",
+        "description": "Update docs before context reset"
+      }
+    ]
+  },
+  "post_install": {
+    "instructions": [
+      "Documentation tools are ready to use!",
+      "Use the documentation-architect agent for comprehensive docs: 'Use the documentation-architect agent to document my API'",
+      "Use slash commands: '/dev-docs Implement user authentication' or '/dev-docs-update'"
+    ]
+  }
+}
