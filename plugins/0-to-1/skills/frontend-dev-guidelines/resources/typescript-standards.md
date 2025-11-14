@@ -1,147 +1,71 @@
-# TypeScript Standards
+# **TypeScript Standards**
 
 TypeScript best practices for type safety and maintainability in React frontend code.
 
 ---
 
-## Strict Mode
+## **Strict Mode**
 
-### Configuration
+**Enabled:** `strict: true`, `noImplicitAny: true`, `strictNullChecks: true`
 
-TypeScript strict mode is **enabled** in the project:
+**Means:** No implicit any, handle null/undefined explicitly, type safety enforced
 
-```json
-// tsconfig.json
-{
-    "compilerOptions": {
-        "strict": true,
-        "noImplicitAny": true,
-        "strictNullChecks": true
+## **No `any` Type**
+
+```tsx
+// ❌ NEVERfunction handle(data: any) { }
+
+// ✅ Specific typesfunction handle(data: MyData) { }
+
+// ✅ Unknown (forces type checking)function handle(data: unknown) {
+    if (typeof data === 'object' && data) {
+// Type guard
     }
 }
+
 ```
 
-**This means:**
-- No implicit `any` types
-- Null/undefined must be handled explicitly
-- Type safety enforced
+## **Explicit Return Types**
+
+```tsx
+// ✅ Functionsfunction getUser(id: number): Promise<User> { }
+function calculate(items: Item[]): number { }
+
+// ✅ Hooksfunction useMyData(id: number): { data: Data; loading: boolean } { }
+
+// React.FC provides return type automatically
+```
+
+## **Type Imports**
+
+```tsx
+// ✅ Use 'type' keywordimport type { User } from '~types/user';
+
+// ❌ Avoid mixed importsimport { User } from '~types/user';
+
+```
+
+**Benefits:** Better tree-shaking, prevents circular deps
 
 ---
 
-## No `any` Type
+## **Component Prop Interfaces**
 
-### The Rule
+### **Interface Pattern**
 
-```typescript
-// ❌ NEVER use any
-function handleData(data: any) {
-    return data.something;
-}
-
-// ✅ Use specific types
-interface MyData {
-    something: string;
-}
-
-function handleData(data: MyData) {
-    return data.something;
-}
-
-// ✅ Or use unknown for truly unknown data
-function handleUnknown(data: unknown) {
-    if (typeof data === 'object' && data !== null && 'something' in data) {
-        return (data as MyData).something;
-    }
-}
-```
-
-**If you truly don't know the type:**
-- Use `unknown` (forces type checking)
-- Use type guards to narrow
-- Document why type is unknown
-
----
-
-## Explicit Return Types
-
-### Function Return Types
-
-```typescript
-// ✅ CORRECT - Explicit return type
-function getUser(id: number): Promise<User> {
-    return apiClient.get(`/users/${id}`);
-}
-
-function calculateTotal(items: Item[]): number {
-    return items.reduce((sum, item) => sum + item.price, 0);
-}
-
-// ❌ AVOID - Implicit return type (less clear)
-function getUser(id: number) {
-    return apiClient.get(`/users/${id}`);
-}
-```
-
-### Component Return Types
-
-```typescript
-// React.FC already provides return type (ReactElement)
-export const MyComponent: React.FC<Props> = ({ prop }) => {
-    return <div>{prop}</div>;
-};
-
-// For custom hooks
-function useMyData(id: number): { data: Data; isLoading: boolean } {
-    const [data, setData] = useState<Data | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-
-    return { data: data!, isLoading };
-}
-```
-
----
-
-## Type Imports
-
-### Use 'type' Keyword
-
-```typescript
-// ✅ CORRECT - Explicitly mark as type import
-import type { User } from '~types/user';
-import type { Post } from '~types/post';
-import type { SxProps, Theme } from '@mui/material';
-
-// ❌ AVOID - Mixed value and type imports
-import { User } from '~types/user';  // Unclear if type or value
-```
-
-**Benefits:**
-- Clearly separates types from values
-- Better tree-shaking
-- Prevents circular dependencies
-- TypeScript compiler optimization
-
----
-
-## Component Prop Interfaces
-
-### Interface Pattern
-
-```typescript
+```tsx
 /**
  * Props for MyComponent
- */
-interface MyComponentProps {
-    /** The user ID to display */
-    userId: number;
+ */interface MyComponentProps {
+/** The user ID to display */userId: number;
 
-    /** Optional callback when action completes */
+/** Optional callback when action completes */
     onComplete?: () => void;
 
-    /** Display mode for the component */
+/** Display mode for the component */
     mode?: 'view' | 'edit';
 
-    /** Additional CSS classes */
+/** Additional CSS classes */
     className?: string;
 }
 
@@ -153,24 +77,25 @@ export const MyComponent: React.FC<MyComponentProps> = ({
 }) => {
     return <div>...</div>;
 };
+
 ```
 
 **Key Points:**
+
 - Separate interface for props
 - JSDoc comments for each prop
-- Optional props use `?`
+- Optional props use `?`
 - Provide defaults in destructuring
 
-### Props with Children
+### **Props with Children**
 
-```typescript
+```tsx
 interface ContainerProps {
     children: React.ReactNode;
     title: string;
 }
 
-// React.FC automatically includes children type, but be explicit
-export const Container: React.FC<ContainerProps> = ({ children, title }) => {
+// React.FC automatically includes children type, but be explicitexport const Container: React.FC<ContainerProps> = ({ children, title }) => {
     return (
         <div>
             <h2>{title}</h2>
@@ -178,83 +103,22 @@ export const Container: React.FC<ContainerProps> = ({ children, title }) => {
         </div>
     );
 };
+
+```
+
+## **Utility Types**
+
+```tsx
+Partial<User>// All props optionalPick<User, 'id' | 'name'>// Select specific propsOmit<User, 'password'>// Exclude propsRequired<Config>// All props requiredRecord<string, User>// Type-safe object/map
 ```
 
 ---
 
-## Utility Types
+## **Type Guards**
 
-### Partial<T>
+### **Basic Type Guards**
 
-```typescript
-// Make all properties optional
-type UserUpdate = Partial<User>;
-
-function updateUser(id: number, updates: Partial<User>) {
-    // updates can have any subset of User properties
-}
-```
-
-### Pick<T, K>
-
-```typescript
-// Select specific properties
-type UserPreview = Pick<User, 'id' | 'name' | 'email'>;
-
-const preview: UserPreview = {
-    id: 1,
-    name: 'John',
-    email: 'john@example.com',
-    // Other User properties not allowed
-};
-```
-
-### Omit<T, K>
-
-```typescript
-// Exclude specific properties
-type UserWithoutPassword = Omit<User, 'password' | 'passwordHash'>;
-
-const publicUser: UserWithoutPassword = {
-    id: 1,
-    name: 'John',
-    email: 'john@example.com',
-    // password and passwordHash not allowed
-};
-```
-
-### Required<T>
-
-```typescript
-// Make all properties required
-type RequiredConfig = Required<Config>;  // All optional props become required
-```
-
-### Record<K, V>
-
-```typescript
-// Type-safe object/map
-const userMap: Record<string, User> = {
-    'user1': { id: 1, name: 'John' },
-    'user2': { id: 2, name: 'Jane' },
-};
-
-// For styles
-import type { SxProps, Theme } from '@mui/material';
-
-const styles: Record<string, SxProps<Theme>> = {
-    container: { p: 2 },
-    header: { mb: 1 },
-};
-```
-
----
-
-## Type Guards
-
-### Basic Type Guards
-
-```typescript
+```tsx
 function isUser(data: unknown): data is User {
     return (
         typeof data === 'object' &&
@@ -264,15 +128,15 @@ function isUser(data: unknown): data is User {
     );
 }
 
-// Usage
-if (isUser(response)) {
-    console.log(response.name);  // TypeScript knows it's User
+// Usageif (isUser(response)) {
+    console.log(response.name);// TypeScript knows it's User
 }
+
 ```
 
-### Discriminated Unions
+### **Discriminated Unions**
 
-```typescript
+```tsx
 type LoadingState =
     | { status: 'idle' }
     | { status: 'loading' }
@@ -280,38 +144,37 @@ type LoadingState =
     | { status: 'error'; error: Error };
 
 function Component({ state }: { state: LoadingState }) {
-    // TypeScript narrows type based on status
-    if (state.status === 'success') {
-        return <Display data={state.data} />;  // data available here
+// TypeScript narrows type based on statusif (state.status === 'success') {
+        return <Display data={state.data} />;// data available here
     }
 
     if (state.status === 'error') {
-        return <Error error={state.error} />;  // error available here
+        return <Error error={state.error} />;// error available here
     }
 
     return <Loading />;
 }
+
 ```
 
 ---
 
-## Generic Types
+## **Generic Types**
 
-### Generic Functions
+### **Generic Functions**
 
-```typescript
+```tsx
 function getById<T>(items: T[], id: number): T | undefined {
     return items.find(item => (item as any).id === id);
 }
 
-// Usage with type inference
-const users: User[] = [...];
-const user = getById(users, 123);  // Type: User | undefined
+// Usage with type inferenceconst users: User[] = [...];
+const user = getById(users, 123);// Type: User | undefined
 ```
 
-### Generic Components
+### **Generic Components**
 
-```typescript
+```tsx
 interface ListProps<T> {
     items: T[];
     renderItem: (item: T) => React.ReactNode;
@@ -332,87 +195,64 @@ export function List<T>({ items, renderItem }: ListProps<T>): React.ReactElement
     items={users}
     renderItem={(user) => <UserCard user={user} />}
 />
+
 ```
 
 ---
 
-## Type Assertions (Use Sparingly)
+## **Type Assertions (Use Sparingly)**
 
-### When to Use
+### **When to Use**
 
-```typescript
-// ✅ OK - When you know more than TypeScript
-const element = document.getElementById('my-element') as HTMLInputElement;
+```tsx
+// ✅ OK - When you know more than TypeScriptconst element = document.getElementById('my-element') as HTMLInputElement;
 const value = element.value;
 
-// ✅ OK - API response that you've validated
-const response = await api.getData();
-const user = response.data as User;  // You know the shape
+// ✅ OK - API response that you've validatedconst response = await api.getData();
+const user = response.data as User;// You know the shape
 ```
 
-### When NOT to Use
+### **When NOT to Use**
 
-```typescript
-// ❌ AVOID - Circumventing type safety
-const data = getData() as any;  // WRONG - defeats TypeScript
-
-// ❌ AVOID - Unsafe assertion
-const value = unknownValue as string;  // Might not actually be string
+```tsx
+// ❌ AVOID - Circumventing type safetyconst data = getData() as any;// WRONG - defeats TypeScript// ❌ AVOID - Unsafe assertionconst value = unknownValue as string;// Might not actually be string
 ```
 
 ---
 
-## Null/Undefined Handling
+## **Null/Undefined Handling**
 
-### Optional Chaining
+### **Optional Chaining**
 
-```typescript
-// ✅ CORRECT
-const name = user?.profile?.name;
+```tsx
+// ✅ CORRECTconst name = user?.profile?.name;
 
-// Equivalent to:
-const name = user && user.profile && user.profile.name;
+// Equivalent to:const name = user && user.profile && user.profile.name;
+
 ```
 
-### Nullish Coalescing
+### **Nullish Coalescing**
 
-```typescript
-// ✅ CORRECT
-const displayName = user?.name ?? 'Anonymous';
+```tsx
+// ✅ CORRECTconst displayName = user?.name ?? 'Anonymous';
 
-// Only uses default if null or undefined
-// (Different from || which triggers on '', 0, false)
+// Only uses default if null or undefined// (Different from || which triggers on '', 0, false)
 ```
 
-### Non-Null Assertion (Use Carefully)
+### **Non-Null Assertion (Use Carefully)**
 
-```typescript
-// ✅ OK - When you're certain value exists
-const data = queryClient.getQueryData<Data>(['data'])!;
+```tsx
+// ✅ OK - When you're certain value existsconst data = queryClient.getQueryData<Data>(['data'])!;
 
-// ⚠️ CAREFUL - Only use when you KNOW it's not null
-// Better to check explicitly:
-const data = queryClient.getQueryData<Data>(['data']);
+// ⚠️ CAREFUL - Only use when you KNOW it's not null// Better to check explicitly:const data = queryClient.getQueryData<Data>(['data']);
 if (data) {
-    // Use data
+// Use data
 }
+
 ```
 
----
+## **Summary**
 
-## Summary
+**TypeScript:** Strict mode + no any + explicit returns + import type + JSDoc + utility types + type guards
 
-**TypeScript Checklist:**
-- ✅ Strict mode enabled
-- ✅ No `any` type (use `unknown` if needed)
-- ✅ Explicit return types on functions
-- ✅ Use `import type` for type imports
-- ✅ JSDoc comments on prop interfaces
-- ✅ Utility types (Partial, Pick, Omit, Required, Record)
-- ✅ Type guards for narrowing
-- ✅ Optional chaining and nullish coalescing
-- ❌ Avoid type assertions unless necessary
-
-**See Also:**
-- [component-patterns.md](component-patterns.md) - Component typing
-- [data-fetching.md](data-fetching.md) - API typing
+**See Also:** `./component-patterns.md` | `./data-fetching.md`
