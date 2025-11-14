@@ -275,14 +275,14 @@ class TestCreateConversationUseCase:
 # Domain Layer - NO external dependencies
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any  # Use str | None (preferred) or Optional[str]
 from uuid import UUID, uuid4
 from enum import Enum
 from abc import ABC, abstractmethod
 
 # Application Layer
 from dataclasses import dataclass
-from typing import Optional, List
+from typing import Optional, List  # Use str | None (preferred) or Optional[str]
 from uuid import UUID
 
 # Infrastructure API Layer
@@ -312,6 +312,25 @@ from unittest.mock import AsyncMock, Mock
 
 ---
 
+## **Python Compatibility**
+
+### **Required Versions**
+
+- **Python**: 3.13+
+- **Pydantic**: 2.8.0+
+- **SQLAlchemy**: 2.0+ (for async support)
+- **FastAPI**: Latest version
+
+### **Key Features**
+
+1. **Modern Type Syntax**: Use `str | None` instead of `Optional[str]`
+2. **Improved Error Messages**: Enhanced tracebacks with color highlighting
+3. **Better Async Support**: Improved TaskGroup and cancellation handling
+4. **Performance**: Optional free-threading (experimental) and JIT compiler
+5. **New copy.replace()**: Convenient for creating modified copies of dataclasses
+
+---
+
 ## **Dependency Management with uv**
 
 ### **Installation**
@@ -320,15 +339,16 @@ from unittest.mock import AsyncMock, Mock
 # Install uv
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Create project
-uv init
+# Create project with Python 3.13+
+uv init --python 3.13
 
 # Install dependencies
 uv sync
 
 # Add dependency to group
 uv add --group test pytest pytest-asyncio
-uv add --group persistence sqlalchemy asyncpg
+uv add --group persistence "sqlalchemy[asyncio]>=2.0.0" asyncpg
+uv add "pydantic>=2.8.0"
 ```
 
 ### **Dependency Groups**
@@ -421,6 +441,8 @@ pytest -m "use_case or service"
 ❌ Using Sentry (use OpenTelemetry)
 ❌ Not using generic base repository
 ❌ Tests without pytest markers
+❌ Using Pydantic V1
+⚠️ Prefer `str | None` over `Optional[str]` (both work, modern syntax preferred)
 
 ---
 

@@ -10,10 +10,10 @@ Python/FastAPI Clean Architecture backend development guidelines with comprehens
 ## Tech Stack Support
 
 ### Backend
-- Python 3.9+
+- Python 3.13+
 - FastAPI framework
-- Pydantic validation
-- SQLAlchemy (optional)
+- Pydantic 2.8.0+
+- SQLAlchemy 2.0+ (optional)
 - Clean Architecture principles
 
 ## Installation

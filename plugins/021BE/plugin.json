@@ -25,10 +25,10 @@
   },
   "requirements": {
     "tech_stack": [
-      "Python 3.9+",
+      "Python 3.13+",
       "FastAPI",
-      "Pydantic",
-      "SQLAlchemy (optional)"
+      "Pydantic 2.8.0+",
+      "SQLAlchemy 2.0+ (optional)"
     ]
   },
   "post_install": {

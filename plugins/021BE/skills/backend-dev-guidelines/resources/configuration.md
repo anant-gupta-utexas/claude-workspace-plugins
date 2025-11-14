@@ -168,21 +168,8 @@ class Settings(BaseSettings):
 ---
 
 ## **Dependency Management with uv**
-### **Installation**
 
-```bash
-# Create project
-uv init
-
-# Create Virtual Environment
-uv venv
-source .venv/bin/activate
-
-# Install dependencies
-uv sync
-```
-
-### **Maintaining Dependency Groups**
+### **Dependency Groups**
 
 **File:** `pyproject.toml`
 
@@ -190,10 +177,10 @@ uv sync
 [project]
 name = "my-backend"
 version = "0.1.0"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.111.0",
-    "pydantic>=2.7.0",
+    "pydantic>=2.8.0",
     "pydantic-settings>=2.2.0",
 ]
 
@@ -229,32 +216,17 @@ target-version = "py311"
 select = ["E", "F", "I", "N", "W", "UP"]
 ```
 
-### **Common uv Commands**
+### **Managing Dependencies**
+
+Use `uv` for dependency management:
 
 ```bash
-# Sync all dependencies (including groups)
-uv sync
-
-# Sync without dev dependencies
-uv sync --no-dev
-
 # Add dependency to specific group
 uv add --group test pytest-cov
 uv add --group persistence asyncpg
 
 # Add core dependency
 uv add fastapi
-
-# Remove dependency
-uv remove pytest-cov
-
-# Update all dependencies
-uv lock --upgrade
-
-# Run commands with uv
-uv run python main.py
-uv run pytest
-uv run alembic upgrade head
 ```
 
 ---
