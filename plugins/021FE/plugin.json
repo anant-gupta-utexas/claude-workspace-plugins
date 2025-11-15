@@ -36,6 +36,13 @@
         "path": "${CLAUDE_PLUGIN_ROOT}/agents/uiux-specialist.md",
         "description": "UI/UX design and specialist guidance for product interfaces"
       }
+    ],
+    "commands": [
+      {
+        "name": "dev-docs-fe",
+        "path": "${CLAUDE_PLUGIN_ROOT}/commands/dev-docs-fe.md",
+        "description": "Create comprehensive technical requirement specifications for frontend features with structured task breakdown"
+      }
     ]
   },
   "requirements": {

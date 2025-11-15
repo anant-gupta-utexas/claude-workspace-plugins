@@ -11,6 +11,9 @@ TanStack Start/React/TypeScript frontend development guidelines with modern patt
 - **frontend-error-fixer** - Debug and fix frontend errors (build and runtime)
 - **uiux-specialist** - UI/UX design and specialist guidance for product interfaces
 
+### Commands (1)
+- **dev-docs-fe** - Create comprehensive technical requirement specifications (TRS) for frontend features with structured task breakdown
+
 ## Tech Stack Support
 
 ### Frontend
@@ -97,6 +100,23 @@ Invoke agents for specialized tasks:
 "Use the uiux-specialist agent to design the user onboarding screens"
 ```
 
+### Using Commands
+
+Use commands for project planning and documentation:
+
+```bash
+# Create technical requirement specification for a feature
+/dev-docs-fe build user dashboard with data tables
+/dev-docs-fe implement form validation for checkout flow
+/dev-docs-fe create authentication flow with SSO
+```
+
+The command will:
+1. Analyze your request and examine relevant docs (PRD, TRD)
+2. Ask clarifying questions if needed
+3. Create a comprehensive TRS with implementation phases
+4. Generate task management files in `dev/active/[task-name]/`
+
 ## Skill Details
 
 ### Frontend Dev Guidelines
@@ -156,6 +176,37 @@ Invoke agents for specialized tasks:
 - "I need designs for a new feature"
 - "Review my dashboard layout"
 - "Help me design the user onboarding flow"
+
+## Command Details
+
+### dev-docs-fe
+
+**Purpose:** Create comprehensive Technical Requirement Specifications (TRS) for frontend features
+
+**What it generates:**
+- **Overview & Scope** - Feature boundaries and objectives
+- **Requirements Summary** - Functional, non-functional, and UI/UX requirements
+- **Design References** - Mockups, design tokens, shadcn/ui components, responsive breakpoints
+- **Detailed UI Component Design** - Component hierarchy, props/state/data flow, event handling
+- **API Integration** - Endpoints, TanStack Query hooks, cache strategy, loading/error states
+- **State Management Design** - TanStack Query for server state, React Context for global state
+- **Type Safety & Validation** - TypeScript interfaces, Zod schemas, type guards
+- **Implementation Phases** - Structured tasks with acceptance criteria and file specifications
+
+**Output files** (in `dev/active/[task-name]/`):
+- `[task-name]-plan.md` - Comprehensive technical specification
+- `[task-name]-context.md` - Key files, decisions, dependencies
+- `[task-name]-tasks.md` - Checklist for tracking progress
+
+**Usage:**
+```bash
+/dev-docs-fe <feature description>
+```
+
+**Example:**
+```bash
+/dev-docs-fe build user dashboard with real-time metrics and data export
+```
 
 ## Core Principles
 

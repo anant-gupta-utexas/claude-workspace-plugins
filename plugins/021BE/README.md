@@ -7,6 +7,9 @@ Python/FastAPI Clean Architecture backend development guidelines with comprehens
 ### Skills (1)
 - **backend-dev-guidelines** - Python/FastAPI Clean Architecture with domain entities, use cases, repositories, and infrastructure patterns
 
+### Commands (1)
+- **dev-docs-be** - Create comprehensive technical requirement specifications (TRS) for backend features with structured task breakdown
+
 ## Tech Stack Support
 
 ### Backend
@@ -61,6 +64,8 @@ If your project structure differs, edit `.claude/skills/skill-rules.json`:
 
 ## Usage Examples
 
+### Backend Development
+
 **Example prompts:**
 ```bash
 "Following backend guidelines, create a new user registration endpoint"
@@ -68,6 +73,23 @@ If your project structure differs, edit `.claude/skills/skill-rules.json`:
 "Following backend best practices, add validation to my Pydantic model"
 "How do I structure domain entities for an e-commerce system?"
 ```
+
+### Using Commands
+
+Use commands for project planning and documentation:
+
+```bash
+# Create technical requirement specification for a feature
+/dev-docs-be refactor authentication system
+/dev-docs-be implement microservices architecture
+/dev-docs-be build order processing system
+```
+
+The command will:
+1. Analyze your request and examine relevant docs (PRD, TRD)
+2. Ask clarifying questions if needed
+3. Create a comprehensive TRS with implementation phases
+4. Generate task management files in `dev/active/[task-name]/`
 
 ## Skill Details
 
@@ -99,6 +121,39 @@ If your project structure differs, edit `.claude/skills/skill-rules.json`:
 10. Testing guide
 11. Observability
 12. Complete examples
+
+## Command Details
+
+### dev-docs-be
+
+**Purpose:** Create comprehensive Technical Requirement Specifications (TRS) for backend features
+
+**What it generates:**
+- **Overview & Scope** - Feature boundaries and objectives
+- **Requirements Summary** - Functional and non-functional requirements
+- **Detailed Component Design** - Classes/modules structure, method signatures, data structures
+- **API Specifications** - Endpoint definitions, request/response schemas, error handling, rate limiting
+- **Database Design** - Schema details, data access patterns, migration strategy
+- **Algorithm & Logic Design** - Pseudocode for complex operations
+- **Error Handling & Edge Cases** - Failure scenarios, retry strategies, fallback mechanisms
+- **Security Considerations** - Input validation, authorization, data sanitization
+- **Testing Strategy** - Unit tests, test data, mocking strategies, coverage expectations
+- **Implementation Phases** - Structured tasks with acceptance criteria and file specifications
+
+**Output files** (in `dev/active/[task-name]/`):
+- `[task-name]-plan.md` - Comprehensive technical specification
+- `[task-name]-context.md` - Key files, decisions, dependencies
+- `[task-name]-tasks.md` - Checklist for tracking progress
+
+**Usage:**
+```bash
+/dev-docs-be <feature description>
+```
+
+**Example:**
+```bash
+/dev-docs-be build authentication system with JWT and refresh tokens
+```
 
 ## Perfect For
 

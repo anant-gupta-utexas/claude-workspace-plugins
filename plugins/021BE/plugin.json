@@ -21,6 +21,13 @@
         "path": "${CLAUDE_PLUGIN_ROOT}/skills/backend-dev-guidelines",
         "description": "Comprehensive Python/FastAPI Clean Architecture patterns with domain layer, application layer, and infrastructure guidance"
       }
+    ],
+    "commands": [
+      {
+        "name": "dev-docs-be",
+        "path": "${CLAUDE_PLUGIN_ROOT}/commands/dev-docs-be.md",
+        "description": "Create comprehensive technical requirement specifications for backend features with structured task breakdown"
+      }
     ]
   },
   "requirements": {
