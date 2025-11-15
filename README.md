@@ -1,62 +1,58 @@
 # Claude Workspace Plugins Marketplace
 
-Production-tested Claude Code plugins for modern development workflows with specialized tools for backend, frontend, documentation, and essential utilities.
+Production-tested Claude Code plugins for modern development workflows with specialized tools for backend, frontend, and essential utilities including documentation, planning, and research.
 
 ## 🎯 Available Plugins
 
-### Core Plugins (Recommended for All Projects)
+### Core Plugin (Recommended for All Projects)
 
 #### [essentials](./plugins/essentials/)
-Essential utilities with specialized agents, expert consultation, skill development tools, and intelligent hooks.
+Essential utilities with specialized agents, expert consultation, documentation tools, skill development, and intelligent hooks.
 
 **Includes:**
 - 2 Skills (consult-experts, skill-developer)
-- 4 Agents (business-strategist, plan-reviewer, refactor-planner, web-research-specialist)
+- 5 Agents (business-strategist, documentation-architect, plan-reviewer, refactor-planner, web-research-specialist)
+- 1 Command (dev-docs-update)
 - 3 Hooks (skill activation, file tracking, error handling reminders)
 
-**Perfect for:** Planning, research, refactoring, expert consultation
-
-#### [documentation](./plugins/documentation/)
-Comprehensive documentation tools for technical writing and architecture documentation.
-
-**Includes:**
-- 1 Agent (documentation-architect)
-- 2 Commands (/dev-docs, /dev-docs-update)
-
-**Perfect for:** Creating technical documentation, API docs, architecture documentation
+**Perfect for:** Planning, research, refactoring, expert consultation, documentation, context management
 
 ---
 
 ### Specialized Plugins (Install Based on Your Stack)
 
 #### [021BE](./plugins/021BE/) - Backend Development
-Python/FastAPI Clean Architecture backend development guidelines.
+Python/FastAPI Clean Architecture backend development guidelines with comprehensive technical requirement specification command.
 
 **Includes:**
 - 1 Skill (backend-dev-guidelines)
+- 1 Command (dev-docs-be)
 
 **Tech Stack:**
-- Python 3.9+
+- Python 3.13+
 - FastAPI
-- Pydantic
+- Pydantic 2.8.0+
 - Clean Architecture
 
-**Perfect for:** Python/FastAPI backend projects
+**Perfect for:** Python/FastAPI backend projects, creating backend TRS documents
 
 #### [021FE](./plugins/021FE/) - Frontend Development
-React/TypeScript/MUI v7 frontend development guidelines with GUARDRAIL enforcement.
+TanStack Start/React/TypeScript frontend development guidelines with modern SSR-ready patterns and comprehensive technical requirement specification command.
 
 **Includes:**
 - 1 Skill (frontend-dev-guidelines)
 - 2 Agents (frontend-error-fixer, uiux-specialist)
+- 1 Command (dev-docs-fe)
 
 **Tech Stack:**
+- TanStack Start
 - React 18+
 - TypeScript
-- MUI v7
-- TanStack Query/Router
+- TanStack Query/Router/Form
+- shadcn/ui
+- Tailwind CSS
 
-**Perfect for:** React/TypeScript frontend projects with MUI v7
+**Perfect for:** TanStack Start/React/TypeScript frontend projects, creating frontend TRS documents
 
 ---
 
@@ -81,14 +77,13 @@ This opens an interactive UI showing all available plugins from this marketplace
 **Recommended installation order:**
 
 ```bash
-# Core plugins (install these first)
+# Core plugin (install this first)
 /plugin install essentials@claude-workspace-plugins
-/plugin install documentation@claude-workspace-plugins
 
 # Backend plugin (if you have a Python/FastAPI backend)
 /plugin install 021BE@claude-workspace-plugins
 
-# Frontend plugin (if you have a React/TypeScript frontend)
+# Frontend plugin (if you have a TanStack Start/React/TypeScript frontend)
 /plugin install 021FE@claude-workspace-plugins
 ```
 
@@ -111,17 +106,21 @@ Test skill activation:
 
 ### essentials Plugin (Core)
 
-**Why install:** Provides fundamental utilities that enhance all development workflows regardless of tech stack.
+**Why install:** Provides fundamental utilities that enhance all development workflows regardless of tech stack, including documentation, planning, research, and context management.
 
 **Skills:**
 - **consult-experts** - Access specialized expert agents (Product Manager, Tech Lead, Code Reviewer)
 - **skill-developer** - Meta-skill for creating and managing Claude Code skills
 
 **Agents:**
-- **business-strategist** - Business strategy and product guidance
+- **business-strategist** - Business strategy and product guidance for 0-to-1 products
+- **documentation-architect** - Create comprehensive, developer-focused documentation with context gathering
 - **plan-reviewer** - Review development plans before implementation
 - **refactor-planner** - Create comprehensive refactoring strategies
-- **web-research-specialist** - Research technical issues and solutions
+- **web-research-specialist** - Research technical issues and solutions online
+
+**Commands:**
+- **/dev-docs-update** - Update dev documentation before context compaction for seamless continuation
 
 **Hooks:**
 - **skill-activation-prompt** - Auto-suggests relevant skills based on your work
@@ -132,27 +131,15 @@ Test skill activation:
 
 ---
 
-### documentation Plugin (Core)
-
-**Why install:** Essential for creating and maintaining high-quality technical documentation.
-
-**Agent:**
-- **documentation-architect** - Expert agent for comprehensive documentation (APIs, architecture, system design)
-
-**Commands:**
-- **/dev-docs** - Create structured development documentation with task breakdown
-- **/dev-docs-update** - Update docs before context reset
-
-[View Details →](./plugins/documentation/README.md)
-
----
-
 ### 021BE Plugin (Backend Specialization)
 
 **When to install:** You're working on Python/FastAPI backend projects following Clean Architecture.
 
 **Skill:**
 - **backend-dev-guidelines** - Python/FastAPI Clean Architecture with domain entities, use cases, repository patterns
+
+**Commands:**
+- **/dev-docs-be** - Create comprehensive Technical Requirement Specifications (TRS) for backend features with structured implementation phases, database design, API specs, and task breakdown
 
 **Key Topics:**
 - Domain layer (entities, value objects)
@@ -169,23 +156,27 @@ Test skill activation:
 
 ### 021FE Plugin (Frontend Specialization)
 
-**When to install:** You're working on React/TypeScript projects with MUI v7.
+**When to install:** You're working on TanStack Start/React/TypeScript projects with modern SSR-ready patterns.
 
 **Skill:**
-- **frontend-dev-guidelines** - React/TypeScript/MUI v7 patterns with GUARDRAIL enforcement (blocks MUI v6)
+- **frontend-dev-guidelines** - TanStack Start/React/TypeScript patterns with Suspense, lazy loading, shadcn/ui, and SSR-ready architecture
 
 **Agents:**
 - **frontend-error-fixer** - Debug and fix frontend errors (build and runtime)
 - **uiux-specialist** - UI/UX design and specialist guidance
 
+**Commands:**
+- **/dev-docs-fe** - Create comprehensive Technical Requirement Specifications (TRS) for frontend features with UI component design, API integration, state management, and implementation phases
+
 **Key Topics:**
 - Component patterns (Suspense, lazy loading)
-- MUI v7 usage with guardrails
-- TanStack Query/Router
+- TanStack Start/Query/Router/Form
+- shadcn/ui components and Tailwind CSS
+- SSR-ready architecture
 - Performance optimization
 - TypeScript standards
 
-**Resources:** 10 comprehensive guides on React/MUI best practices
+**Resources:** 11 comprehensive guides on TanStack Start/React best practices
 
 [View Details →](./plugins/021FE/README.md)
 
@@ -225,11 +216,9 @@ Invoke agents for complex tasks:
 ```bash
 # Essential agents
 "Use the business-strategist agent to help me plan my product strategy"
+"Use the documentation-architect agent to document my REST API"
 "Use the plan-reviewer agent to review my authentication implementation plan"
 "Use the web-research-specialist agent to find best practices for WebSockets"
-
-# Documentation agent
-"Use the documentation-architect agent to document my REST API"
 
 # Frontend agents (if 021FE installed)
 "Use the frontend-error-fixer agent to debug this console error"
@@ -241,8 +230,17 @@ Invoke agents for complex tasks:
 Use commands for workflows:
 
 ```bash
-/dev-docs Implement user authentication
+# Essential commands
 /dev-docs-update
+/dev-docs-update authentication system changes and middleware
+
+# Backend commands (if 021BE installed)
+/dev-docs-be build authentication system with JWT
+/dev-docs-be implement order processing microservice
+
+# Frontend commands (if 021FE installed)
+/dev-docs-fe create user dashboard with real-time metrics
+/dev-docs-fe implement checkout flow with payment integration
 ```
 
 ---
@@ -318,7 +316,6 @@ Edit `.claude/skills/skill-rules.json` to customize activation patterns:
 
 ```bash
 /plugin update essentials
-/plugin update documentation
 /plugin update 021BE
 /plugin update 021FE
 ```
@@ -326,6 +323,7 @@ Edit `.claude/skills/skill-rules.json` to customize activation patterns:
 ### Remove Plugins
 
 ```bash
+/plugin uninstall essentials
 /plugin uninstall 021BE
 /plugin uninstall 021FE
 ```
@@ -344,41 +342,37 @@ Edit `.claude/skills/skill-rules.json` to customize activation patterns:
 
 ```bash
 /plugin install essentials@claude-workspace-plugins
-/plugin install documentation@claude-workspace-plugins
 /plugin install 021BE@claude-workspace-plugins
 /plugin install 021FE@claude-workspace-plugins
 ```
 
-**You get:** Complete development workflow with backend/frontend patterns, planning agents, documentation tools, and hooks.
+**You get:** Complete development workflow with backend/frontend patterns, TRS documentation commands, planning agents, documentation tools, and intelligent hooks.
 
 ### For Backend-Only Projects
 
 ```bash
 /plugin install essentials@claude-workspace-plugins
-/plugin install documentation@claude-workspace-plugins
 /plugin install 021BE@claude-workspace-plugins
 ```
 
-**You get:** Backend development patterns, planning agents, documentation tools, and essential utilities.
+**You get:** Backend Clean Architecture patterns, backend TRS command, planning agents, documentation tools, and essential utilities.
 
 ### For Frontend-Only Projects
 
 ```bash
 /plugin install essentials@claude-workspace-plugins
-/plugin install documentation@claude-workspace-plugins
 /plugin install 021FE@claude-workspace-plugins
 ```
 
-**You get:** Frontend development patterns with guardrails, UI/UX specialist, error fixing, planning agents, and documentation tools.
+**You get:** TanStack Start/React patterns, frontend TRS command, UI/UX specialist, error fixing, planning agents, and documentation tools.
 
 ### For Product Planning & Documentation
 
 ```bash
 /plugin install essentials@claude-workspace-plugins
-/plugin install documentation@claude-workspace-plugins
 ```
 
-**You get:** Business strategy, planning, documentation creation, and essential utilities without tech-specific development patterns.
+**You get:** Business strategy, planning, documentation architect, context management, and essential utilities without tech-specific development patterns.
 
 ---
 
@@ -391,7 +385,6 @@ Edit `.claude/skills/skill-rules.json` to customize activation patterns:
 
 ### Plugin READMEs
 - [essentials Plugin →](./plugins/essentials/README.md)
-- [documentation Plugin →](./plugins/documentation/README.md)
 - [021BE Plugin →](./plugins/021BE/README.md)
 - [021FE Plugin →](./plugins/021FE/README.md)
 
@@ -443,11 +436,13 @@ MIT License - Use freely in your projects.
 After installing these plugins, you get:
 
 - ✅ **Intelligent skill activation** - Skills suggest themselves when relevant
-- ✅ **Specialized agents** - AI assistants for business strategy, planning, UI/UX, research, and error fixing
-- ✅ **Expert guidance** - Access to business strategist, tech lead, and UI/UX specialist agents
+- ✅ **Specialized agents** - AI assistants for business strategy, documentation, planning, UI/UX, research, and error fixing
+- ✅ **Expert guidance** - Access to business strategist, documentation architect, tech lead, and UI/UX specialist agents
+- ✅ **TRS documentation commands** - Create comprehensive Technical Requirement Specifications for backend and frontend features
+- ✅ **Context management** - Update dev docs before context reset for seamless continuation
 - ✅ **Automated workflows** - Hooks that track and optimize your work
-- ✅ **Production patterns** - Best practices from real-world projects (Python/FastAPI, React/MUI)
-- ✅ **Tech stack validation** - Prevents common mistakes with guardrails (MUI v7)
+- ✅ **Production patterns** - Best practices from real-world projects (Python/FastAPI, TanStack Start/React)
+- ✅ **Modern tech stacks** - SSR-ready React patterns, Clean Architecture backend, shadcn/ui, TanStack ecosystem
 - ✅ **Comprehensive documentation** - Everything you need to know
 - ✅ **Modular installation** - Install only what you need for your project
 
