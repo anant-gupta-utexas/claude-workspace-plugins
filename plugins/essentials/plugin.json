@@ -12,7 +12,9 @@
     "hooks",
     "planning",
     "research",
-    "refactoring"
+    "refactoring",
+    "documentation",
+    "dev-docs"
   ],
   "category": "utilities",
   "components": {
@@ -35,6 +37,11 @@
         "description": "Business strategy and product guidance for building products"
       },
       {
+        "name": "documentation-architect",
+        "path": "${CLAUDE_PLUGIN_ROOT}/agents/documentation-architect.md",
+        "description": "Create comprehensive, developer-focused documentation with context gathering from code and existing docs"
+      },
+      {
         "name": "plan-reviewer",
         "path": "${CLAUDE_PLUGIN_ROOT}/agents/plan-reviewer.md",
         "description": "Review development plans before implementation"
@@ -48,6 +55,13 @@
         "name": "web-research-specialist",
         "path": "${CLAUDE_PLUGIN_ROOT}/agents/web-research-specialist.md",
         "description": "Research technical issues and solutions online"
+      }
+    ],
+    "commands": [
+      {
+        "name": "dev-docs-update",
+        "path": "${CLAUDE_PLUGIN_ROOT}/commands/dev-docs-update.md",
+        "description": "Update dev documentation before context compaction for seamless continuation"
       }
     ],
     "hooks": [

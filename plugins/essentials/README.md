@@ -8,11 +8,15 @@ Essential utilities for enhanced development workflow including specialized agen
 - **consult-experts** - Access specialized expert agents for business strategy, tech leadership, and UI/UX design
 - **skill-developer** - Meta-skill for creating and managing Claude Code skills
 
-### Agents (4)
+### Agents (5)
 - **business-strategist** - Business strategy and product guidance for building products from 0 to 1
+- **documentation-architect** - Create comprehensive, developer-focused documentation with context gathering from code and existing docs
 - **plan-reviewer** - Review development plans before implementation
 - **refactor-planner** - Create comprehensive refactoring strategies
 - **web-research-specialist** - Research technical issues and solutions online
+
+### Commands (1)
+- **dev-docs-update** - Update dev documentation before context compaction for seamless continuation
 
 ### Hooks (3)
 - **skill-activation-prompt** - Auto-suggests relevant skills based on your work
@@ -59,6 +63,12 @@ cd ~/.claude/plugins/marketplaces/claude-workspace-plugins/plugins/essentials/ho
 "Use the business-strategist agent to analyze my product roadmap"
 ```
 
+**Documentation:**
+```bash
+"Use the documentation-architect agent to document my new billing service"
+"Use the documentation-architect agent to create API docs for my endpoints"
+```
+
 **Plan Review:**
 ```bash
 "Use the plan-reviewer agent to review my authentication implementation plan"
@@ -76,6 +86,23 @@ cd ~/.claude/plugins/marketplaces/claude-workspace-plugins/plugins/essentials/ho
 "Use the web-research-specialist agent to find best practices for file uploads"
 "Use the web-research-specialist agent to research WebSocket implementation patterns"
 ```
+
+### Using Commands
+
+**Update Documentation:**
+```bash
+# Before context compaction/reset
+/dev-docs-update
+
+# With specific focus
+/dev-docs-update authentication system changes and new middleware
+```
+
+The command will update:
+1. Active task documentation in `/dev/active/`
+2. Context files with current implementation state
+3. Task files with completed/pending status
+4. Capture session context and decisions
 
 ## Component Details
 
@@ -128,6 +155,37 @@ cd ~/.claude/plugins/marketplaces/claude-workspace-plugins/plugins/essentials/ho
 - Feature prioritization decisions
 - Market analysis and validation
 
+#### Documentation Architect
+
+**Specializes in:**
+- Comprehensive developer-focused documentation
+- Context gathering from code and existing docs
+- API documentation with examples
+- README files following best practices
+- Data flow diagrams and architecture overviews
+- Testing documentation
+
+**Methodology:**
+1. **Discovery Phase** - Queries memory MCP, scans `/docs/` and `/dev/`, identifies source files
+2. **Analysis Phase** - Understands implementation, identifies key concepts, recognizes patterns
+3. **Documentation Phase** - Structures content logically, includes code examples, adds diagrams
+4. **Quality Assurance** - Verifies accuracy, checks references, ensures consistency
+
+**When to use:**
+- Documenting new features or services
+- Creating API documentation
+- Updating existing documentation
+- Building comprehensive developer guides
+- Need architectural overviews
+- Onboarding documentation
+
+**Output includes:**
+- Developer guides with clear explanations
+- README files with setup and usage instructions
+- API docs with endpoints, parameters, examples
+- Data flow diagrams
+- Testing documentation
+
 #### Plan Reviewer
 
 **Specializes in:**
@@ -175,6 +233,60 @@ cd ~/.claude/plugins/marketplaces/claude-workspace-plugins/plugins/essentials/ho
 - Researching implementation approaches
 - Finding solutions to technical problems
 - Comparing libraries or frameworks
+
+## Command Details
+
+### dev-docs-update
+
+**Purpose:** Update development documentation before context compaction to ensure seamless continuation after context reset
+
+**What it updates:**
+
+1. **Active Task Documentation** (`/dev/active/[task-name]/`)
+   - `[task-name]-context.md` - Current state, decisions, files modified, blockers, next steps
+   - `[task-name]-tasks.md` - Mark completed tasks, add new tasks, update priorities
+
+2. **Session Context Capture**
+   - Complex problems solved
+   - Architectural decisions made
+   - Bugs found and fixed
+   - Integration points discovered
+   - Testing approaches
+   - Performance optimizations
+
+3. **Memory Updates** (if applicable)
+   - New patterns or solutions
+   - Entity relationships
+   - System behavior observations
+
+4. **Unfinished Work Documentation**
+   - Current work state when context limit approached
+   - Partially completed features
+   - Commands to run on restart
+   - Temporary workarounds
+
+5. **Handoff Notes**
+   - Exact file and line being edited
+   - Goal of current changes
+   - Uncommitted changes
+   - Test commands
+
+**Usage:**
+```bash
+/dev-docs-update
+/dev-docs-update <optional focus area>
+```
+
+**Example:**
+```bash
+/dev-docs-update authentication system changes and middleware implementation
+```
+
+**When to use:**
+- Approaching context limits
+- Before taking a break from complex work
+- After major implementation milestones
+- When switching between different features
 
 ### Hooks
 
@@ -229,6 +341,8 @@ cd ~/.claude/plugins/marketplaces/claude-workspace-plugins/plugins/essentials/ho
 - ✅ Creating custom skills
 - ✅ Enhanced development workflow
 - ✅ 0-to-1 product development
+- ✅ Documentation creation and maintenance
+- ✅ Context management across sessions
 
 ## Not Designed For
 
