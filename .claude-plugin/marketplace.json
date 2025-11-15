@@ -32,7 +32,7 @@
     {
       "name": "021FE",
       "source": "./plugins/021FE",
-      "description": "React/TypeScript/MUI v7 frontend development guidelines with GUARDRAIL enforcement to prevent deprecated patterns. Includes dev-docs-fe command for creating comprehensive technical requirement specifications.",
+      "description": "React/TypeScript/Tanstack Query/Tanstack Router frontend development guidelines. Includes dev-docs-fe command for creating comprehensive technical requirement specifications.",
       "version": "1.0.0",
       "author": {
         "name": "Anant Gupta",
