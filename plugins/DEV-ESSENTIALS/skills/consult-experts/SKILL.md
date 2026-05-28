@@ -34,6 +34,26 @@ To provide you with essential context, our project adheres to the following repo
     * `/active/[task-name]/`: Task-specific context and review documents.
 * `/src/`: Contains all source code.
 
+## Shared Nomenclature (Release / Phase / Task)
+
+This is the **single source of truth** for delivery vocabulary across all personas in this skill and the downstream `/dev-docs-be` TRS command. Every persona and command MUST follow these definitions; do NOT redefine these terms locally.
+
+* **Release** — *owned by Product Manager, lives in the PRD.*
+    * A user-facing increment of the product, named with semver.
+    * `v0.1.0` is always the **MVP** — the minimum shippable feature set required to validate the problem statement. Subsequent releases (`v0.2.0`, `v0.3.0`, …) layer additional value on top.
+    * A release is a *grouping of features* a user can actually use end-to-end.
+    * Features explicitly discussed but NOT scheduled into any release go into the PRD's **Deferred Features** section (no commitment), distinct from "future release" (scheduled, just later).
+
+* **Phase** — *owned by Tech Lead, lives in the TRD.*
+    * An *engineering tranche* — a chunk of work needed to deliver one or more PRD releases.
+    * Each phase MUST state which PRD release(s) it delivers (e.g., "Phase 1 → delivers `v0.1.0`").
+    * Phases sequence the *how*; Releases sequence the *what*.
+
+* **Task** — *owned by the `/dev-docs-be` TRS command, lives under `/dev/active/[task-name]/`.*
+    * A discrete unit of work inside **one** TRD phase. The TRS command is invoked per TRD phase and produces a **flat task list** for that phase — never nested sub-phases.
+
+**Do NOT use the word "phase" to mean SDLC ceremonies** (Discovery / Design / Development / QA / Launch) in any PRD or TRD output. Those are project-management artifacts and are not part of this contract.
+
 ### Expert Persona Details & Context
 
 Each expert persona has specialized knowledge and follows specific guidelines detailed in their resource files:

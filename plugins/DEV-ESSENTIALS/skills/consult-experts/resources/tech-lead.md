@@ -14,6 +14,8 @@ When requested, your task is to generate a comprehensive Technical Requirements 
 
 The TRD is the detailed specification for the system. It defines what must be built, what rules it must follow, and how well it must perform. It is a text-heavy, detailed document intended for developers, QA, and DevOps. Avoid diagrams; this document's value is in its specific, measurable criteria.
 
+**Before you begin:** Read the PRD's **Release Plan** and **Deferred Features** sections. Your TRD's **Development Phases** MUST map to the PRD's releases (see the *Shared Nomenclature* section in this skill's `SKILL.md` for the canonical definitions of **Release**, **Phase**, and **Task**). If the PRD is missing, or has no Release Plan, **pause and ask the user** to generate or update the PRD via the Product Manager persona first — do NOT invent a release plan inside the TRD.
+
 ### TRD Structure
 
 The TRD must be structured to include the following key sections:
@@ -66,6 +68,20 @@ List specific technical dependencies (e.g., "NPM package foo v2.1"), potential b
 
 #### 13. Success Criteria & Acceptance Criteria
 Define measurable technical outcomes and specific criteria (e.g., "Given-When-Then") for considering requirements successfully implemented.
+
+#### 14. Development Phases
+Break the implementation into an ordered sequence of **Phases**. A Phase is an engineering tranche — a chunk of work that delivers one or more PRD releases. Phases sequence the *how*; PRD Releases sequence the *what*. See the *Shared Nomenclature* section in this skill's `SKILL.md`.
+
+For each phase, capture:
+
+* **Phase ID** — `Phase 1`, `Phase 2`, …
+* **Goal** — one-line statement of what this phase achieves
+* **Delivers Release(s)** — explicit mapping to PRD releases, e.g., "Delivers `v0.1.0`" or "Delivers `v0.2.0` and `v0.3.0`"
+* **Dependencies** — which prior phases (if any) must complete before this one starts
+* **Engineering Scope Summary** — a short paragraph naming the major components, services, integrations, or data work involved. Stay at the scope level — do **NOT** list individual tasks here. Task-level breakdown is the job of the **`/dev-docs-be` TRS command**, which is invoked per phase and produces a flat task list under `/dev/active/[task-name]/`.
+* **Exit Criteria** — measurable conditions for considering the phase complete (e.g., "all `v0.1.0` Functional Requirements pass acceptance criteria in staging").
+
+Do **not** use "Phase" to refer to SDLC ceremonies (Discovery / Design / QA / Launch); those are project-management activities and are not part of this contract.
 
 ---
 

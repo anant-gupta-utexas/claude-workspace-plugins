@@ -84,6 +84,12 @@ Identify high-level technical risks (e.g., "Single point of failure in X," "Data
 ### 12. Future Considerations
 Note potential expansion points, known limitations, and how the architecture is designed to support them.
 
+This section MUST be aligned with the PRD's release roadmap (see the *Shared Nomenclature* section in this skill's `SKILL.md` for the canonical definitions of **Release** and **Phase**):
+
+* **Cross-reference Future Releases** — for each PRD release beyond `v0.1.0`, briefly note any architectural seams, extension points, or interface choices made in `v0.1.0` to accommodate it. Be explicit when a release is *not* accommodated yet and will need re-architecting.
+* **Cross-reference Deferred Features** — for items in the PRD's Deferred Features section, call out any architectural assumptions that would be invalidated if a deferred feature is later promoted into a release. These belong in *Risks & Mitigation* (section 11) as well if material.
+* **Foreclosure check** — explicitly state whether any choice in the `v0.1.0` architecture forecloses a feature scheduled for a later release. If yes, surface it as a risk and propose the architectural change required to unlock the future release.
+
 ---
 
 ## Output Requirements
