@@ -182,7 +182,7 @@ This opens an interactive UI showing all available plugins from this marketplace
 **Skills:**
 - **git-workflow** - Branching strategies, conventional commits, PR workflow, merge vs rebase, conflict resolution, release management
 - **lateral-thinking** - 5 thinking personas (Contrarian, Hacker, Simplifier, Researcher, Architect) that diagnose stagnation patterns and reframe problems
-- **consult-experts** - Access specialized expert personas (Product Manager, Tech Lead, System Design Specialist, Code Reviewer)
+- **consult-experts** - Access specialized expert personas (Product Manager, Tech Lead, System Design Specialist, Code Reviewer) with a shared Release / Phase / Task nomenclature: PRDs now ship with release plans (v0.1.0 MVP, v0.2.0, …) and deferred features; TRDs break work into Development Phases tagged to PRD releases
 
 **Agents:**
 - **documentation-architect** - Create comprehensive, developer-focused documentation with context gathering and Maps of Content (MOC) navigation
@@ -191,7 +191,7 @@ This opens an interactive UI showing all available plugins from this marketplace
 
 **Commands:**
 - **/dev-docs-update** - Update dev documentation before context compaction for seamless continuation
-- **/dev-docs-be** - Create comprehensive Technical Requirement Specifications (TRS) for backend features
+- **/dev-docs-be** - Generate a per-phase Technical Requirement Specification (TRS) by picking ONE phase from the TRD and producing a flat task list for that phase
 - **/code-review** - Run security and quality review of uncommitted changes before committing
 - **/verify** - Run comprehensive verification (build, types, lint, tests, secrets, debug statements)
 

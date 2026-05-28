@@ -7,7 +7,7 @@ Development essentials with specialized agents for planning, documentation, and 
 ### Skills (3)
 - **git-workflow** - Git workflow patterns including branching strategies, conventional commits, PR workflow, merge vs rebase, conflict resolution, and release management
 - **lateral-thinking** - Break through development blocks with 5 thinking personas (Contrarian, Hacker, Simplifier, Researcher, Architect) that diagnose your stagnation pattern and reframe the problem
-- **consult-experts** - Access specialized expert personas for product requirements (PRDs), technical requirements (TRDs), system design (SDDs), and code review
+- **consult-experts** - Access specialized expert personas for product requirements (PRDs with release plans and deferred features), technical requirements (TRDs with development phases mapped to PRD releases), system design (SDDs), and code review. Uses a shared Release / Phase / Task nomenclature contract across personas.
 
 ### Agents (3)
 - **documentation-architect** - Create comprehensive, developer-focused documentation with context gathering from code and existing docs, plus Maps of Content (MOC) navigation
@@ -16,7 +16,7 @@ Development essentials with specialized agents for planning, documentation, and 
 
 ### Commands (4)
 - **dev-docs-update** - Update dev documentation before context compaction for seamless continuation
-- **dev-docs-be** - Create comprehensive Technical Requirement Specifications (TRS) for backend features
+- **dev-docs-be** - Generate a per-phase Technical Requirement Specification (TRS) by picking ONE phase from the TRD and breaking it into a flat task list for backend features
 - **code-review** - Run a security and quality review of uncommitted changes before committing
 - **verify** - Run comprehensive verification (build, types, lint, tests, secrets, debug statements)
 
@@ -228,12 +228,12 @@ Comprehensive codebase verification: build, type check, lint, tests, secret scan
 
 #### /dev-docs-be
 
-Creates comprehensive Technical Requirement Specifications (TRS) for backend features including component design, API specifications, database design, error handling, security considerations, testing strategy, and implementation phases with task breakdown.
+Generates a **per-phase** Technical Requirement Specification (TRS). Reads `/docs/2_architecture/TRD.md`, lists its Development Phases, asks you which phase to detail, then produces a flat task breakdown for that one phase — including component design, API specifications, database design, error handling, security considerations, and testing strategy. The command does NOT re-plan releases or phases; that's owned by the Product Manager and Tech Lead personas in the `consult-experts` skill.
 
-**Output files** (in `dev/active/[task-name]/`):
-- `[task-name]-plan.md` - Comprehensive technical specification
-- `[task-name]-context.md` - Key files, decisions, dependencies
-- `[task-name]-tasks.md` - Checklist for tracking progress
+**Output files** (in `dev/active/[feature-name]-phase-N/`):
+- `[feature-name]-phase-N-plan.md` - Per-phase technical specification with flat task list
+- `[feature-name]-phase-N-context.md` - Key files, decisions, dependencies
+- `[feature-name]-phase-N-tasks.md` - Checklist for tracking progress
 
 #### /dev-docs-update
 
