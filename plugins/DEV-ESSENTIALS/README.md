@@ -22,7 +22,7 @@ Development essentials with specialized agents for planning, documentation, and 
 
 ### Hooks (8)
 - **block-no-verify** - Blocks `git commit --no-verify` (PreToolUse, Bash)
-- **pre-commit-security** - Scans staged files for hardcoded secrets before commits (PreToolUse, Bash)
+- **pre-commit-security** - Scans staged files for hardcoded secrets before commits; supports `# pragma: allowlist secret` inline markers and auto-skips obvious placeholder values (test/fake/dummy/etc.) (PreToolUse, Bash)
 - **commit-quality** - Validates conventional commit format, detects debugger/console.log in staged files (PreToolUse, Bash)
 - **suggest-compact** - Suggests `/compact` every ~50 tool calls to manage context window (PreToolUse, Edit|Write)
 - **large-file-blocker** - Blocks creation of files exceeding 800 lines (PreToolUse, Write)
@@ -129,7 +129,7 @@ User request -> Claude picks a tool -> PreToolUse hook runs -> Tool executes -> 
 | Hook | Matcher | What it does | Exit code |
 |------|---------|-------------|-----------|
 | block-no-verify | Bash | Blocks `git commit --no-verify` | 2 (block) |
-| pre-commit-security | Bash | Scans staged files for secrets (sk-, ghp_, AKIA, api_key, password) | 2 (block) |
+| pre-commit-security | Bash | Scans staged files for secrets (sk-, ghp_, AKIA, api_key, password); honors `# pragma: allowlist secret` and placeholder values | 2 (block) |
 | commit-quality | Bash | Validates commit format, detects debugger/console.log in staged files | 0 (warn) or 2 (block) |
 | suggest-compact | Edit, Write | Suggests `/compact` every ~50 tool calls | 0 (warn) |
 | large-file-blocker | Write | Blocks files exceeding 800 lines | 2 (block) |

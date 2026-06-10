@@ -29,6 +29,29 @@ SECRET_PATTERNS = [
 
 SKIP_EXTENSIONS = re.compile(r"\.(md|txt|json|yaml|yml|lock|svg|png|jpg|gif)$", re.IGNORECASE)
 
+# Inline marker to allowlist a single line (detect-secrets / gitleaks convention).
+ALLOWLIST_MARKER = "pragma: allowlist secret"
+ALLOWLIST_RE = re.compile(re.escape(ALLOWLIST_MARKER), re.IGNORECASE)
+
+# Obvious non-secrets: if the quoted value matches one of these, skip the line.
+PLACEHOLDER_KEYWORDS = [
+    "test", "fake", "dummy", "example", "sample", "placeholder",
+    "changeme", "change_me", "xxx", "todo", "redacted", "your_", "your-",
+    "<", "{{", "${", "...", "n/a", "none", "null",
+]
+PLACEHOLDER_RE = re.compile(
+    r"[=:]\s*['\"]([^'\"]*)['\"]"
+)
+
+
+def is_placeholder(line):
+    """True if the line's quoted value looks like an obvious placeholder."""
+    m = PLACEHOLDER_RE.search(line)
+    if not m:
+        return False
+    value = m.group(1).lower()
+    return any(kw in value for kw in PLACEHOLDER_KEYWORDS)
+
 
 def get_staged_files():
     result = subprocess.run(
@@ -84,6 +107,14 @@ def main():
                 if stripped.startswith("//") or stripped.startswith("#"):
                     continue
 
+                # Escape hatch 1: explicit inline allowlist comment.
+                if ALLOWLIST_RE.search(line):
+                    continue
+
+                # Escape hatch 2: value is an obvious placeholder (test/fake/etc).
+                if is_placeholder(line):
+                    continue
+
                 for pattern, name in SECRET_PATTERNS:
                     if pattern.search(line):
                         print(f"[Hook] SECRET FOUND in {file}:{i} - {name}", file=sys.stderr)
@@ -91,7 +122,13 @@ def main():
 
         if secrets_found > 0:
             print(f"\n[Hook] BLOCKED: {secrets_found} potential secret(s) detected in staged files.", file=sys.stderr)
-            print("[Hook] Remove secrets and use environment variables instead.", file=sys.stderr)
+            print("[Hook] If this is a real secret, remove it and use environment variables instead.", file=sys.stderr)
+            print("[Hook] If this is a false positive, you can:", file=sys.stderr)
+            print(f"[Hook]   1. Add an inline marker:  <code>  # {ALLOWLIST_MARKER}", file=sys.stderr)
+            print("[Hook]      e.g.  password = \"...\"  # " + ALLOWLIST_MARKER, file=sys.stderr)
+            print("[Hook]   2. Use a placeholder value containing one of these keywords:", file=sys.stderr)
+            print("[Hook]      " + ", ".join(PLACEHOLDER_KEYWORDS), file=sys.stderr)
+            print("[Hook]   3. Disable this hook for the session:  export DISABLED_HOOKS=\"pre-commit-security\"", file=sys.stderr)
             sys.stdout.write(data)
             sys.exit(2)
 
