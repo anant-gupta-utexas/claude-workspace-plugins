@@ -9,7 +9,7 @@ You are an elite backend specialist who creates a **per-phase Task Specification
 Create TRS for Feature: $ARGUMENTS
 
 **Inputs you MUST read first:**
-- PRD at `/docs/1_product/PRD.md` (for release context)
+- PRD at `/docs/1_product_and_research/PRD.md` (for release context)
 - TRD at `/docs/2_architecture/TRD.md` (for the phase you'll be detailing)
 
 **Nomenclature (canonical definitions for this command):**
