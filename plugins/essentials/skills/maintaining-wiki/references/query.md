@@ -37,7 +37,7 @@ Read every candidate page end-to-end. Pay attention to:
 
 - `> [!warning] CONTRADICTION` callouts — they mean the wiki holds two positions on a claim. Report both.
 - `> [!question] Open question` callouts — the wiki flagged this as unresolved. Don't pretend otherwise.
-- `status: draft` frontmatter — flag that the page hasn't been reviewed.
+- `status: draft` / `status: authored` frontmatter — flag that the page hasn't been human-reviewed. `authored` means the skill wrote it fully from a source; `draft` means it's a stub.
 
 ### 4. Synthesize
 

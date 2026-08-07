@@ -109,7 +109,19 @@ Present both to the user as a two-part proposal before writing anything:
 
 For each new page, use the wiki page template from `references/templates.md`. Required elements:
 
-- Full YAML frontmatter (`title`, `created`, `last_updated`, `source_count: 1`, `status: draft`, `tags: [...]`, `aliases: [...]`)
+- Full YAML frontmatter (`title`, `created`, `last_updated`, `source_count: 1`, `status: authored`, `tags: [...]`, `aliases: [...]`)
+
+> **Use `status: authored`, not `draft`.** A page the skill wrote end-to-end from a
+> source — summary, cited claims, related links, open questions — is complete but
+> not human-reviewed. That is `authored`. Reserve `draft` for genuine stubs: a page
+> created to satisfy an inbound `[[link]]` with a placeholder body, or one the user
+> explicitly asked you to leave unfinished.
+>
+> The distinction is load-bearing for lint check #6. When ingest defaulted to
+> `draft`, every page started in the state the staleness check penalizes and nothing
+> ever cleared it — one vault reached 49% of pages flagged, which made the check
+> useless. `authored` is a state the skill can set truthfully; `reviewed` is the
+> state only a human can grant.
 - One-paragraph summary
 - `## Key claims` — each claim cited `[Source: <raw-filename>.md]`
 - `## Related` — `[[wiki-links]]` to connected pages

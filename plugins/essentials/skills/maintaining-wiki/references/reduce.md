@@ -81,7 +81,7 @@ Also show what happens to the parent page:
 
 For new pages, use the wiki page template from `references/templates.md`:
 - `source_count: 1` (the parent page is the source)
-- `status: draft`
+- `status: authored` (the skill wrote it in full; see `references/ingest.md`)
 - Cite the parent page: `[Source: parent-page.md]`
 - Include `## Related` with links back to the parent and sibling claims
 

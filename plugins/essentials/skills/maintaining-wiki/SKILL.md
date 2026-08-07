@@ -185,6 +185,51 @@ These fields are not in `docs/02_learning/README.md` yet. On first ingest after 
 
 Full rationale: `references/obsidian.md`.
 
+## Schema additions this skill assumes
+
+Two conventions were added in v2.8.0 that a vault's `docs/02_learning/README.md`
+may not document yet. On the first operation after upgrading, propose a README
+patch for whichever is missing and wait for approval. **Never mutate the README
+silently.**
+
+### 1. `status: authored`
+
+The status enum becomes `draft | authored | reviewed | needs_update`:
+
+- **`draft`** — a genuine stub. Placeholder body, created to satisfy an inbound link.
+- **`authored`** — the skill wrote the page in full from a source, but no human has
+  reviewed it. **This is the ingest default.**
+- **`reviewed`** — a human read it and signed off. Only a human can grant this.
+- **`needs_update`** — known to be stale or superseded.
+
+Why it exists: when `draft` doubled as "the skill made this," lint check #6 fired on
+a template default that nothing ever cleared, reaching 49% of pages in a real vault
+and rendering the check useless. See "Tuning the staleness check" in
+`references/lint.md`.
+
+Migrating an existing vault: pages the skill authored in full can be moved
+`draft` → `authored` in bulk, since that asserts nothing about human review. Moving
+anything to `reviewed` in bulk is never acceptable.
+
+### 2. Negative citations
+
+For recording that a source *doesn't* say something — an open question is often
+load-bearing precisely because the source raised a claim without quantifying it:
+
+```
+[Source: filename.md — not stated]
+[Source: filename.md — not quantified]
+[Source: filename.md — not disclosed]
+```
+
+Rule: everything before the ` — ` must be a bare filename resolvable in `raw/`.
+Writing the qualifier without the delimiter (`[Source: file.md doesn't quantify]`)
+breaks citation resolution and will be reported by lint check #2b.
+
+Multi-source citations use a comma list, all filenames resolvable:
+`[Source: file-a.md, file-b.md]`. If one entry is a characterization rather than a
+file, move it into the prose and cite only the file.
+
 ## Git integration
 
 The skill never runs `git add`, `git commit`, or `git push` without explicit user confirmation.

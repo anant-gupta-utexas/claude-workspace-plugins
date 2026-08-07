@@ -12,7 +12,7 @@ title: {{Canonical Topic Name}}
 created: {{YYYY-MM-DD}}
 last_updated: {{YYYY-MM-DD}}
 source_count: 1
-status: draft
+status: authored
 tags: [{{tag1}}, {{tag2}}]
 aliases: ["{{Synonym}}", "{{Acronym}}"]
 ---
